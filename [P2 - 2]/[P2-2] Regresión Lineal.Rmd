@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "02 de abril de 2018"
 output: 
-  html_document:
+  md_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
