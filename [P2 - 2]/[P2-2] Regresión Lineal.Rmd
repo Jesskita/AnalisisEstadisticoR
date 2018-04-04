@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "02 de abril de 2018"
 output: 
-  md_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -66,15 +66,19 @@ par(mfrow=c(1,1))
 
 - ¿Qué hemos hecho?
 
+
 $$
 E(Y|X_i) = f(X_i) 
 $$
+
 $$
 E(Y|X_i) = \beta_1+\beta_2X_i 
 $$
+
 $$
 u_i = Y_i - E(Y|X_i) 
 $$
+
 $$
 Y_i = E(Y|X_i) + u_i 
 $$
@@ -132,12 +136,18 @@ Como no es observable, se usa la muestral
 $$
 Y_i = \hat\beta_1+\hat\beta_2X_i+\hat u_i  
 $$
+
+
 $$
 Y_i=\hat Y_i+\hat u_i  
 $$
+
+
 $$
 \hat u_i = Y_i-\hat Y_i 
 $$
+
+
 $$
 \hat u_i = Y_i- \hat\beta_1-\hat\beta_2X_i
 $$
@@ -149,6 +159,8 @@ Es por esto que los residuos se obtienen a través de los betas:
 $$
 \sum\hat u_i^2 =\sum (Y_i- \hat\beta_1-\hat\beta_2X_i)^2
 $$
+
+
 $$
 \sum\hat u_i^2 =f(\hat\beta_1,\hat\beta_2) 
 $$
@@ -166,6 +178,7 @@ donde
 $$
 S_{xx} = \sum_{i=1}^{n}x_i^2-n\bar x^2
 $$
+
 $$
 S_{xy} = \sum_{i=1}^{n}x_i y_i-n\bar x\bar{y}
 $$
@@ -561,6 +574,7 @@ aov(reg.1)
 
 
 Ahora, si existen rendimientos constantes a escala (un cambio equi proporcional en la producción ante un cambio equiproporcional en los insumos), la teoría económica sugeriría que: 
+
 $$
 \beta_2 +\beta_3 = 1
 $$

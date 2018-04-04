@@ -63,8 +63,11 @@ Ahora:
 -   ¿Qué hemos hecho?
 
 *E*(*Y*|*X*<sub>*i*</sub>)=*f*(*X*<sub>*i*</sub>)
+
 *E*(*Y*|*X*<sub>*i*</sub>)=*β*<sub>1</sub> + *β*<sub>2</sub>*X*<sub>*i*</sub>
+
 *u*<sub>*i*</sub> = *Y*<sub>*i*</sub> − *E*(*Y*|*X*<sub>*i*</sub>)
+
 *Y*<sub>*i*</sub> = *E*(*Y*|*X*<sub>*i*</sub>)+*u*<sub>*i*</sub>
 
 -   ¿Qué significa que sea lineal?
@@ -113,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         22.9571           0.5472
+    ##         23.0860           0.5648
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      22.9571267       0.5471982
+    ##      23.0860359       0.5647682
 
     abline(coef(ajuste.1))
 
@@ -134,12 +137,15 @@ Como no es observable, se usa la muestral
 $$
 Y\_i = \\hat\\beta\_1+\\hat\\beta\_2X\_i+\\hat u\_i  
 $$
+
 $$
 Y\_i=\\hat Y\_i+\\hat u\_i  
 $$
+
 $$
 \\hat u\_i = Y\_i-\\hat Y\_i 
 $$
+
 $$
 \\hat u\_i = Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i
 $$
@@ -150,9 +156,10 @@ Es por esto que los residuos se obtienen a través de los betas:
     $$
     \\sum\\hat u\_i^2 =\\sum (Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i)^2
     $$
-    $$
-    \\sum\\hat u\_i^2 =f(\\hat\\beta\_1,\\hat\\beta\_2) 
-    $$
+
+$$
+\\sum\\hat u\_i^2 =f(\\hat\\beta\_1,\\hat\\beta\_2) 
+$$
 
 Diferenciando ((<span class="citeproc-not-found"
 data-reference-id="eq1">**???**</span>)) se obtiene:
@@ -167,6 +174,7 @@ $$
 $$
 S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar x^2
 $$
+
 $$
 S\_{xy} = \\sum\_{i=1}^{n}x\_i y\_i-n\\bar x\\bar{y}
 $$
@@ -891,6 +899,7 @@ Inversión de Capital (*X*<sub>3</sub>) en el Valor Agregado (*Y*)
 Ahora, si existen rendimientos constantes a escala (un cambio equi
 proporcional en la producción ante un cambio equiproporcional en los
 insumos), la teoría económica sugeriría que:
+
 *β*<sub>2</sub> + *β*<sub>3</sub> = 1
 
     LY_K <- log(Y/X3)
