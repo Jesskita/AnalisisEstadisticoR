@@ -68,8 +68,14 @@ par(mfrow=c(1,1))
 
 $$
 E(Y|X_i) = f(X_i) 
+$$
+$$
 E(Y|X_i) = \beta_1+\beta_2X_i 
+$$
+$$
 u_i = Y_i - E(Y|X_i) 
+$$
+$$
 Y_i = E(Y|X_i) + u_i 
 $$
 
@@ -93,8 +99,6 @@ muestra <- sample( X ,size=20)
 muestra <- sample(indice,size=20)
 ingreso.muestra <- X[muestra]
 consumo.muestra <- Y[muestra]
-
-
 ```
 
 
@@ -126,9 +130,15 @@ $$
 Como no es observable, se usa la muestral
 
 $$
-Y_i = \hat\beta_1+\hat\beta_2X_i+\hat u_i  \\
-Y_i=\hat Y_i+\hat u_i  \\
-\hat u_i = Y_i-\hat Y_i \\
+Y_i = \hat\beta_1+\hat\beta_2X_i+\hat u_i  
+$$
+$$
+Y_i=\hat Y_i+\hat u_i  
+$$
+$$
+\hat u_i = Y_i-\hat Y_i 
+$$
+$$
 \hat u_i = Y_i- \hat\beta_1-\hat\beta_2X_i
 $$
 
@@ -137,19 +147,26 @@ Es por esto que los residuos se obtienen a través de los betas:
 
 (@eq1)
 $$
-\sum\hat u_i^2 =\sum (Y_i- \hat\beta_1-\hat\beta_2X_i)^2 \\
+\sum\hat u_i^2 =\sum (Y_i- \hat\beta_1-\hat\beta_2X_i)^2
+$$
+$$
 \sum\hat u_i^2 =f(\hat\beta_1,\hat\beta_2) 
 $$
 
 
 Diferenciando ([@eq1]) se obtiene:
 $$
- \hat\beta_2 = \frac{S_{xy}}{S_{xx}} \\
+ \hat\beta_2 = \frac{S_{xy}}{S_{xx}} 
+$$
+
+$$
  \hat\beta_1 = \bar{Y} -  \hat\beta_2\bar{X}
 $$
 donde 
 $$
-S_{xx} = \sum_{i=1}^{n}x_i^2-n\bar x^2 \\
+S_{xx} = \sum_{i=1}^{n}x_i^2-n\bar x^2
+$$
+$$
 S_{xy} = \sum_{i=1}^{n}x_i y_i-n\bar x\bar{y}
 $$
 
@@ -233,6 +250,8 @@ Pruebas de hipótesis:
 
 $$
 H_0:\beta_2=0
+$$
+$$
 H_1:\beta_2\neq 0
 $$
 
@@ -610,7 +629,11 @@ summary(reg2)
 
 - Esto es un análisis de la varianza con  covariadas (el covariado es el gasto por estudiante). 
 - Se quiere mostrar que en los estados del sur se gana menos que los otros: 
-$$H_0: \beta_3 >= 0 \\
+
+$$
+H_0: \beta_3 >= 0
+$$
+$$
 H_a: \beta_3 <  0
 $$
 

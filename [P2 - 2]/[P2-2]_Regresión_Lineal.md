@@ -62,7 +62,10 @@ Ahora:
 
 -   ¿Qué hemos hecho?
 
-*E*(*Y*|*X*<sub>*i*</sub>)=*f*(*X*<sub>*i*</sub>)*E*(*Y*|*X*<sub>*i*</sub>)=*β*<sub>1</sub> + *β*<sub>2</sub>*X*<sub>*i*</sub>*u*<sub>*i*</sub> = *Y*<sub>*i*</sub> − *E*(*Y*|*X*<sub>*i*</sub>)*Y*<sub>*i*</sub> = *E*(*Y*|*X*<sub>*i*</sub>)+*u*<sub>*i*</sub>
+*E*(*Y*|*X*<sub>*i*</sub>)=*f*(*X*<sub>*i*</sub>)
+*E*(*Y*|*X*<sub>*i*</sub>)=*β*<sub>1</sub> + *β*<sub>2</sub>*X*<sub>*i*</sub>
+*u*<sub>*i*</sub> = *Y*<sub>*i*</sub> − *E*(*Y*|*X*<sub>*i*</sub>)
+*Y*<sub>*i*</sub> = *E*(*Y*|*X*<sub>*i*</sub>)+*u*<sub>*i*</sub>
 
 -   ¿Qué significa que sea lineal?
 
@@ -110,12 +113,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         10.8261           0.6358
+    ##         22.9571           0.5472
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      10.8260870       0.6358124
+    ##      22.9571267       0.5471982
 
     abline(coef(ajuste.1))
 
@@ -129,9 +132,15 @@ La función poblacional sería:
 Como no es observable, se usa la muestral
 
 $$
-Y\_i = \\hat\\beta\_1+\\hat\\beta\_2X\_i+\\hat u\_i  \\\\
-Y\_i=\\hat Y\_i+\\hat u\_i  \\\\
-\\hat u\_i = Y\_i-\\hat Y\_i \\\\
+Y\_i = \\hat\\beta\_1+\\hat\\beta\_2X\_i+\\hat u\_i  
+$$
+$$
+Y\_i=\\hat Y\_i+\\hat u\_i  
+$$
+$$
+\\hat u\_i = Y\_i-\\hat Y\_i 
+$$
+$$
 \\hat u\_i = Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i
 $$
 
@@ -139,19 +148,26 @@ Es por esto que los residuos se obtienen a través de los betas:
 
 1.  
     $$
-    \\sum\\hat u\_i^2 =\\sum (Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i)^2 \\\\
+    \\sum\\hat u\_i^2 =\\sum (Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i)^2
+    $$
+    $$
     \\sum\\hat u\_i^2 =f(\\hat\\beta\_1,\\hat\\beta\_2) 
     $$
 
 Diferenciando ((<span class="citeproc-not-found"
 data-reference-id="eq1">**???**</span>)) se obtiene:
 $$
- \\hat\\beta\_2 = \\frac{S\_{xy}}{S\_{xx}} \\\\
+ \\hat\\beta\_2 = \\frac{S\_{xy}}{S\_{xx}} 
+$$
+
+$$
  \\hat\\beta\_1 = \\bar{Y} -  \\hat\\beta\_2\\bar{X}
 $$
  donde
 $$
-S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar x^2 \\\\
+S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar x^2
+$$
+$$
 S\_{xy} = \\sum\_{i=1}^{n}x\_i y\_i-n\\bar x\\bar{y}
 $$
 
@@ -278,7 +294,8 @@ Abrimos la `tabla3.2`, vamos a obtener:
 
 Pruebas de hipótesis:
 
-*H*<sub>0</sub> : *β*<sub>2</sub> = 0*H*<sub>1</sub> : *β*<sub>2</sub> ≠ 0
+*H*<sub>0</sub> : *β*<sub>2</sub> = 0
+*H*<sub>1</sub> : *β*<sub>2</sub> ≠ 0
 
 ![](RL_Im2.png)
 
@@ -1007,9 +1024,9 @@ con factores (categorias)
     el gasto por estudiante).
 -   Se quiere mostrar que en los estados del sur se gana menos que los
     otros:
-    $$H\_0: \\beta\_3 &gt;= 0 \\\\
-    H\_a: \\beta\_3 &lt;  0
-    $$
+
+*H*<sub>0</sub> : *β*<sub>3</sub> &gt; =0
+*H*<sub>*a*</sub> : *β*<sub>3</sub> &lt; 0
 
 ### Diferencias en medias, enfoque RLM
 
