@@ -134,9 +134,13 @@ $$
 
 Como no es observable, se usa la muestral
 
+
+
 $$
-Y_i = \hat{\beta}_1+\hat{\beta_2}X_i+\hat{u}_i
+Y_i=\hat{\beta}_1+\hat{\beta}_2X_i+\hat{u}_i
 $$
+
+
 
 
 $$

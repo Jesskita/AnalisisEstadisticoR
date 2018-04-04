@@ -116,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##          27.988            0.533
+    ##         14.0934           0.6095
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      27.9881890       0.5330217
+    ##      14.0934084       0.6095065
 
     abline(coef(ajuste.1))
 
@@ -136,7 +136,7 @@ La función poblacional sería:
 Como no es observable, se usa la muestral
 
 $$
-Y\_i = \\hat{\\beta}\_1+\\hat{\\beta\_2}X\_i+\\hat{u}\_i
+Y\_i=\\hat{\\beta}\_1+\\hat{\\beta}\_2X\_i+\\hat{u}\_i
 $$
 
 $$
