@@ -116,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         23.0860           0.5648
+    ##          27.988            0.533
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      23.0860359       0.5647682
+    ##      27.9881890       0.5330217
 
     abline(coef(ajuste.1))
 
@@ -130,41 +130,43 @@ obtener una muestra de la población:
 ### Regresión: Paso a paso
 
 La función poblacional sería:
+
 *Y*<sub>*i*</sub> = *β*<sub>1</sub> + *β*<sub>2</sub>*X*<sub>*i*</sub> + *u*<sub>*i*</sub>
 
 Como no es observable, se usa la muestral
 
 $$
-Y\_i = \\hat\\beta\_1+\\hat\\beta\_2X\_i+\\hat u\_i  
+Y\_i = \\hat{\\beta}\_1+\\hat{\\beta\_2}X\_i+\\hat{u}\_i
 $$
 
 $$
-Y\_i=\\hat Y\_i+\\hat u\_i  
+Y\_i=\\hat{Y}\_i+\\hat{u}\_i
 $$
 
 $$
-\\hat u\_i = Y\_i-\\hat Y\_i 
+\\hat{u}\_i = Y\_i-\\hat{Y}\_i
 $$
 
 $$
-\\hat u\_i = Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i
+\\hat{u}\_i = Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i
 $$
 
 Es por esto que los residuos se obtienen a través de los betas:
 
 1.  
     $$
-    \\sum\\hat u\_i^2 =\\sum (Y\_i- \\hat\\beta\_1-\\hat\\beta\_2X\_i)^2
+    \\sum\\hat{u}\_i^2 =\\sum (Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i)^2
     $$
 
 $$
-\\sum\\hat u\_i^2 =f(\\hat\\beta\_1,\\hat\\beta\_2) 
+\\sum\\hat{u}\_i^2 =f(\\hat{\\beta}\_1,\\hat{\\beta}\_2)
 $$
 
 Diferenciando ((<span class="citeproc-not-found"
 data-reference-id="eq1">**???**</span>)) se obtiene:
+
 $$
- \\hat\\beta\_2 = \\frac{S\_{xy}}{S\_{xx}} 
+ \\hat{\\beta}\_2 = \\frac{S\_{xy}}{S\_{xx}}
 $$
 
 $$
@@ -172,11 +174,11 @@ $$
 $$
  donde
 $$
-S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar x^2
+S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar{x}^2
 $$
 
 $$
-S\_{xy} = \\sum\_{i=1}^{n}x\_i y\_i-n\\bar x\\bar{y}
+S\_{xy} = \\sum\_{i=1}^{n}x\_i y\_i-n\\bar{x}\\bar{y}
 $$
 
 Abrimos la `tabla3.2`, vamos a obtener:
