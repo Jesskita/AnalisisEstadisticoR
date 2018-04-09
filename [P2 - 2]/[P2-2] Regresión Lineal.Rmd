@@ -137,24 +137,26 @@ Como no es observable, se usa la muestral
 
 
 $$
-Y_i=hat\beta_1+hat\beta_2X_i+hat u_i
+\begin{equation}
+Y_i=\hat{\beta}_1+\hat{\beta}_2X_i+\hat{u}_i
+\end{equation}
 $$
 
 
 
 
 $$
-Y_i=hat Y_i+hat u_i
+Y_i=\hat{Y}_i+\hat{u}_i
 $$
 
 
 $$
-hat u_i = Y_i-hat Y _i
+\hat{u}_i = Y_i-\hat{Y}_i
 $$
 
 
 $$
-hat u_i = Y_i- hat \beta_1-hat \beta _2X_i
+\hat{u}_i = Y_i- \hat{\beta}_1-\hat{\beta}_2X_i
 $$
 
 
@@ -162,31 +164,31 @@ Es por esto que los residuos se obtienen a través de los betas:
 
 (@eq1)
 $$
-\sum hat u _i^2 =\sum (Y_i- hat \beta _1-hat \beta_2X_i)^2
+\sum\hat{u}_i^2 =\sum (Y_i- \hat{\beta}_1-\hat{\beta}_2X_i)^2
 $$
 
 
 $$
-\sum hat u_i^2 =f(hat\beta_1,hat\beta_2)
+\sum\hat{u}_i^2 =f(\hat{\beta}_1,\hat{\beta}_2)
 $$
 
 
 Diferenciando ([@eq1]) se obtiene:
 
 $$
- hat \beta_2 = frac{S_{xy}}{S_{xx}}
+ \hat{\beta}_2 = \frac{S_{xy}}{S_{xx}}
 $$
 
 $$
- hat beta_1 = bar Y -  hat beta_2 bar X
+ \hat\beta_1 = \bar{Y} -  \hat\beta_2\bar{X}
 $$
 donde 
 $$
-S_{xx} = sum_{i=1}^{n}x_i^2-n bar x ^2
+S_{xx} = \sum_{i=1}^{n}x_i^2-n\bar{x}^2
 $$
 
 $$
-S_{xy} = sum_{i=1}^{n}x_i y_i-n bar x bar y
+S_{xy} = \sum_{i=1}^{n}x_i y_i-n\bar{x}\bar{y}
 $$
 
 Abrimos la `tabla3.2`, vamos a obtener:
