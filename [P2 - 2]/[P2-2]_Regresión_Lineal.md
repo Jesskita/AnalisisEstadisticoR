@@ -116,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         14.0934           0.6095
+    ##         12.1069           0.6094
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      14.0934084       0.6095065
+    ##       12.106914        0.609443
 
     abline(coef(ajuste.1))
 
@@ -135,55 +135,37 @@ La función poblacional sería:
 
 Como no es observable, se usa la muestral
 
-$$
-Y\_i=\\hat{\\beta}\_1+\\hat{\\beta}\_2X\_i+\\hat{u}\_i
-$$
+*Y*<sub>*i*</sub> = *h**a**t**β*<sub>1</sub> + *h**a**t**β*<sub>2</sub>*X*<sub>*i*</sub> + *h**a**t**u*<sub>*i*</sub>
 
-$$
-Y\_i=\\hat{Y}\_i+\\hat{u}\_i
-$$
+*Y*<sub>*i*</sub> = *h**a**t**Y*<sub>*i*</sub> + *h**a**t**u*<sub>*i*</sub>
 
-$$
-\\hat{u}\_i = Y\_i-\\hat{Y}\_i
-$$
+*h**a**t**u*<sub>*i*</sub> = *Y*<sub>*i*</sub> − *h**a**t**Y*<sub>*i*</sub>
 
-$$
-\\hat{u}\_i = Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i
-$$
+*h**a**t**u*<sub>*i*</sub> = *Y*<sub>*i*</sub> − *h**a**t**β*<sub>1</sub> − *h**a**t**β*<sub>2</sub>*X*<sub>*i*</sub>
 
 Es por esto que los residuos se obtienen a través de los betas:
 
 1.  
-    $$
-    \\sum\\hat{u}\_i^2 =\\sum (Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i)^2
-    $$
+    ∑*h**a**t**u*<sub>*i*</sub><sup>2</sup> = ∑(*Y*<sub>*i*</sub> − *h**a**t**β*<sub>1</sub> − *h**a**t**β*<sub>2</sub>*X*<sub>*i*</sub>)<sup>2</sup>
 
-$$
-\\sum\\hat{u}\_i^2 =f(\\hat{\\beta}\_1,\\hat{\\beta}\_2)
-$$
+∑*h**a**t**u*<sub>*i*</sub><sup>2</sup> = *f*(*h**a**t**β*<sub>1</sub>, *h**a**t**β*<sub>2</sub>)
 
 Diferenciando ((<span class="citeproc-not-found"
 data-reference-id="eq1">**???**</span>)) se obtiene:
 
-$$
- \\hat{\\beta}\_2 = \\frac{S\_{xy}}{S\_{xx}}
-$$
+*h**a**t**β*<sub>2</sub> = *f**r**a**c**S*<sub>*x**y*</sub>*S*<sub>*x**x*</sub>
 
-$$
- \\hat\\beta\_1 = \\bar{Y} -  \\hat\\beta\_2\\bar{X}
-$$
+*h**a**t**b**e**t**a*<sub>1</sub> = *b**a**r**Y* − *h**a**t**b**e**t**a*<sub>2</sub>*b**a**r**X*
  donde
-$$
-S\_{xx} = \\sum\_{i=1}^{n}x\_i^2-n\\bar{x}^2
-$$
+*S*<sub>*x**x*</sub> = *s**u**m*<sub>*i* = 1</sub><sup>*n*</sup>*x*<sub>*i*</sub><sup>2</sup> − *n**b**a**r**x*<sup>2</sup>
 
-$$
-S\_{xy} = \\sum\_{i=1}^{n}x\_i y\_i-n\\bar{x}\\bar{y}
-$$
+*S*<sub>*x**y*</sub> = *s**u**m*<sub>*i* = 1</sub><sup>*n*</sup>*x*<sub>*i*</sub>*y*<sub>*i*</sub> − *n**b**a**r**x**b**a**r**y*
 
 Abrimos la `tabla3.2`, vamos a obtener:
 
-    consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla3_2.csv"
+    # consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+    consumo <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
     attach(consumo)
 
     ## The following objects are masked from familia:

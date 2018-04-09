@@ -625,7 +625,7 @@ df.residual(reg1)
 Una exploración gráfica:
 
 ```{r}
-plot(PNB_PC,tasa_mort,col="blue")
+plot((PNB_PC),tasa_mort,col="blue")
 abline(coef(reg1),col="red") 
 ```
 

@@ -137,24 +137,24 @@ Como no es observable, se usa la muestral
 
 
 $$
-Y_i=\hat{\beta}_1+\hat{\beta}_2X_i+\hat{u}_i
+Y_i=hat\beta_1+hat\beta_2X_i+hat u_i
 $$
 
 
 
 
 $$
-Y_i=\hat{Y}_i+\hat{u}_i
+Y_i=hat Y_i+hat u_i
 $$
 
 
 $$
-\hat{u}_i = Y_i-\hat{Y}_i
+hat u_i = Y_i-hat Y _i
 $$
 
 
 $$
-\hat{u}_i = Y_i- \hat{\beta}_1-\hat{\beta}_2X_i
+hat u_i = Y_i- hat \beta_1-hat \beta _2X_i
 $$
 
 
@@ -162,38 +162,40 @@ Es por esto que los residuos se obtienen a través de los betas:
 
 (@eq1)
 $$
-\sum\hat{u}_i^2 =\sum (Y_i- \hat{\beta}_1-\hat{\beta}_2X_i)^2
+\sum hat u _i^2 =\sum (Y_i- hat \beta _1-hat \beta_2X_i)^2
 $$
 
 
 $$
-\sum\hat{u}_i^2 =f(\hat{\beta}_1,\hat{\beta}_2)
+\sum hat u_i^2 =f(hat\beta_1,hat\beta_2)
 $$
 
 
 Diferenciando ([@eq1]) se obtiene:
 
 $$
- \hat{\beta}_2 = \frac{S_{xy}}{S_{xx}}
+ hat \beta_2 = frac{S_{xy}}{S_{xx}}
 $$
 
 $$
- \hat\beta_1 = \bar{Y} -  \hat\beta_2\bar{X}
+ hat beta_1 = bar Y -  hat beta_2 bar X
 $$
 donde 
 $$
-S_{xx} = \sum_{i=1}^{n}x_i^2-n\bar{x}^2
+S_{xx} = sum_{i=1}^{n}x_i^2-n bar x ^2
 $$
 
 $$
-S_{xy} = \sum_{i=1}^{n}x_i y_i-n\bar{x}\bar{y}
+S_{xy} = sum_{i=1}^{n}x_i y_i-n bar x bar y
 $$
 
 Abrimos la `tabla3.2`, vamos a obtener:
 
 
 ```{r}
-consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla3_2.csv"
+# consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+consumo <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(consumo)
 
 media_x <- mean(X, na.rm=T)
@@ -307,7 +309,9 @@ Interpretación de los coeficientes
 
 Abrir la tabla 5.9, las variables son:
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
-datos=read.csv(file="Tabla5_9.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla5_9.csv"
+# datos=read.csv(file="Tabla5_9.csv",sep=";",dec=".",header=TRUE)
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos) 
 ```
@@ -402,11 +406,9 @@ Derivaciones del modelo
 Abrir la `tabla 31.3`, regresar el ingreso per cápita en el número de celulares por cada 100 personas:
 
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
-dirdat <- "~/Documents/Consultorias/SEE/2daEscuela/Datos/5e_data_sets"
-dirplot <- "~/Documents/Consultorias/SEE/2daEscuela/Slides/[2] Regresion Lineal Simple"
-
-# RL
-datos=read.csv(file="Table 31_3.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%2031_3.csv"
+# datos=read.csv(file="Table 31_3.csv",sep=";",dec=".",header=TRUE)
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
 
@@ -427,7 +429,9 @@ abline(coef(reg.1))
 Abrir la `tabla 6.4`, regresar el Producto Nacional Bruto (PGNP) en la tasa de mortalidad (CM).
 
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
-datos = read.csv(file="tabla_6_4.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_6_4.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+# datos = read.csv(file="tabla_6_4.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos)
 ```
@@ -475,7 +479,9 @@ summary(lm(lsalary~ceoten))
 Abrir la `tabla 6.1`, regresar X (rendimientos excedentes de un índice acciones del sector de bienes de consumo cíclico) en Y (rendimientos excedentes de un índice acciones de todo el mercado de valores en el Reino Unido)
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
-datos <- read.csv("Table 6_1.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%206_1.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+# datos <- read.csv("Table 6_1.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
 
@@ -559,7 +565,9 @@ predict.lm(modelo2,newdata=datos.nuevos,se.fit=T)
 Abrir la `tabla 7.3`. Regresar las horas de trabajo ($X_2$)  e Inversión de Capital ($X_3$) en el Valor Agregado ($Y$)
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
-datos=read.csv(file="tabla7_3.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla7_3.csv"
+# datos=read.csv(file="tabla7_3.csv",sep=";",dec=".",header=TRUE)
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
 
@@ -621,7 +629,9 @@ No se tiene suficiente evidencia para rechazar la hipótesis nula de que sea una
 Abrir la `tabla 9.1`. ¿Hay alguna diferencia entre la ubicación del estado en los salarios?
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
-datos <- read.csv(file="Table 9_1.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%209_1.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+# datos <- read.csv(file="Table 9_1.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos)
 ```
@@ -726,7 +736,9 @@ summary(reg5)
 Abrir los `datos 8.9`. Veamos las variables gráficamente:
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
-datos <- read.csv(file="tabla_8_9.csv",sep=";",dec=".",header=TRUE)
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_8_9.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+# datos <- read.csv(file="tabla_8_9.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos)
 ```
