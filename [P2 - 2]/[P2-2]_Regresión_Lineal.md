@@ -116,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         30.1762           0.5399
+    ##         10.6527           0.6458
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      30.1761550       0.5398659
+    ##       10.652677        0.645767
 
     abline(coef(ajuste.1))
 
@@ -134,6 +134,12 @@ La función poblacional sería:
 *Y*<sub>*i*</sub> = *β*<sub>1</sub> + *β*<sub>2</sub>*X*<sub>*i*</sub> + *u*<sub>*i*</sub>
 
 Como no es observable, se usa la muestral
+
+$$
+\\begin{equation}
+Y\_i=\\hat{\\beta}\_1+\\hat{\\beta}\_2X\_i+\\hat{u}\_i
+\\end{equation}
+$$
 
 $$
 Y\_i=\\hat{Y}\_i+\\hat{u}\_i
@@ -409,11 +415,6 @@ Regresamos la paridad del poder de compra en la tasa de cambio
     ## F-statistic: 1.127e+04 on 1 and 28 DF,  p-value: < 2.2e-16
 
     reg3 <- lm(log(EXCH)~log(PPP))
-
-    ## Warning in log(EXCH): NaNs produced
-
-    ## Warning in log(PPP): NaNs produced
-
     summary(reg3)
 
     ## 
