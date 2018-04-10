@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "02 de abril de 2018"
 output: 
-  md_document:
+  pdf_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -137,9 +137,7 @@ Como no es observable, se usa la muestral
 
 
 $$
-\begin{equation}
 Y_i=\hat{\beta}_1+\hat{\beta}_2X_i+\hat{u}_i
-\end{equation}
 $$
 
 
