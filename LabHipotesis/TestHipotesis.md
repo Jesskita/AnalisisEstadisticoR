@@ -161,10 +161,12 @@ rejecting the null hypothesis, we can simply compute a Z score, the
 number of standard deviations the sample mean is from the hypothesized
 mean. We can then compare it to quantile determined by alpha.
 
-How do we do this? Compute the distance between the two means (32-30)
-and divide by the standard error of the mean, that is (s/sqrt(n)).
+How do we do this?
 
 (**pregunta** 9)
+
+**Compute the distance between the two means (32-30) and divide by the
+standard error of the mean, that is (s/sqrt(n)).**
 
 <!-- 2/1 -->
 **The Z score is 2. The quantile is 1.645, so since 2&gt;1.645. What do
