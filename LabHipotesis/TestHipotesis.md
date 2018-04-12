@@ -6,39 +6,48 @@ evidence is required to reject H\_0 in favor of the research or
 alternative hypothesis.
 
 We'll consider the motivating example. A respiratory disturbance index
-(RDI) of more than 30 events / hour is considered evidence of severe
-sleep disordered breathing (SDB). Suppose that in a sample of 100
-overweight subjects with other risk factors for SDB at a sleep clinic,
-the mean RDI (X') was 32 events / hour with a standard deviation (s) of
-10 events / hour.
+(RDI) of more than 30 events/hour is considered evidence of severe sleep
+disordered breathing (SDB). Suppose that in a sample of 100 overweight
+subjects with other risk factors for SDB at a sleep clinic, the mean RDI
+(X') was 32 events / hour with a standard deviation (s) of 10 events /
+hour.
 
 We want to test the null hypothesis H\_0 that mu = 30. Our alternative
 hypothesis H\_a is mu&gt;30. Here mu represents the hypothesized
 population mean RDI (a variable).
 
-**Which of the following outcomes would be correct?**
+(**pregunta** 1) **Which of the following outcomes would be correct?**
 
-1: H\_a is TRUE and we accept it 2: H\_0 is TRUE and we reject it 3:
-H\_0 is FALSE and we accept it 4: H\_a is FALSE and we accept it
+1.  H\_a is TRUE and we accept it
+2.  H\_0 is TRUE and we reject it
+3.  H\_0 is FALSE and we accept it
+4.  H\_a is FALSE and we accept it
+
+<!-- -->
 
     pnorm(30,mean = 32, sd = 10)/2
 
     ## [1] 0.2103701
 
 <!-- # H_a is TRUE and we accept it -->
-**Which of the following outcomes would be an error?**
+(**pregunta** 2) **Which of the following outcomes would be an error?**
 
-1: H\_a is FALSE and we reject it 2: H\_0 is FALSE and we reject it 3:
-H\_a is TRUE and we accept it 4: H\_0 is TRUE and we reject it
+1.  H\_a is FALSE and we reject it
+2.  H\_0 is FALSE and we reject it
+3.  H\_a is TRUE and we accept it
+4.  H\_0 is TRUE and we reject it
 
 <!-- H_0 is TRUE and we reject it -->
 We distinguish between these two errors. A Type I error REJECTS a TRUE
 null hypothesis H\_0 and a Type II error ACCEPTS a FALSE null hypothesis
 H\_0.
 
-**Can we ever be sure that we're absolutely right?**
+(**pregunta** 3) **Can we ever be sure that we're absolutely right?**
 
-1: Yes 2: Always 3: Let's not get into philosophy now 4: No
+1.  Yes
+2.  Always
+3.  Let's not get into philosophy now
+4.  No
 
 Since there's some element of uncertainty in questions concerning
 populations, we deal with probabilities. In our hypothesis testing we'll
@@ -54,13 +63,19 @@ As in the slides, we'll consider an American court of law. The null
 hypothesis is that the defendant is innocent. **If an innocent man is
 convicted what type of error is this?**
 
-1: Type II 2: Type I
+(**pregunta** 4)
+
+1.  Type II
+2.  Type I
 
 <!-- 2: Type I -->
 You might send the innocent man to jail by rejecting H\_0. Suppose a
 guilty person is not convicted. **What type of error is this?**
 
-1: Type II 2: Type I
+(**pregunta** 5)
+
+1.  Type II
+2.  Type I
 
 <!-- 1: Type II -->
 Back to sleep (example)! A reasonable strategy would reject the null
@@ -76,9 +91,12 @@ hypothesis even if it's false.
 
 Recall that the standard error of a sample mean is given by the formula
 s/sqrt(n). Recall in our sleep example we had a sample of 100 subjects,
-our mean RDI (X') was 32 events / hour with a standard deviation (s) of
-10 events / hour. **What is the standard error of the mean in this
-example?**
+our mean RDI (X') was 32 events/hour with a standard deviation (s) of 10
+events / hour.
+
+(**pregunta** 6)
+
+**What is the standard error of the mean in this example?**
 
 <!-- 10/sqrt(100) -->
 Under H\_0, X' is normally distributed with mean mu=30 and variance 1.
@@ -105,7 +123,12 @@ The shaded portion represents 5% of the area under this normal density
 curve. Which expression represents the smallest value X for which the
 area is shaded, assuming this is standard normal?
 
-1: qnorm(.95) 2: qt(.95,99) 3: dnorm(.95) 4: rnorm(.95)
+(**pregunta** 7)
+
+1.  qnorm(.95)
+2.  qt(.95,99)
+3.  dnorm(.95)
+4.  rnorm(.95)
 
 <!-- 1-->
 The 95th percentile of a standard normal distribution is 1.645 standard
@@ -121,7 +144,11 @@ than C.
 Recall that our observed mean X' is 32 which is greater than C=31.645,
 so it falls in that 5% region. What do we do with H\_0?
 
-1: reject it 2: fail to reject it 3: give it another chance
+(**pregunta** 8)
+
+1.  reject it
+2.  fail to reject it
+3.  give it another chance
 
 <!-- 1 -->
 So the rule "Reject H\_0 when the sample mean X' &gt;= 31.645" has the
@@ -137,28 +164,39 @@ mean. We can then compare it to quantile determined by alpha.
 How do we do this? Compute the distance between the two means (32-30)
 and divide by the standard error of the mean, that is (s/sqrt(n)).
 
-<!-- 2/1 -->
-The Z score is 2. The quantile is 1.645, so since 2&gt;1.645. What do we
-do with H\_0?
+(**pregunta** 9)
 
-1: reject it 2: give it another chance 3: fail to reject it
+<!-- 2/1 -->
+**The Z score is 2. The quantile is 1.645, so since 2&gt;1.645. What do
+we do with H\_0?**
+
+(**pregunta** 10)
+
+1.  reject it
+2.  give it another chance
+3.  fail to reject it
 
 <!-- 1 -->
-The general rule for rejection is if sqrt(n) \* ( X' - mu) / s &gt;
-Z\_{1-alpha}.
+The general rule for rejection is if
+`sqrt(n) * ( X' - mu)/s > Z_{1-alpha}`.
 
-Our test statistic is (X'-mu) / (s/sqrt(n)) which is standard normal.
+Our test statistic is `(X'-mu)/(s/sqrt(n))` which is standard normal.
 
 This means that our test statistic has what mean and standard deviation?
 
-1: 0 and 1 2: 1 and 1 3: 0 and 0 4: 1 and 0
+(**pregunta** 11)
+
+1.  0 and 1
+2.  1 and 1
+3.  0 and 0
+4.  1 and 0
 
 <!-- 1 -->
 Suppose our first alternative, H\_a, is that mu &lt; mu\_0. We would
 reject H\_0 (and accept H\_a) when our observed sample mean is
-significantly less than mu\_0. That is, our test statistic (X'-mu) /
-(s/sqrt(n)) is less than Z\_alpha. Specifically, it is more than 1.64
-standard deviations to the left of the mean mu\_0.
+significantly less than mu\_0. That is, our test statistic
+`(X'-mu) / (s/sqrt(n))` is less than Z\_alpha. Specifically, it is more
+than 1.64 standard deviations to the left of the mean mu\_0.
 
 Here's a plot to show what we mean. The shaded portion represents 5% of
 the area under the curve and those X values in it are those which are at
@@ -179,14 +217,22 @@ We already covered the alternative hypothesis H\_a that mu &gt; mu\_0
 but let's review it. We would reject H\_0 (and accept H\_a) when our
 sample mean is what?
 
-1: huh? 2: equal to mu\_0 3: significantly greater than mu\_0 4:
-significantly less than mu\_0
+(**pregunta** 12)
+
+1.  huh?
+2.  equal to mu\_0
+3.  significantly greater than mu\_0
+4.  significantly less than mu\_0
 
 <!-- 3 -->
-This means that our test statistic (X'-mu) / (s/sqrt(n)) is what?
+This means that our test statistic `(X'-mu) / (s/sqrt(n))` is what?
 
-1: at least 1.64 std dev less than mu\_0 2: at least 1.64 std dev
-greater than mu\_0 3: huh? 4: equal to mu\_0
+(**pregunta** 13)
+
+1.  at least 1.64 std dev less than mu\_0
+2.  at least 1.64 std dev greater than mu\_0
+3.  huh?
+4.  equal to mu\_0
 
 <!-- 2 -->
 Here again is the plot to show this. The shaded portion represents 5% of
@@ -216,10 +262,16 @@ Notice that if we reject H\_0, either it was FALSE (and hence our model
 is wrong and we are correct to reject it) OR H\_0 is TRUE and we have
 made an error (Type I). The probability of this is 5%.
 
-What do you think we call the region of values for which we reject H\_0?
+(**pregunta** 14)
 
-1: the rejection region 2: the abnormal region 3: the waggy tails 4: the
-shady tails 5: the region of interest
+**What do you think we call the region of values for which we reject
+H\_0?**
+
+1.  the rejection region
+2.  the abnormal region
+3.  the waggy tails
+4.  the shady tails
+5.  the region of interest
 
 <!-- 1 -->
     x <- seq(-8,8, length = 2000)
@@ -240,14 +292,19 @@ implicitly relying on the CENTRAL LIMIT THEOREM (CLT).
 Remember the CLT. For a distribution to be approximated by a normal what
 does the sample size have to be?
 
-1: small 2: normal 3: abnormal 4: large
+(**pregunta** 15)
+
+1.  small
+2.  normal
+3.  abnormal
+4.  large
 
 <!-- 4 -->
 No need to worry. If we don't have a large sample size, we can use the t
-distribution which conveniently uses the same test statistic (X'-mu) /
-(s/sqrt(n)) we used above. That means that all the examples we just went
-through would work exactly the same EXCEPT instead of using NORMAL
-quantiles, we would use t quantiles and n-1 degrees of freedom.
+distribution which conveniently uses the same test statistic
+`(X'-mu) / (s/sqrt(n))` we used above. That means that all the examples
+we just went through would work exactly the same EXCEPT instead of using
+NORMAL quantiles, we would use t quantiles and n-1 degrees of freedom.
 
 We said t distributions were very handy, didn't we?
 
@@ -255,15 +312,21 @@ Let's go back to our sleep disorder example and suppose our sample
 size=16 (instead of 100). As before, (sample mean) X'=32, (standard
 deviation) s=10. H\_0 says the true mean mu=30, and H\_a is that
 mu&gt;30. With this smaller sample size we use the t test, but our test
-statistic is computed the same way, namely (X'-mu)/(s/sqrt(n))
+statistic is computed the same way, namely `(X'-mu)/(s/sqrt(n))`
 
-What is the value of the test statistic (X'-mu)/(s/sqrt(n)) with sample
-size 16?
+(**pregunta** 16)
+
+**What is the value of the test statistic `(X'-mu)/(s/sqrt(n))` with
+sample size 16?**
 
 <!-- (32-30)/(10/sqrt(16)) -->
-How many degrees of freedom do we have with a sample size of 16?
+(**pregunta** 17)
+
+**How many degrees of freedom do we have with a sample size of 16?**
 
 <!-- 15 -->
+(**pregunta** 18)
+
 **Under H\_0, the probability that the test statistic is larger than the
 95th percentile of the t distribution is 5%. Use the R function qt with
 the arguments .95 and the correct number of degrees of freedom to find
@@ -274,9 +337,13 @@ So the test statistic (.8) is less than 1.75, the 95th percentile of the
 t distribution with 15 df. This means that our sample mean (32) does not
 fall within the region of rejection since H\_a was that mu&gt;30.
 
-This means what?
+(**pregunta** 19)
 
-1: we reject H\_a 2: we fail to reject H\_0 3: we reject H\_0
+**This means what?**
+
+1.  we reject H\_a
+2.  we fail to reject H\_0
+3.  we reject H\_0
 
 <!-- 2 -->
 Now let's consider a two-sided test. Suppose that we would reject the
@@ -290,30 +357,46 @@ null to be 5%, split equally as 2.5% in the upper tail and 2.5% in the
 lower tail. Thus we reject if our test statistic is larger than qt(.975,
 15) or smaller than qt(.025, 15).
 
-Do you expect qt(.975,15) to be bigger or smaller than qt(.95,15)?
+(**pregunta** 20)
 
-1: bigger 2: smaller
+**Do you expect qt(.975,15) to be bigger or smaller than qt(.95,15)?**
+
+1.  bigger
+2.  smaller
 
 <!-- 1 -->
-Since the test statistic was smaller than qt(.95,15) will it be bigger
-or smaller than qt(.975,15)?
+(**pregunta** 21)
 
-1: bigger 2: smaller
+**Since the test statistic was smaller than qt(.95,15) will it be bigger
+or smaller than qt(.975,15)?**
+
+1.  bigger
+2.  smaller
 
 <!-- 2-->
-Now for the left tail, qt(.025,15). What can we say about it?
+(**pregunta** 22)
 
-1: it is bigger than qt(.975,15) 2: it is greater than 0 3: we don't
-know anything about it 4: it is less than 0
+**Now for the left tail, qt(.025,15). What can we say about it?**
+
+1.  it is bigger than qt(.975,15)
+2.  it is greater than 0
+3.  we don't know anything about it
+4.  it is less than 0
 
 <!-- 4 Any quantile of a percentile less than .5 will be less than 0 by -->
 <!-- | the symmetry of the distribution. -->
 Bottom line here is if you fail to reject the one sided test, you know
 that you will fail to reject the two sided.
 
-So the test statistic .8 failed both sides of the test. That means we ?
+(**pregunta** 23)
 
-1: huh? 2: reject H\_0 3: reject H\_a 4: fail to reject H\_0
+**So the test statistic .8 failed both sides of the test. That means we
+?**
+
+1.  huh?
+2.  reject H\_0
+3.  reject H\_a
+4.  fail to reject H\_0
 
 <!-- 4 -->
 Now we usually don't have to do all this computation ourselves because R
@@ -338,9 +421,14 @@ say `fs$sheight-fs$fheight`. OR we can run it with three arguments, the
 two heights plus the paired argument set to TRUE. Run t.test now using
 whichever way you prefer
 
-The test statistic is what?
+(**pregunta** 24)
 
-1: 2.2e-16 2: 0.9969728 3: 11.7885 4: .8310296
+**The test statistic is what?**
+
+1.  2.2e-16
+2.  0.9969728
+3.  11.7885
+4.  .8310296
 
 <!-- 3 -->
 So the test statistic is 11.79 which is quite large so we REJECT the
@@ -349,10 +437,15 @@ the test on the difference sheight-fheight) or that the true difference
 in means was 0 (if you ran the test on the two separate but paired
 columns).
 
-The test statistic tell us what?
+(**pregunta** 25)
 
-1: the sample mean 2: the true mean 3: the number of estimated std
-errors between the sample and hypothesized means 4: the true variance
+**The test statistic tell us what?**
+
+1.  the sample mean
+2.  the true mean
+3.  the number of estimated std errors between the sample and
+    hypothesized means
+4.  the true variance
 
 We can test this by multiplying the t statistic (11.7885) by the
 standard deviation of the data divided by the square root of the sample
@@ -402,8 +495,11 @@ least i-1 girls out of the 8 possible children. Look at mybin now.
 So mybin\[1\]=1.0, meaning that with probability 1 there are at least 0
 girls, and mybin\[2\]=.996 is the probability that there's at least 1
 girl out of the 8, and so forth. The probabilities decrease as i
-increases. What is the least value of i for which the probability is
-less than .05?
+increases.
+
+(**pregunta** 26)
+
+What is the least value of i for which the probability is less than .05?
 
 <!-- 8 -->
 So mybin\[8\]=.03 is the probability of having at least 7 girls out of a
@@ -412,7 +508,10 @@ sample has. This is less than .05 so our sample falls in this region of
 rejection. Does that mean we accept or reject H\_0, (that either gender
 is equally likely) based on this sample of size 8?
 
-1: reject H\_0 2: accept H\_0
+(**pregunta** 27)
+
+1.  reject H\_0
+2.  accept H\_0
 
 <!-- 1 -->
 Finally, we note that a 2-sided test would mean that our alternative
@@ -422,5 +521,5 @@ lesson on p-values will make this clearer. It's interesting that for
 discrete distributions such as binomial and Poisson, inverting 2-sided
 tests is how R calculates exact tests. (It doesn't rely on the CLT.)
 
-Congrats! We confidently hypothesize that you're happy to have finished
-this lesson. Can we test this?
+**Congrats! We confidently hypothesize that you're happy to have
+finished this lesson. Can we test this?**
