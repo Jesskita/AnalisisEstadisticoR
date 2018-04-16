@@ -550,6 +550,39 @@ predict.lm(modelo2,newdata=datos.nuevos,se.fit=T)
 
 ### RLM: Cobb-Douglas
 
+
+El modelo:
+
+$$
+Y_i = \beta_1X_{2i}^{\beta_2}X_{3i}^{\beta_3}e^{u_i}
+$$
+
+donde 
+
+-   $Y$: producción
+-   $X_2$: insumo trabajo
+-   $X_3$: insumo capital
+-   $u$: término de perturbación
+-   $e$: base del logaritmo
+
+
+Notemos que el modelo es multiplicativo, si tomamos la derivada obetenemos un modelo más famliar respecto a la regresión lineal múltiple:
+
+$$
+lnY_i = ln\beta_1 + \beta_2ln(X_{2i})+ \beta_3ln(X_{3i}) + u_i
+$$
+
+
+La interpretación de los coeficientes es [@gujarati2004econometria]:
+
+1. $\beta_2$ es la elasticidad (parcial) de la producción respecto del insumo trabajo, es decir, mide el cambio porcentual en la producción debido a una variación de 1% en el insumo trabajo, con el insumo capital constante.
+
+2. De igual forma, $\beta_3$ es la elasticidad (parcial) de la producción respecto del insumo capital, con el insumo trabajo constante.
+
+3. La suma ($\beta_2+\beta_3$) da información sobre los rendimientos a escala, es decir, la respuesta de la producción a un cambio proporcional en los insumos. Si esta suma es 1, existen rendimientos constantes a escala, es decir, la duplicación de los insumos duplica la producción, la triplicación de los insumos la triplica, y así sucesivamente. Si la suma es menor que 1, existen rendimientos decrecientes a escala: al duplicar los insumos, la producción crece en menos del doble. Por
+último, si la suma es mayor que 1, hay rendimientos crecientes a escala; la duplicación de los insumos aumenta la producción en más del doble.
+
+
 Abrir la `tabla 7.3`. Regresar las horas de trabajo ($X_2$)  e Inversión de Capital ($X_3$) en el Valor Agregado ($Y$)
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
@@ -758,3 +791,4 @@ ajuste_chow1$x
 ```
 
 
+# Referencias

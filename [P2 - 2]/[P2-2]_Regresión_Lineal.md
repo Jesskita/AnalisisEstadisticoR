@@ -2,6 +2,7 @@
     -   [Una idea general](#una-idea-general)
     -   [Transformaciones Lineales](#transformaciones-lineales)
     -   [Regresión Lineal Múltiple](#regresion-lineal-multiple)
+-   [Referencias](#referencias)
 
 <!--
 La revisión metodológica aquí vertida se basa en [@Wang_2012].
@@ -116,12 +117,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         19.1359           0.5847
+    ##         21.3938           0.5643
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      19.1358561       0.5847395
+    ##      21.3938268       0.5643184
 
     abline(coef(ajuste.1))
 
@@ -841,6 +842,48 @@ interpretarlos:
 
 ### RLM: Cobb-Douglas
 
+El modelo:
+
+*Y*<sub>*i*</sub> = *β*<sub>1</sub>*X*<sub>2*i*</sub><sup>*β*<sub>2</sub></sup>*X*<sub>3*i*</sub><sup>*β*<sub>3</sub></sup>*e*<sup>*u*<sub>*i*</sub></sup>
+
+donde
+
+-   *Y*: producción
+-   *X*<sub>2</sub>: insumo trabajo
+-   *X*<sub>3</sub>: insumo capital
+-   *u*: término de perturbación
+-   *e*: base del logaritmo
+
+Notemos que el modelo es multiplicativo, si tomamos la derivada
+obetenemos un modelo más famliar respecto a la regresión lineal
+múltiple:
+
+*l**n**Y*<sub>*i*</sub> = *l**n**β*<sub>1</sub> + *β*<sub>2</sub>*l**n*(*X*<sub>2*i*</sub>)+*β*<sub>3</sub>*l**n*(*X*<sub>3*i*</sub>)+*u*<sub>*i*</sub>
+
+La interpretación de los coeficientes es (<span
+class="citeproc-not-found"
+data-reference-id="gujarati2004econometria">**???**</span>):
+
+1.  *β*<sub>2</sub> es la elasticidad (parcial) de la producción
+    respecto del insumo trabajo, es decir, mide el cambio porcentual en
+    la producción debido a una variación de 1% en el insumo trabajo, con
+    el insumo capital constante.
+
+2.  De igual forma, *β*<sub>3</sub> es la elasticidad (parcial) de la
+    producción respecto del insumo capital, con el insumo trabajo
+    constante.
+
+3.  La suma (*β*<sub>2</sub> + *β*<sub>3</sub>) da información sobre los
+    rendimientos a escala, es decir, la respuesta de la producción a un
+    cambio proporcional en los insumos. Si esta suma es 1, existen
+    rendimientos constantes a escala, es decir, la duplicación de los
+    insumos duplica la producción, la triplicación de los insumos la
+    triplica, y así sucesivamente. Si la suma es menor que 1, existen
+    rendimientos decrecientes a escala: al duplicar los insumos, la
+    producción crece en menos del doble. Por último, si la suma es mayor
+    que 1, hay rendimientos crecientes a escala; la duplicación de los
+    insumos aumenta la producción en más del doble.
+
 Abrir la `tabla 7.3`. Regresar las horas de trabajo (*X*<sub>2</sub>) e
 Inversión de Capital (*X*<sub>3</sub>) en el Valor Agregado (*Y*)
 
@@ -1287,3 +1330,6 @@ Veamos el modelo en términos de interacciones y la matriz de diseño:
     ## 26           1 5320.8      1        5320.8
     ## attr(,"assign")
     ## [1] 0 1 2 3
+
+Referencias
+===========
