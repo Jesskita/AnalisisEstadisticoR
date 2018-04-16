@@ -49,12 +49,12 @@ Ahora:
     ## [10,]      260             173
 
     par(mfrow=c(1,2))
-    plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gr??fico en escalera
+    plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gráfico en escalera
     points(X,Y)
 
-    #Primero poner los puntos y luego la l?nea para tener 
+    #Primero poner los puntos y luego la línea para tener 
     plot(X,Y,col="blue",main="Linea poblacional \ny puntos muestral")
-    lines(ingresos,consumoEsperado,col="blue") #Funci??n de regresi??n poblacional (l??nea)
+    lines(ingresos,consumoEsperado,col="blue") #Función de regresión poblacional (línea)
 
 ![](%5BP2-2%5D_Regresión_Lineal_files/figure-markdown_strict/unnamed-chunk-3-1.png)
 
@@ -116,12 +116,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         10.6527           0.6458
+    ##         19.1359           0.5847
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##       10.652677        0.645767
+    ##      19.1358561       0.5847395
 
     abline(coef(ajuste.1))
 
@@ -136,9 +136,7 @@ La función poblacional sería:
 Como no es observable, se usa la muestral
 
 $$
-\\begin{equation}
 Y\_i=\\hat{\\beta}\_1+\\hat{\\beta}\_2X\_i+\\hat{u}\_i
-\\end{equation}
 $$
 
 $$
@@ -186,7 +184,7 @@ $$
 Abrimos la `tabla3.2`, vamos a obtener:
 
     uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla3_2.csv"
-    # consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+
     consumo <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
     attach(consumo)
 
@@ -245,7 +243,7 @@ Abrimos la `tabla3.2`, vamos a obtener:
 <!-- -->
 
     y.ajustado=alpha_som+beta_som*X
-    e = Y-y.ajustado
+    e <- Y-y.ajustado
 
 -   Comparemos los resultados
 
@@ -280,8 +278,8 @@ Abrimos la `tabla3.2`, vamos a obtener:
 
 <!-- -->
 
-    SCT = sum((Y-media_y)^2)
-    SCE = sum((y.ajustado-media_y)^2)
+    SCT <- sum((Y-media_y)^2)
+    SCE <- sum((y.ajustado-media_y)^2)
     SCR <- sum(e^2)
     R_2 <- SCE/SCT
 
@@ -364,9 +362,9 @@ Empezamos con el buen `summary`. ¿Notan algo raro?
 
 <!-- -->
 
-    datos$EXCH[which(  EXCH  == -99999)] = NA
-    datos$PPP[which(  PPP == -99999)] =NA
-    datos$LOCALC[which(  LOCALC   ==-99999)] = NA
+    datos$EXCH[which(  EXCH  == -99999)] <- NA
+    datos$PPP[which(  PPP == -99999)] <- NA
+    datos$LOCALC[which(  LOCALC   ==-99999)] <- NA
 
 Regresamos la paridad del poder de compra en la tasa de cambio
 
@@ -456,16 +454,12 @@ De la carpeta *Datos*, abrir `sleep.xls`
     ## http://www.mirai-solutions.com ,
     ## http://miraisolutions.wordpress.com
 
-    wk = loadWorkbook("sleep75.xls") 
-    datos = readWorksheet(wk, sheet="SLEEP75",header=FALSE)
+    wk <- loadWorkbook("sleep75.xls") 
+    datos <- readWorksheet(wk, sheet="SLEEP75",header=FALSE)
 
 agregamos los nombres:
 
-    names (datos)=c("age", "black", "case", "clerical" , "construc"  ,"educ","earns74","gdhlth"   
-                    ,"inlf", "leis1", "leis2", "leis3", "smsa", "lhrwage", "lothinc", "male",     
-                    "marr", "prot", "rlxall", "selfe", "sleep", "slpnaps", "south", "spsepay",  
-                    "spwrk75", "totwrk" ,  "union" , "worknrm" , "workscnd", "exper" , "yngkid",
-                    "yrsmarr", "hrwage", "agesq")    
+    names (datos) <- c("age","black","case","clerical","construc","educ","earns74","gdhlth","inlf", "leis1", "leis2", "leis3", "smsa", "lhrwage", "lothinc", "male", "marr", "prot", "rlxall", "selfe", "sleep", "slpnaps", "south", "spsepay", "spwrk75", "totwrk" , "union" , "worknrm" , "workscnd", "exper" , "yngkid","yrsmarr", "hrwage", "agesq")    
 
 Veamos los datos gráficamente y corramos la regresión:
 
@@ -481,7 +475,7 @@ Veamos los datos gráficamente y corramos la regresión:
 
 ![](%5BP2-2%5D_Regresión_Lineal_files/figure-markdown_strict/unnamed-chunk-21-1.png)
 
-    dormir = lm(sleep~totwrk)
+    dormir <- lm(sleep~totwrk)
     summary(dormir)
 
     ## 
@@ -527,7 +521,7 @@ Transformaciones Lineales
 Abrir la `tabla 31.3`, regresar el ingreso per cápita en el número de
 celulares por cada 100 personas:
 
-    reg.1 = lm(Cellphone ~ Pcapincome)
+    reg.1 <- lm(Cellphone ~ Pcapincome)
     summary(reg.1)
 
     ## 
@@ -565,7 +559,7 @@ tasa de mortalidad (CM).
 
 ![](%5BP2-2%5D_Regresión_Lineal_files/figure-markdown_strict/unnamed-chunk-26-1.png)
 
-    reg1<-lm(CM~ PGNP)
+    reg1 <- lm(CM ~ PGNP)
     summary(reg1)
 
     ## 
@@ -587,7 +581,7 @@ tasa de mortalidad (CM).
     ## Multiple R-squared:  0.1662, Adjusted R-squared:  0.1528 
     ## F-statistic: 12.36 on 1 and 62 DF,  p-value: 0.0008262
 
-    reg2<-lm(CM~I(1/PGNP))
+    reg2 <- lm(CM~I(1/PGNP))
     summary(reg2)
 
     ## 
@@ -614,10 +608,9 @@ tasa de mortalidad (CM).
 Abrir los datos `ceosal2.xls`,
 
     library(XLConnect)
-    wk = loadWorkbook("ceosal2.xls") 
-    datos = readWorksheet(wk, sheet="CEOSAL2",header=FALSE)
-    names(datos) = c("salary", "age", "college", "grad", "comten", "ceoten", "sales", "profits", 
-                     "mktval", "lsalary", "lsales", "lmktval", "comtensq", "ceotensq", "profmarg")
+    wk <- loadWorkbook("ceosal2.xls") 
+    datos <- readWorksheet(wk, sheet="CEOSAL2",header=FALSE)
+    names(datos) = c("salary", "age", "college", "grad", "comten", "ceoten", "sales", "profits","mktval", "lsalary", "lsales", "lmktval", "comtensq", "ceotensq", "profmarg")
     attach(datos)
 
 Regresar la antigüedad del CEO en el logaritmo del salario.
@@ -708,13 +701,12 @@ Reino Unido)
 Regresión Lineal Múltiple
 -------------------------
 
-Abrir los datos `hprice1.xls`. Correr os siguientes modelos e
+Abrir los datos `hprice1.xls`. Correr los siguientes modelos e
 interpretarlos:
 
     library(XLConnect)
     wk = loadWorkbook("hprice1.xls") 
     precios = readWorksheet(wk, sheet="HPRICE1",header=FALSE)
-
 
     names(precios)=c("price"   ,  "assess"  , 
                      "bdrms"  ,   "lotsize"  ,
@@ -724,7 +716,7 @@ interpretarlos:
 
     attach(precios)
 
-    modelo1 = lm(lprice ~ lassess + llotsize + lsqrft + bdrms)
+    modelo1 <- lm(lprice ~ lassess + llotsize + lsqrft + bdrms)
     summary(modelo1)
 
     ## 
@@ -749,7 +741,7 @@ interpretarlos:
     ## Multiple R-squared:  0.7728, Adjusted R-squared:  0.7619 
     ## F-statistic: 70.58 on 4 and 83 DF,  p-value: < 2.2e-16
 
-    modelo2 = lm(lprice ~ llotsize + lsqrft + bdrms)
+    modelo2 <- lm(lprice ~ llotsize + lsqrft + bdrms)
     summary(modelo2)
 
     ## 
@@ -773,7 +765,7 @@ interpretarlos:
     ## Multiple R-squared:  0.643,  Adjusted R-squared:  0.6302 
     ## F-statistic: 50.42 on 3 and 84 DF,  p-value: < 2.2e-16
 
-    modelo3 = lm(lprice ~  bdrms)
+    modelo3 <- lm(lprice ~  bdrms)
     summary(modelo3)
 
     ## 
@@ -805,16 +797,16 @@ interpretarlos:
 
 <!-- -->
 
-    tamano_casa=8000
-    cuartos=4
-    tamano_lote=2100
+    tamano_casa <- 8000
+    cuartos <- 4
+    tamano_lote <- 2100
 
     coef(modelo2)
 
     ## (Intercept)    llotsize      lsqrft       bdrms 
     ## -1.29704057  0.16796682  0.70023213  0.03695833
 
-    valores=c(1,log(tamano_lote),log(tamano_casa),cuartos)
+    valores <- c(1,log(tamano_lote),log(tamano_casa),cuartos)
     valores
 
     ## [1] 1.000000 7.649693 8.987197 4.000000
@@ -831,7 +823,7 @@ interpretarlos:
 
 <!-- -->
 
-    datos.nuevos=data.frame(llotsize=log(2100),lsqrft=log(8000),bdrms=4)
+    datos.nuevos <- data.frame(llotsize=log(2100),lsqrft=log(8000),bdrms=4)
     predict.lm(modelo2,newdata=datos.nuevos,se.fit=T)
 
     ## $fit
@@ -852,13 +844,13 @@ interpretarlos:
 Abrir la `tabla 7.3`. Regresar las horas de trabajo (*X*<sub>2</sub>) e
 Inversión de Capital (*X*<sub>3</sub>) en el Valor Agregado (*Y*)
 
-    W=log(X2)
+    W <- log(X2)
 
-    K=log(X3)
+    K <- log(X3)
 
-    LY=log(Y)
+    LY <- log(Y)
 
-    reg.1=lm(LY~W+K)
+    reg.1 <- lm(LY~W+K)
     summary(reg.1)
 
     ## 
@@ -946,7 +938,7 @@ insumos), la teoría económica sugeriría que:
 
     SCRNR <- 0.0671410  
     SCRRes <- 0.09145854 
-    numero_rest = 1
+    numero_rest <- 1
     grad <- 12
 
     est_F <- ((SCRRes-SCRNR)/numero_rest)/(SCRNR/grad)
@@ -1044,8 +1036,8 @@ Abrir los datos wage1.xls. Correr los modelos. Se desea saber si el
 género tiene relación con el salario y en qué medida.
 
     library(XLConnect)
-    wk = loadWorkbook("wage1.xls") 
-    salarios = readWorksheet(wk, sheet="WAGE1",header=FALSE)
+    wk <- loadWorkbook("wage1.xls") 
+    salarios <- readWorksheet(wk, sheet="WAGE1",header=FALSE)
 
     names(salarios) <- c("wage", "educ", "exper", "tenure", "nonwhite", "female", "married",
                          "numdep", "smsa", "northcen", "south", "west", "construc", "ndurman",
@@ -1118,13 +1110,10 @@ Abrir los datos gpa1.xls. Correr los modelos.
     wk <- loadWorkbook("GPA1.xls") 
     datosgpa <- readWorksheet(wk, sheet="GPA1",header=FALSE)
 
-    #age       soph      junior    senior    senior5   male      campus    
-    #business engineer  colGPA    hsGPA     ACT       job19     job20     drive     
-    #bike     walk      voluntr   PC        greek     car       siblings  bgfriend  
-    #clubs    skipped   alcohol   gradMI    fathcoll  mothcoll
-
     names(datosgpa) <- c("age",  "soph",  "junior",    "senior",    "senior5",  "male", "campus",   "business", "engineer", "colGPA",   "hsGPA",    "ACT",  "job19",    "job20",    "drive",    "bike", "walk", "voluntr",  "PC",   "greek",    "car",  "siblings", "bgfriend", "clubs",    "skipped",  "alcohol",  "gradMI",   "fathcoll", "mothcoll")
     attach(datosgpa)
+
+Realizamos la regresión lineal:
 
     reg4 <- lm(colGPA ~ PC )
     summary(reg4)
@@ -1243,7 +1232,7 @@ Abrir los `datos 8.9`. Veamos las variables gráficamente:
 
 Veamos el modelo en términos de interacciones y la matriz de diseño:
 
-    ajuste_chow1=lm(SAVINGS~INCOME+cambio+INCOME*cambio, x = TRUE)
+    ajuste_chow1 <- lm(SAVINGS~INCOME+cambio+INCOME*cambio, x = TRUE)
     summary(ajuste_chow1)
 
     ## 

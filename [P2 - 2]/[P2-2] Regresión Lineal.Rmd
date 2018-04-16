@@ -54,12 +54,12 @@ cbind(ingresos,consumoEsperado)
 
 ```{r}
 par(mfrow=c(1,2))
-plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gr??fico en escalera
+plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gráfico en escalera
 points(X,Y)
 
-#Primero poner los puntos y luego la l?nea para tener 
+#Primero poner los puntos y luego la línea para tener 
 plot(X,Y,col="blue",main="Linea poblacional \ny puntos muestral")
-lines(ingresos,consumoEsperado,col="blue") #Funci??n de regresi??n poblacional (l??nea)
+lines(ingresos,consumoEsperado,col="blue") #Función de regresión poblacional (línea)
 par(mfrow=c(1,1))
 ```
 
@@ -194,7 +194,7 @@ Abrimos la `tabla3.2`, vamos a obtener:
 
 ```{r}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla3_2.csv"
-# consumo=read.csv(file="Tabla3_2.csv",sep=";",dec=".",header=TRUE)
+
 consumo <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(consumo)
 
@@ -237,7 +237,7 @@ abline(a=alpha_som,b=beta_som)
 
 ```{r}
 y.ajustado=alpha_som+beta_som*X
-e = Y-y.ajustado
+e <- Y-y.ajustado
 ```
 
 - Comparemos los resultados
@@ -258,8 +258,8 @@ cor(e,X)
 - Para ello necesitamos la suma de cuadrados total y la suma de cuadramos explicada 
 
 ```{r}
-SCT = sum((Y-media_y)^2)
-SCE = sum((y.ajustado-media_y)^2)
+SCT <- sum((Y-media_y)^2)
+SCE <- sum((y.ajustado-media_y)^2)
 SCR <- sum(e^2)
 R_2 <- SCE/SCT
 
@@ -310,7 +310,6 @@ Interpretación de los coeficientes
 Abrir la tabla 5.9, las variables son:
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla5_9.csv"
-# datos=read.csv(file="Tabla5_9.csv",sep=";",dec=".",header=TRUE)
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos) 
@@ -328,9 +327,9 @@ Empezamos con el buen `summary`. ¿Notan algo raro?
 
 - Debemos limpiar los datos
 ```{r}
-datos$EXCH[which(  EXCH  == -99999)] = NA
-datos$PPP[which(  PPP == -99999)] =NA
-datos$LOCALC[which(  LOCALC   ==-99999)] = NA
+datos$EXCH[which(  EXCH  == -99999)] <- NA
+datos$PPP[which(  PPP == -99999)] <- NA
+datos$LOCALC[which(  LOCALC   ==-99999)] <- NA
 ```
 
 Regresamos la paridad del poder de compra en la tasa de cambio
@@ -356,18 +355,14 @@ De la carpeta *Datos*, abrir `sleep.xls`
 
 ```{r}
 library(XLConnect)
-wk = loadWorkbook("sleep75.xls") 
-datos = readWorksheet(wk, sheet="SLEEP75",header=FALSE)
+wk <- loadWorkbook("sleep75.xls") 
+datos <- readWorksheet(wk, sheet="SLEEP75",header=FALSE)
 ```
 
 agregamos los nombres:
 
 ```{r}
-names (datos)=c("age", "black", "case", "clerical" , "construc"  ,"educ","earns74","gdhlth"   
-                ,"inlf", "leis1", "leis2", "leis3", "smsa", "lhrwage", "lothinc", "male",     
-                "marr", "prot", "rlxall", "selfe", "sleep", "slpnaps", "south", "spsepay",  
-                "spwrk75", "totwrk" ,  "union" , "worknrm" , "workscnd", "exper" , "yngkid",
-                "yrsmarr", "hrwage", "agesq")    
+names (datos) <- c("age","black","case","clerical","construc","educ","earns74","gdhlth","inlf", "leis1", "leis2", "leis3", "smsa", "lhrwage", "lothinc", "male", "marr", "prot", "rlxall", "selfe", "sleep", "slpnaps", "south", "spsepay", "spwrk75", "totwrk" , "union" , "worknrm" , "workscnd", "exper" , "yngkid","yrsmarr", "hrwage", "agesq")    
 ```
 
 
@@ -379,7 +374,7 @@ attach(datos)
 #totwrk minutos trabajados por semana
 #sleep minutos dormidos por semana
 plot(totwrk,sleep)
-dormir = lm(sleep~totwrk)
+dormir <- lm(sleep~totwrk)
 summary(dormir)
 ```
 
@@ -407,7 +402,6 @@ Abrir la `tabla 31.3`, regresar el ingreso per cápita en el número de celulare
 
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%2031_3.csv"
-# datos=read.csv(file="Table 31_3.csv",sep=";",dec=".",header=TRUE)
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
@@ -416,7 +410,7 @@ attach(datos)
 
 
 ```{r}
-reg.1 = lm(Cellphone ~ Pcapincome)
+reg.1 <- lm(Cellphone ~ Pcapincome)
 summary(reg.1)
 
 plot(Pcapincome,Cellphone)
@@ -431,7 +425,6 @@ Abrir la `tabla 6.4`, regresar el Producto Nacional Bruto (PGNP) en la tasa de m
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_6_4.csv"
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
-# datos = read.csv(file="tabla_6_4.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos)
 ```
@@ -440,10 +433,10 @@ names(datos)
 ```{r}
 plot(CM~ PGNP)
 
-reg1<-lm(CM~ PGNP)
+reg1 <- lm(CM ~ PGNP)
 summary(reg1)
 
-reg2<-lm(CM~I(1/PGNP))
+reg2 <- lm(CM~I(1/PGNP))
 summary(reg2)
 ```
 
@@ -454,10 +447,9 @@ Abrir los datos `ceosal2.xls`,
 
 ```{r,echo=TRUE,warning=FALSE,message=FALSE}
 library(XLConnect)
-wk = loadWorkbook("ceosal2.xls") 
-datos = readWorksheet(wk, sheet="CEOSAL2",header=FALSE)
-names(datos) = c("salary", "age", "college", "grad", "comten", "ceoten", "sales", "profits", 
-                 "mktval", "lsalary", "lsales", "lmktval", "comtensq", "ceotensq", "profmarg")
+wk <- loadWorkbook("ceosal2.xls") 
+datos <- readWorksheet(wk, sheet="CEOSAL2",header=FALSE)
+names(datos) = c("salary", "age", "college", "grad", "comten", "ceoten", "sales", "profits","mktval", "lsalary", "lsales", "lmktval", "comtensq", "ceotensq", "profmarg")
 attach(datos)
 ```
 
@@ -472,8 +464,6 @@ summary(lm(lsalary~ceoten))
 - Los CEO con 0 a?os de antiguedad entran ganando `exp(6.505)=668.4757` miles de USD `exp(6.505)`
 
 
-
-
 ### Regresión a través del origen
 
 Abrir la `tabla 6.1`, regresar X (rendimientos excedentes de un índice acciones del sector de bienes de consumo cíclico) en Y (rendimientos excedentes de un índice acciones de todo el mercado de valores en el Reino Unido)
@@ -481,7 +471,6 @@ Abrir la `tabla 6.1`, regresar X (rendimientos excedentes de un índice acciones
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%206_1.csv"
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
-# datos <- read.csv("Table 6_1.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
 
@@ -500,13 +489,12 @@ summary(lmod2)
 
 ## Regresión Lineal Múltiple
 
-Abrir los datos `hprice1.xls`. Correr os siguientes modelos e interpretarlos:
+Abrir los datos `hprice1.xls`. Correr los siguientes modelos e interpretarlos:
 
 ```{r,echo=TRUE,warning=FALSE,message=FALSE}
 library(XLConnect)
 wk = loadWorkbook("hprice1.xls") 
 precios = readWorksheet(wk, sheet="HPRICE1",header=FALSE)
-
 
 names(precios)=c("price"   ,  "assess"  , 
                  "bdrms"  ,   "lotsize"  ,
@@ -519,13 +507,13 @@ attach(precios)
 
 
 ```{r}
-modelo1 = lm(lprice ~ lassess + llotsize + lsqrft + bdrms)
+modelo1 <- lm(lprice ~ lassess + llotsize + lsqrft + bdrms)
 summary(modelo1)
 
-modelo2 = lm(lprice ~ llotsize + lsqrft + bdrms)
+modelo2 <- lm(lprice ~ llotsize + lsqrft + bdrms)
 summary(modelo2)
 
-modelo3 = lm(lprice ~  bdrms)
+modelo3 <- lm(lprice ~  bdrms)
 summary(modelo3)
 ```
 
@@ -540,12 +528,12 @@ pairs(cbind(lprice,llotsize , lsqrft , bdrms), col=rainbow(5))
 - Forma 1 de predicción:
 
 ```{r}
-tamano_casa=8000
-cuartos=4
-tamano_lote=2100
+tamano_casa <- 8000
+cuartos <- 4
+tamano_lote <- 2100
 
 coef(modelo2)
-valores=c(1,log(tamano_lote),log(tamano_casa),cuartos)
+valores <- c(1,log(tamano_lote),log(tamano_casa),cuartos)
 valores
 sum(valores*coef(modelo2))
 exp(sum(valores*coef(modelo2)))
@@ -554,7 +542,7 @@ exp(sum(valores*coef(modelo2)))
 - Forma 2 de predicción:
 
 ```{r}
-datos.nuevos=data.frame(llotsize=log(2100),lsqrft=log(8000),bdrms=4)
+datos.nuevos <- data.frame(llotsize=log(2100),lsqrft=log(8000),bdrms=4)
 predict.lm(modelo2,newdata=datos.nuevos,se.fit=T)
 ```
 
@@ -566,20 +554,20 @@ Abrir la `tabla 7.3`. Regresar las horas de trabajo ($X_2$)  e Inversión de Cap
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla7_3.csv"
-# datos=read.csv(file="tabla7_3.csv",sep=";",dec=".",header=TRUE)
+# datos <- read.csv(file="tabla7_3.csv",sep=";",dec=".",header=TRUE)
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
 attach(datos)
 ```
 
 
 ```{r}
-W=log(X2)
+W <- log(X2)
 
-K=log(X3)
+K <- log(X3)
 
-LY=log(Y)
+LY <- log(Y)
 
-reg.1=lm(LY~W+K)
+reg.1 <- lm(LY~W+K)
 summary(reg.1)
 aov(reg.1)
 ```
@@ -610,7 +598,7 @@ aov(reg.2)
 ```{r}
 SCRNR <- 0.0671410  
 SCRRes <- 0.09145854 
-numero_rest = 1
+numero_rest <- 1
 grad <- 12
 
 est_F <- ((SCRRes-SCRNR)/numero_rest)/(SCRNR/grad)
@@ -673,8 +661,8 @@ Abrir los datos wage1.xls. Correr los modelos. Se desea saber si el género tien
 
 ```{r,echo=TRUE,warning=FALSE,message=FALSE}
 library(XLConnect)
-wk = loadWorkbook("wage1.xls") 
-salarios = readWorksheet(wk, sheet="WAGE1",header=FALSE)
+wk <- loadWorkbook("wage1.xls") 
+salarios <- readWorksheet(wk, sheet="WAGE1",header=FALSE)
 
 names(salarios) <- c("wage", "educ", "exper", "tenure", "nonwhite", "female", "married",
                      "numdep", "smsa", "northcen", "south", "west", "construc", "ndurman",
@@ -707,17 +695,12 @@ library(XLConnect)
 wk <- loadWorkbook("GPA1.xls") 
 datosgpa <- readWorksheet(wk, sheet="GPA1",header=FALSE)
 
-#age       soph      junior    senior    senior5   male      campus    
-#business engineer  colGPA    hsGPA     ACT       job19     job20     drive     
-#bike     walk      voluntr   PC        greek     car       siblings  bgfriend  
-#clubs    skipped   alcohol   gradMI    fathcoll  mothcoll
-
 names(datosgpa) <- c("age",  "soph",  "junior",    "senior",	"senior5",	"male",	"campus",	"business",	"engineer",	"colGPA",	"hsGPA",	"ACT",	"job19",	"job20",	"drive",	"bike",	"walk",	"voluntr",	"PC",	"greek",	"car",	"siblings",	"bgfriend",	"clubs",	"skipped",	"alcohol",	"gradMI",	"fathcoll",	"mothcoll")
 attach(datosgpa)
 ```
 
 
-
+Realizamos la regresión lineal:
 
 ```{r}
 reg4 <- lm(colGPA ~ PC )
@@ -737,8 +720,8 @@ Abrir los `datos 8.9`. Veamos las variables gráficamente:
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_8_9.csv"
+
 datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
-# datos <- read.csv(file="tabla_8_9.csv",sep=";",dec=".",header=TRUE)
 attach(datos)
 names(datos)
 ```
@@ -769,7 +752,7 @@ summary(ajuste_chow)
 Veamos el modelo en términos de interacciones y la matriz de diseño:
 
 ```{r}
-ajuste_chow1=lm(SAVINGS~INCOME+cambio+INCOME*cambio, x = TRUE)
+ajuste_chow1 <- lm(SAVINGS~INCOME+cambio+INCOME*cambio, x = TRUE)
 summary(ajuste_chow1)
 ajuste_chow1$x
 ```
