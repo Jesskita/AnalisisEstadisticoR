@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "02 de abril de 2018"
 output: 
-  pdf_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -160,8 +160,8 @@ $$
 
 Es por esto que los residuos se obtienen a través de los betas:
 
-(@eq1)
-$$
+
+$$\label{eq1}
 \sum\hat{u}_i^2 =\sum (Y_i- \hat{\beta}_1-\hat{\beta}_2X_i)^2
 $$
 
@@ -171,7 +171,7 @@ $$
 $$
 
 
-Diferenciando ([@eq1]) se obtiene:
+Diferenciando ([\eqref{eq1}]) se obtiene:
 
 $$
  \hat{\beta}_2 = \frac{S_{xy}}{S_{xx}}
@@ -573,7 +573,7 @@ lnY_i = ln\beta_1 + \beta_2ln(X_{2i})+ \beta_3ln(X_{3i}) + u_i
 $$
 
 
-La interpretación de los coeficientes es [@gujarati2004econometria]:
+La interpretación de los coeficientes es [@gujarati2010econometria]:
 
 1. $\beta_2$ es la elasticidad (parcial) de la producción respecto del insumo trabajo, es decir, mide el cambio porcentual en la producción debido a una variación de 1% en el insumo trabajo, con el insumo capital constante.
 
@@ -626,7 +626,28 @@ aov(reg.2)
 ```
 
 
-¿Se cumple la hipótesis nula?
+**¿Se cumple la hipótesis nula? ¿Existen rendimientos constantes de escala?**
+
+Una forma de responder a la pregunta es mediante la prueba $t$, para $Ho: \beta_2 +\beta_3 = 1$, tenemos
+
+$$
+t = \frac{(\hat{\beta}_2+\hat{\beta}_3)-(\beta_2+\beta_3)}{ee(\hat{\beta}_2+\hat{\beta}_3)}
+$$
+$$
+t = \frac{(\hat{\beta}_2+\hat{\beta}_3)-1}{\sqrt{var(\hat{\beta}_2)+var(\hat{\beta}_3)+2cov(\hat{\beta}_2,\hat{\beta}_3})}
+$$
+donde la información nececesaria para obtener $cov(\hat{\beta}_2,\hat{\beta}_3)$ en `R` es `vcov(fit.model)` y `fit.model` es el ajuste del modelo.
+
+Otra forma de hacer la prueba es mediante el estadístico $F$:
+
+$$
+F = \frac{Q_2/gl}{Q_4/gl}
+$$
+$$
+F = \frac{(SCE_{R}-SCE_{NR})/m}{SCR_{NR}/(n-k)}
+$$
+
+donde $m$ es el número de restricciones lineales y $k$ es el número de parámetros de la regresión no restringida.
 
 ```{r}
 SCRNR <- 0.0671410  
@@ -644,6 +665,28 @@ valor.p
 
 No se tiene suficiente evidencia para rechazar la hipótesis nula de que sea una economía de escala.
 
+
+Notemos que existe una relación directa entre el coeficiente de determinación o bondad de ajuste $R^2$ y $F$. En primero lugar, recordemos la descomposición de los errores:
+
+$$
+SCT = SCE + SCR
+$$
+
+$$
+\sum_{i=1}^{n}(Y-\bar{Y})^2 = \sum_{i=1}^{n}(\hat{Y}-\bar{Y})^2 + \sum_{i=1}^{n}(\hat{u})^2
+$$
+
+De cuyos elementos podemos obtener tanto $R^2$ como $F$:
+
+$$
+R^2 = \frac{SCE}{SCT}
+$$
+
+$$
+R^2 = \frac{SCE/(k-1)}{SCT/(n-k)}
+$$
+
+donde $k$ es el número de variables (incluido el intercepto) y sigue una distribución $F$ con $k-1$ y $n-k$ grados de libertad.
 
 ### RLM: Dicotómicas
 

@@ -117,12 +117,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         21.3938           0.5643
+    ##          7.9697           0.6544
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      21.3938268       0.5643184
+    ##       7.9696790       0.6543995
 
     abline(coef(ajuste.1))
 
@@ -154,17 +154,15 @@ $$
 
 Es por esto que los residuos se obtienen a través de los betas:
 
-1.  
-    $$
-    \\sum\\hat{u}\_i^2 =\\sum (Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i)^2
-    $$
+$$\\label{eq1}
+\\sum\\hat{u}\_i^2 =\\sum (Y\_i- \\hat{\\beta}\_1-\\hat{\\beta}\_2X\_i)^2
+$$
 
 $$
 \\sum\\hat{u}\_i^2 =f(\\hat{\\beta}\_1,\\hat{\\beta}\_2)
 $$
 
-Diferenciando ((<span class="citeproc-not-found"
-data-reference-id="eq1">**???**</span>)) se obtiene:
+Diferenciando (\[\]) se obtiene:
 
 $$
  \\hat{\\beta}\_2 = \\frac{S\_{xy}}{S\_{xx}}
@@ -860,9 +858,7 @@ múltiple:
 
 *l**n**Y*<sub>*i*</sub> = *l**n**β*<sub>1</sub> + *β*<sub>2</sub>*l**n*(*X*<sub>2*i*</sub>)+*β*<sub>3</sub>*l**n*(*X*<sub>3*i*</sub>)+*u*<sub>*i*</sub>
 
-La interpretación de los coeficientes es (<span
-class="citeproc-not-found"
-data-reference-id="gujarati2004econometria">**???**</span>):
+La interpretación de los coeficientes es (Gujarati and Porter 2010):
 
 1.  *β*<sub>2</sub> es la elasticidad (parcial) de la producción
     respecto del insumo trabajo, es decir, mide el cambio porcentual en
@@ -977,7 +973,33 @@ insumos), la teoría económica sugeriría que:
     ## Residual standard error: 0.08387653
     ## Estimated effects may be unbalanced
 
-¿Se cumple la hipótesis nula?
+**¿Se cumple la hipótesis nula? ¿Existen rendimientos constantes de
+escala?**
+
+Una forma de responder a la pregunta es mediante la prueba *t*, para
+*H**o* : *β*<sub>2</sub> + *β*<sub>3</sub> = 1, tenemos
+
+$$
+t = \\frac{(\\hat{\\beta}\_2+\\hat{\\beta}\_3)-(\\beta\_2+\\beta\_3)}{ee(\\hat{\\beta}\_2+\\hat{\\beta}\_3)}
+$$
+$$
+t = \\frac{(\\hat{\\beta}\_2+\\hat{\\beta}\_3)-1}{\\sqrt{var(\\hat{\\beta}\_2)+var(\\hat{\\beta}\_3)+2cov(\\hat{\\beta}\_2,\\hat{\\beta}\_3})}
+$$
+ donde la información nececesaria para obtener
+$cov(\\hat{\\beta}\_2,\\hat{\\beta}\_3)$ en `R` es `vcov(fit.model)` y
+`fit.model` es el ajuste del modelo.
+
+Otra forma de hacer la prueba es mediante el estadístico *F*:
+
+$$
+F = \\frac{Q\_2/gl}{Q\_4/gl}
+$$
+$$
+F = \\frac{(SCE\_{R}-SCE\_{NR})/m}{SCR\_{NR}/(n-k)}
+$$
+
+donde *m* es el número de restricciones lineales y *k* es el número de
+parámetros de la regresión no restringida.
 
     SCRNR <- 0.0671410  
     SCRRes <- 0.09145854 
@@ -996,6 +1018,29 @@ insumos), la teoría económica sugeriría que:
 
 No se tiene suficiente evidencia para rechazar la hipótesis nula de que
 sea una economía de escala.
+
+Notemos que existe una relación directa entre el coeficiente de
+determinación o bondad de ajuste *R*<sup>2</sup> y *F*. En primero
+lugar, recordemos la descomposición de los errores:
+
+*S**C**T* = *S**C**E* + *S**C**R*
+
+$$
+\\sum\_{i=1}^{n}(Y-\\bar{Y})^2 = \\sum\_{i=1}^{n}(\\hat{Y}-\\bar{Y})^2 + \\sum\_{i=1}^{n}(\\hat{u})^2
+$$
+
+De cuyos elementos podemos obtener tanto *R*<sup>2</sup> como *F*:
+
+$$
+R^2 = \\frac{SCE}{SCT}
+$$
+
+$$
+R^2 = \\frac{SCE/(k-1)}{SCT/(n-k)}
+$$
+
+donde *k* es el número de variables (incluido el intercepto) y sigue una
+distribución *F* con *k* − 1 y *n* − *k* grados de libertad.
 
 ### RLM: Dicotómicas
 
@@ -1333,3 +1378,6 @@ Veamos el modelo en términos de interacciones y la matriz de diseño:
 
 Referencias
 ===========
+
+Gujarati, Damodar, and Dawn Porter. 2010. *Econometría*. 5th ed. México:
+McGRAW-HILL/INTERAMERICANA EDITORES, SS DE CV.
