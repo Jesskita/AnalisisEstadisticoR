@@ -41,7 +41,13 @@ Ahora:
 
 <!-- -->
 
+    familia <- read.csv(file="Tabla2_1.csv",sep=";",dec=".",header=T)
+    attach(familia)
+    names(familia)
+
     ## [1] "X" "Y"
+
+    cbind(ingresos,consumoEsperado) 
 
     ##       ingresos consumoEsperado
     ##  [1,]       80              65
@@ -123,12 +129,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         19.1211           0.5869
+    ##         30.8583           0.5064
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      19.1210762       0.5868575
+    ##       30.858341        0.506384
 
     abline(coef(ajuste.1))
 
@@ -351,6 +357,11 @@ Interpretación de los coeficientes
 
 Abrir la tabla 5.9, las variables son:
 
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Tabla5_9.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+    names(datos) 
+
     ## [1] "COUNTRY" "BMACLC"  "BMAC."   "EXCH"    "PPP"     "LOCALC"
 
 -   BMACLC: Big Mac Prices in Local Currency
@@ -514,6 +525,10 @@ Transformaciones Lineales
 Abrir la `tabla 31.3`, regresar el ingreso per cápita en el número de
 celulares por cada 100 personas:
 
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%2031_3.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+
     reg.1 <- lm(Cellphone ~ Pcapincome)
     summary(reg.1)
 
@@ -545,6 +560,11 @@ celulares por cada 100 personas:
 
 Abrir la `tabla 6.4`, regresar el Producto Nacional Bruto (PGNP) en la
 tasa de mortalidad (CM).
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_6_4.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+    names(datos)
 
     ## [1] "CM"   "FLR"  "PGNP" "TFR"
 
@@ -640,6 +660,10 @@ Abrir la `tabla 6.1`, regresar X (rendimientos excedentes de un índice
 acciones del sector de bienes de consumo cíclico) en Y (rendimientos
 excedentes de un índice acciones de todo el mercado de valores en el
 Reino Unido)
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%206_1.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
 
     lmod1 <- lm(Y~ -1 + X)
     summary(lmod1)
@@ -875,6 +899,11 @@ La interpretación de los coeficientes es (Gujarati and Porter 2010):
 Abrir la `tabla 7.3`. Regresar las horas de trabajo (*X*<sub>2</sub>) e
 Inversión de Capital (*X*<sub>3</sub>) en el Valor Agregado (*Y*)
 
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla7_3.csv"
+    # datos <- read.csv(file="tabla7_3.csv",sep=";",dec=".",header=TRUE)
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+
     W <- log(X2)
 
     K <- log(X3)
@@ -1038,6 +1067,11 @@ distribución *F* con *k* − 1 y *n* − *k* grados de libertad.
 
 Abrir la `tabla 9.1`. ¿Hay alguna diferencia entre la ubicación del
 estado en los salarios?
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/Table%209_1.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+    names(datos)
 
     ## [1] "State"    "Salary"   "Spending" "D2"       "D3"
 
@@ -1299,6 +1333,12 @@ $\\eqref{chow2}$, con
 -   *γ*<sub>2</sub> = (*β*<sub>1</sub> + *β*<sub>2</sub>)
 
 Abrir los `datos 8.9`. Veamos las variables gráficamente:
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla_8_9.csv"
+
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+    names(datos)
 
     ## [1] "YEAR"    "SAVINGS" "INCOME"
 
