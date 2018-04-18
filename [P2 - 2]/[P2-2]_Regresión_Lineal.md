@@ -4,6 +4,12 @@
     -   [Regresión Lineal Múltiple](#regresion-lineal-multiple)
 -   [Referencias](#referencias)
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ TeX: { equationNumbers: {autoNumber: "all"} } });
+  </script>
+
+------------------------------------------------------------------------
+
 <!--
 La revisión metodológica aquí vertida se basa en [@Wang_2012].
 -->
@@ -117,12 +123,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         15.4393           0.6148
+    ##         19.1211           0.5869
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      15.4393241       0.6148233
+    ##      19.1210762       0.5868575
 
     abline(coef(ajuste.1))
 
@@ -1235,6 +1241,63 @@ Realizamos la regresión lineal:
 
 ### RLM: Cambio estructural
 
+> Cuando utilizamos un modelo de regresión que implica series de tiempo,
+> tal vez se dé un cambio estructural en la relación entre la regresada
+> Y y las regresoras. Por cambio estructural nos referimos a que los
+> valores de los parámetros del modelo no permanecen constantes a lo
+> largo de todo el periodo (Gujarati and Porter (2010))
+
+La tasa de desempleo civil alcanzó 9.7%,
+
+la más alta desde 1948. Un suceso como éste pudo perturbar la relación
+entre el ahorro y el IPD. Para ver si lo anterior sucedió, dividamos la
+muestra en dos periodos: 1970-1981 y 1982-1995, antes y después de la
+recesión de 1982.
+
+Ahora tenemos tres posibles regresiones:
+
+1970-1981: *Y*<sub>*t*</sub> = *λ*<sub>1</sub> + *λ*<sub>2</sub>*X*<sub>*t*</sub> + *u*<sub>1*t*</sub>
+
+1982-1995: *Y*<sub>*t*</sub> = *γ*<sub>1</sub> + *γ*<sub>2</sub>*X*<sub>*t*</sub> + *u*<sub>2*t*</sub>
+
+1970-1995: *Y*<sub>*t*</sub> = *α*<sub>1</sub> + *α*<sub>2</sub>*X*<sub>*t*</sub> + *u*<sub>2*t*</sub>
+
+De los períodos parciales se desprende cuatro posibilidades:
+
+![](RL_Im5.png)
+
+Para evaluar si hay diferencias, podemos utilizar los modelos de
+regresión con variables dicotómicas:
+
+*Y*<sub>*t*</sub> = *α*<sub>1</sub> + *α*<sub>2</sub>*D*<sub>*t*</sub> + *β*<sub>1</sub>*X*<sub>*t*</sub> + *β*<sub>2</sub>(*D*<sub>*t*</sub>*X*<sub>*t*</sub>)+*u*<sub>*t*</sub>
+
+donde
+
+-   *Y*: ahorro
+-   *X*: ingreso
+-   *t*: tiempo
+-   *D*: 1 para el período 1982-1995, 0 en otro caso.
+
+La variable dicotómica de la ecuacuión $\\eqref{chow3}$ es quien me
+permite estimar las ecuaciones $\\eqref{chow1}$ y $\\eqref{chow2}$ al
+*mismo tiempo*. Es decir:
+
+Función de ahorros medios para 1970-1981:
+
+*E*(*Y*<sub>*t*</sub>|*D*<sub>*t*</sub> = 0, *X*<sub>*t*</sub>)=*α*<sub>1</sub> + *β*<sub>1</sub>*X*<sub>*t*</sub>
+
+Función de ahorros medios para 1982-1995:
+
+*E*(*Y*<sub>*t*</sub>|*D*<sub>*t*</sub> = 1, *X*<sub>*t*</sub>)=(*α*<sub>1</sub> + *α*<sub>2</sub>)+(*β*<sub>1</sub> + *β*<sub>2</sub>)*X*<sub>*t*</sub>
+
+Notemos que se trata de las mismas funciones que en $\\eqref{chow1}$ y
+$\\eqref{chow2}$, con
+
+-   *λ*<sub>1</sub> = *α*<sub>1</sub>
+-   *λ*<sub>2</sub> = *α*<sub>2</sub>
+-   *γ*<sub>1</sub> = (*α*<sub>1</sub> + *α*<sub>2</sub>)
+-   *γ*<sub>2</sub> = (*β*<sub>1</sub> + *β*<sub>2</sub>)
+
 Abrir los `datos 8.9`. Veamos las variables gráficamente:
 
     ## [1] "YEAR"    "SAVINGS" "INCOME"
@@ -1250,7 +1313,7 @@ Abrir los `datos 8.9`. Veamos las variables gráficamente:
 
 ¿Hubo algún cambio en la relación entre ingreso y ahorro en el 80?
 
--   Hay varias formas de hacer la prueba, la mas facil es mediante
+-   Hay varias formas de hacer la prueba, la mas fácil es mediante
     variables dicotómicas
 
 <!-- -->
