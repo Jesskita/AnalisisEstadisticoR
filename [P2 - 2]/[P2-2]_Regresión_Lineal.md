@@ -117,12 +117,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##          7.9697           0.6544
+    ##         15.4393           0.6148
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##       7.9696790       0.6543995
+    ##      15.4393241       0.6148233
 
     abline(coef(ajuste.1))
 
@@ -441,20 +441,8 @@ misma canasta de bienes en todos los países.
 
 De la carpeta *Datos*, abrir `sleep.xls`
 
-    library(XLConnect)
-
-    ## Loading required package: XLConnectJars
-
-    ## XLConnect 0.2-13 by Mirai Solutions GmbH [aut],
-    ##   Martin Studer [cre],
-    ##   The Apache Software Foundation [ctb, cph] (Apache POI),
-    ##   Graph Builder [ctb, cph] (Curvesapi Java library)
-
-    ## http://www.mirai-solutions.com ,
-    ## http://miraisolutions.wordpress.com
-
-    wk <- loadWorkbook("sleep75.xls") 
-    datos <- readWorksheet(wk, sheet="SLEEP75",header=FALSE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/sleep75.csv"
+    datos <- read.csv(url(uu), header = FALSE) 
 
 agregamos los nombres:
 
@@ -606,9 +594,8 @@ tasa de mortalidad (CM).
 
 Abrir los datos `ceosal2.xls`,
 
-    library(XLConnect)
-    wk <- loadWorkbook("ceosal2.xls") 
-    datos <- readWorksheet(wk, sheet="CEOSAL2",header=FALSE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/ceosal2.csv"
+    datos <- read.csv(url(uu), header = FALSE) 
     names(datos) = c("salary", "age", "college", "grad", "comten", "ceoten", "sales", "profits","mktval", "lsalary", "lsales", "lmktval", "comtensq", "ceotensq", "profmarg")
     attach(datos)
 
@@ -703,9 +690,8 @@ Regresión Lineal Múltiple
 Abrir los datos `hprice1.xls`. Correr los siguientes modelos e
 interpretarlos:
 
-    library(XLConnect)
-    wk = loadWorkbook("hprice1.xls") 
-    precios = readWorksheet(wk, sheet="HPRICE1",header=FALSE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/hprice1.csv"
+    precios <- read.csv(url(uu), header = FALSE) 
 
     names(precios)=c("price"   ,  "assess"  , 
                      "bdrms"  ,   "lotsize"  ,
@@ -1123,9 +1109,8 @@ con factores (categorias)
 Abrir los datos wage1.xls. Correr los modelos. Se desea saber si el
 género tiene relación con el salario y en qué medida.
 
-    library(XLConnect)
-    wk <- loadWorkbook("wage1.xls") 
-    salarios <- readWorksheet(wk, sheet="WAGE1",header=FALSE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wage1.csv"
+    salarios <- read.csv(url(uu), header = FALSE) 
 
     names(salarios) <- c("wage", "educ", "exper", "tenure", "nonwhite", "female", "married",
                          "numdep", "smsa", "northcen", "south", "west", "construc", "ndurman",
@@ -1194,9 +1179,8 @@ Abrir los datos gpa1.xls. Correr los modelos.
 
 <!-- -->
 
-    library(XLConnect)
-    wk <- loadWorkbook("GPA1.xls") 
-    datosgpa <- readWorksheet(wk, sheet="GPA1",header=FALSE)
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/gpa1.csv"
+    datosgpa <- read.csv(url(uu), header = FALSE) 
 
     names(datosgpa) <- c("age",  "soph",  "junior",    "senior",    "senior5",  "male", "campus",   "business", "engineer", "colGPA",   "hsGPA",    "ACT",  "job19",    "job20",    "drive",    "bike", "walk", "voluntr",  "PC",   "greek",    "car",  "siblings", "bgfriend", "clubs",    "skipped",  "alcohol",  "gradMI",   "fathcoll", "mothcoll")
     attach(datosgpa)
