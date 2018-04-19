@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "02 de abril de 2018"
 output: 
-  html_document:
+  md_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -851,7 +851,7 @@ $$
 Notemos que se trata de las mismas funciones que en $\eqref{chow1}$ y $\eqref{chow2}$, con
 
 - $\lambda_1=\alpha_1$
-- $\lambda_2=\alpha_2$
+- $\lambda_2=\beta_2$
 - $\gamma_1=(\alpha_1+\alpha_2)$
 - $\gamma_2=(\beta_1+\beta_2)$
 

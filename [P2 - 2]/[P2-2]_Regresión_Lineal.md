@@ -129,12 +129,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         30.8583           0.5064
+    ##         15.9038           0.6321
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##       30.858341        0.506384
+    ##       15.903840        0.632065
 
     abline(coef(ajuste.1))
 
@@ -1328,7 +1328,7 @@ Notemos que se trata de las mismas funciones que en $\\eqref{chow1}$ y
 $\\eqref{chow2}$, con
 
 -   *λ*<sub>1</sub> = *α*<sub>1</sub>
--   *λ*<sub>2</sub> = *α*<sub>2</sub>
+-   *λ*<sub>2</sub> = *β*<sub>2</sub>
 -   *γ*<sub>1</sub> = (*α*<sub>1</sub> + *α*<sub>2</sub>)
 -   *γ*<sub>2</sub> = (*β*<sub>1</sub> + *β*<sub>2</sub>)
 

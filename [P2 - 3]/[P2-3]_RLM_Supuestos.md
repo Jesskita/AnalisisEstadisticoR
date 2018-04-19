@@ -84,6 +84,12 @@ donde
 
 -   Analice los resultados
 
+<!-- -->
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla10_8.csv"
+    datos<- read.csv(url(uu),sep=";",header=TRUE)
+    attach(datos)
+
 Agreguemos el tiempo: - Las correlaciones muy altas también suelen ser
 síntoma de multicolinealidad
 
@@ -284,6 +290,24 @@ Veamos las pruebas de detección en un ejemplo
 
 -   Abrir la base de datos *wage1* de Wooldrigde
 
+<!-- -->
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wage1.csv"
+    datos <- read.csv(url(uu),header=FALSE)
+    names(datos) <- c("wage",  "educ",  "exper",  "tenure",    
+                   "nonwhite",  "female",   "married",  
+                   "numdep",    "smsa", "northcen", "south",
+                   "west",  "construc", "ndurman",  "trcommpu",
+                   "trade", "services", "profserv", "profocc",
+                   "clerocc",   "servocc",  "lwage",    "expersq",
+                   "tenursq")
+    attach(datos)
+
+    casados = (1-female)*married  # female 1=mujer  married=1 casado
+    casadas = (female)*married
+    solteras = (female)*(1-married)
+    solteros = (1-female)*(1-married)
+
 -   Correr el modelo
     *l**w**a**g**e* = *β*<sub>0</sub> + *β*<sub>1</sub>*c**a**s**a**d**o**s* + *β*<sub>2</sub>*c**a**s**a**d**a**s* + *β*<sub>3</sub>*s**o**l**t**e**r**a**s* + *β*<sub>4</sub>*e**d**u**c* + *β*<sub>5</sub>*e**x**p**e**r* + *β*<sub>6</sub>*e**x**p**e**r**s**q* + *β*<sub>7</sub>*t**e**n**u**r**e* + *β*<sub>8</sub>*t**e**n**u**r**e**s**q* + *u*<sub>*i*</sub>
 -   Hacer un gráfico de los valores estimados y los residuos al cuadrado
@@ -449,6 +473,10 @@ modelo:
 -   X, producción por hora X
 
 <!-- -->
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla12_4.csv"
+    datos1<- read.csv(url(uu), sep=";",dec=".", header=T)
+    attach(datos1)
 
     #Indice de compensacion real (salario real)
     plot(X,Y)

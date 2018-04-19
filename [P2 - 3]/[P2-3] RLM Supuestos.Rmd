@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "18 de abril de 2018"
 output: 
-  md_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -98,7 +98,7 @@ $$
 - Analice los resultados
 
 
-```{r,echo=FALSE,warning=FALSE,message=FALSE}
+```{r,echo=TRUE,warning=FALSE,message=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla10_8.csv"
 datos<- read.csv(url(uu),sep=";",header=TRUE)
 attach(datos)
@@ -195,7 +195,7 @@ Veamos las pruebas de detección en un ejemplo
 
 - Abrir la base de datos *wage1* de Wooldrigde
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
+```{r,echo=TRUE,message=FALSE,warning=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wage1.csv"
 datos <- read.csv(url(uu),header=FALSE)
 names(datos) <- c("wage",  "educ",  "exper",  "tenure",    
@@ -309,7 +309,7 @@ Abrir la `tabla 12.4`. Veamos los datos en forma gráfica, y corramos el modelo:
 - Y, índices de remuneración real por hora
 - X, producción por hora X
 
-```{r,echo=FALSE,warning=FALSE,message=FALSE}
+```{r,echo=TRUE,warning=FALSE,message=FALSE}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla12_4.csv"
 datos1<- read.csv(url(uu), sep=";",dec=".", header=T)
 attach(datos1)
