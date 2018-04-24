@@ -1,0 +1,268 @@
+---
+title: 'Análisis Estadístico con R'
+subtitle: 'Modelos de probabilidad'
+author: 
+- name: VMO
+  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+date: "24 de abril de 2018"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documents/Consultorias&Cursos/DataLectures")) 
+```
+
+
+<!--
+La revisión metodológica aquí vertida se basa en [@Wang_2012].
+-->
+
+# Probabilidad lineal
+
+En este caso la variable dependiente es una dummy
+
+![](RL_Im7.png)
+
+Se trata de modelos del tipo:
+
+\begin{eqnarray}
+D_{i} = \beta_{0}+\beta_{1}X_{1i}+u_{i} \nonumber
+\end{eqnarray}
+
+
+Veamos un ejemplo: Abrir la base `MROZ` de Wooldridge y ajuste el modelo:
+
+$$
+inlf=\beta_0nwifeinc+\beta_1educ + \beta_2exper +\beta_3expersq + \beta_4age + \beta_5kidslt6 + \beta_6kidsge6
+$$
+
+
+En R:
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/mroz.csv"
+datos <- read.csv(url(uu),header=FALSE,na.strings = ".")
+# str(datos)
+
+# De ser necesario, quitar comentario y ejecutar:
+# datos$V1[1] <- 1
+# datos$V1 <- as.numeric(as.character(datos$V1))
+
+names(datos) <- c("inlf","hours",  "kidslt6", "kidsge6", 
+               "age", "educ",  "wage",    
+               "repwage",
+               "hushrs"  ,  "husage", "huseduc" ,
+               "huswage"  , "faminc", "mtr","motheduc",
+               "fatheduc" , "unem"    ,  "city"     , "exper"   ,  "nwifeinc" , "lwage" ,    "expersq" )
+attach(datos)
+
+reg1 <- lm(inlf~nwifeinc+educ + exper +
+            expersq + age + kidslt6 + 
+            kidsge6)
+summary(reg1)
+```
+
+¿Qué hemos ajustado?
+
+```{r}
+plot(inlf~educ)
+abline(coef(lm(inlf~educ)))
+```
+
+- Excepto *kidsge6* los coeficientes son significativos.
+- Se introdujo la experiencia cuadrática para capturar un efecto decreciente en el efecto deseado (inlf). ¿Cómo lo interpretamos?
+
+`.039 - 2(.0006)exper = 0.39 - .0012exper`
+
+- El punto en el que la experiencia ya no tiene efecto en *inlf* es $.039/.0012 = 32.5$. ¿Cuantos elementos de la muestra tienen más de 32 años de experiencia?
+
+
+Se añade exper al cuadrado porque queremos dar la posibilidad que los años adicionales de expericnecia contribuyan con un efecto decreciente.
+
+Trabajemos ahora con la predicción, y revisemos el resultado:
+
+```{r}
+prediccion <- predict(reg1)
+head(cbind(inlf,prediccion))
+summary(prediccion)
+```
+
+¿Qué podemos notar?
+
+
+- Existen valores mayores a 1 e inferiores a 0.
+- $R^{2}$ ya no es interpretable en estas regresiones
+- Usaremos una probabilidad de ocurrencia, digamos 0.5
+
+```{r}
+prediccion.inlf <- (prediccion>=0.5)*1
+head(cbind(inlf,prediccion,prediccion.inlf))
+sum(inlf)-sum(prediccion.inlf)
+```
+
+- Viendo la tabla, ¿cuál será la tasa de predicción del modelo actual?
+
+```{r}
+tabla1 <- table(inlf,prediccion.inlf)
+tabla1
+porcentaje.correcto <- (tabla1[1,1]+tabla1[2,2])/length(prediccion)
+porcentaje.correcto
+```
+
+
+Para resolver el problema anterior de los valores fuera del intervalo 0-1, se propone una función diferente.
+
+# Logit
+
+La regresión logística puede entenderse simplemente como encontrar los parámtros $\beta$ que mejor asjuten:
+
+$$
+y={\begin{cases}1&\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}+u >0\\0&{\text{en otro caso}}\end{cases}}
+$$
+
+Donde se asume que el error tiene una [distribución logística estándar](https://es.wikipedia.org/wiki/Distribuci%C3%B3n_log%C3%ADstica)
+
+$$
+{\displaystyle f(x;\mu ,s)={\frac {e^{-{\frac {x-\mu }{s}}}}{s\left(1+e^{-{\frac {x-\mu }{s}}}\right)^{2}}}={\frac {1}{s\left(e^{\frac {x-\mu }{2s}}+e^{-{\frac {x-\mu }{2s}}}\right)^{2}}}={\frac {1}{4s}}\operatorname {sech} ^{2}\!\left({\frac {x-\mu }{2s}}\right).}
+$$
+Donde $s$ es el parámetro de escala y $\mu$ el de locación (*sech* es la función secante hiperbólico).
+
+
+Otra forma de entender la regresión logística es a través de la función logística:
+
+$$
+\sigma (t)={\frac {e^{t}}{e^{t}+1}}={\frac {1}{1+e^{-t}}}
+$$
+
+donde $ t\in \mathbb{R}$ y $0\leq\sigma (t)\leq1$.
+
+Asumiento $t$ como una función lineal de una variable explicativa $x$, tenemos:
+
+$$
+t=\beta _{0}+\beta _{1}x
+$$
+
+Ahora la función logística se puede expresar:
+
+$$
+p(x)={\frac {1}{1+e^{-(\beta _{0}+\beta _{1}x)}}}
+$$
+
+Ten en cuenta que $p (x)$ se interpreta como la probabilidad de que la variable dependiente iguale a *éxito*  en lugar de un *fracaso*. Está claro que las variables de respuesta $Y_ {i}$ no se distribuyen de forma idéntica: $ P (Y_ {i} = 1 \ mid X )$ difiere de un punto $X_ {i}$ a otro, aunque son independientes dado que la matriz de diseño $X$ y los parámetros compartidos $\beta$.
+
+Finalmente definimos la inversa de la función logística, $g$, el **logit** (log odds):
+
+$$
+{\displaystyle g(p(x))=\ln \left({\frac {p(x)}{1-p(x)}}\right)=\beta _{0}+\beta _{1}x,}
+$$
+
+lo que es equivalente a:
+
+$$
+{\frac {p(x)}{1-p(x)}}=e^{\beta _{0}+\beta _{1}x}
+$$
+
+**Interpretación**:
+
+-   $g$ es la función logit. La ecuación para $g (p (x))$ ilustra que el logit (es decir, log-odds o logaritmo natural de las probabilidades) es equivalente a la expresión de regresión lineal.
+-   $ln$ denota el logaritmo natural.
+-   $p (x)$ es la probabilidad de que la variable dependiente sea igual a un caso, dada alguna combinación lineal de los predictores. La fórmula para $p (x)$ ilustra que la probabilidad de que la variable dependiente iguale un caso es igual al valor de la función logística de la expresión de regresión lineal. Esto es importante porque muestra que el valor de la expresión de regresión lineal puede variar de infinito negativo a positivo y, sin embargo, después de la transformación, la expresión resultante para la probabilidad $p (x)$ oscila entre $0$ y $1$.
+-   $\beta _ {0}$ es la intersección de la ecuación de regresión lineal (el valor del criterio cuando el predictor es igual a cero).
+-   $\beta _ {1} x$ es el coeficiente de regresión multiplicado por algún valor del predictor.
+-   la base $e$ denota la función exponencial.
+
+
+<!-- \begin{eqnarray} -->
+<!-- Y &=& f(\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}) + u\nonumber \\ -->
+<!-- f(z) &=& \frac{e^{z}}{1+e^{z}}\nonumber \\ -->
+<!-- E[Y]&=& P(Y = 1) = \frac{e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}}{1+e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}} \nonumber -->
+<!-- \end{eqnarray} -->
+
+-  Abra la base de datos `wells.dat`
+-  Note que existe una variable llamada `switch`. Dado que esta palabra es un condicional, debemos cambiar el nombre de la variable: `names(datos)[1]="Switch"`
+-  Realice un gráfico del cambio vs arsénico e interprete
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wells.dat"
+datos <- read.csv(url(uu),sep="",dec=".",header=TRUE)
+names(datos)[1]="Switch"
+attach(datos)
+plot(Switch~arsenic, main="Cambio VS contenido de arsenico")
+```
+
+-    Corra el siguiente modelo:`ajuste2 <- glm(Switch ~ dist1,family=binomial(link="logit"),x=T)`
+-    Donde: `dist1 <- dist/100`
+-  Interpretación: Si la distancia es cero, la probabilidad de cambio es de $0.6$, es decir $60\%$
+
+```{r}
+dist1=dist/100
+ajuste2 <- glm(Switch~dist1,family=binomial(link="logit"), x = T)
+summary(ajuste2)
+```
+
+
+
+-    Para la interpretación se suele usar los *efectos marginales*.
+-    Instalar el paquete *erer*
+-    Correr el comando: 
+
+`ea <- maBina(w = ajuste2, x.mean = T, rev.dum = TRUE)
+ea$out`
+
+- Interpretación: La probabilidad de que se cambien a un pozo seguro disminuye $15\%$ en una familia que est? a una distancia de una unidad respecto a la distancia promedio $(0.48)$
+
+```{r}
+library(erer)
+ea <- maBina(w = ajuste2, x.mean = TRUE, rev.dum = TRUE)
+ea$out
+```
+
+-  Aunque no tan exacto, una forma de obtener los efectos marginales (aunque sin tanta precisión), es:
+
+`coef(ajuste2)/4`
+-   Interpretación: La probabilidad de que se cambien a un pozo seguro disminuye $15\%$ en una familia que está a una distancia de una unidad respecto a la distancia promedio $(0.48)$
+
+```{r}
+coef(ajuste2)/4
+```
+
+
+- Ajuste un nuevo modelo incluyendo la variable *arsenic*
+- Calcule los efectos marginales
+- Interpretación: 
+    - cambio disminuye $22\%$ para una casa que está a una unidad adicional de la distancia promedio.
+    - a una distancia fija, comparando un pozo de contenido de arsénico promedio más una unidad, la probabilidad aumenta un $11\%$
+    
+```{r}
+ajuste3 <- glm(Switch~dist1+arsenic,family=binomial(link="logit"), x = T)
+summary(ajuste3)
+ea <- maBina(w = ajuste3, x.mean = TRUE, rev.dum = TRUE)
+ea$out
+```
+
+¿Cual de las dos variables es más importante en la decisión de
+cambio?
+
+-  Se debe calcular los coeficientes estandarizados. 
+
+```{r}
+#este es el coeficiente estandarizado de la distancia
+d=sd(dist1)*(-0.896644) 
+# este es el coeficiente estandarizado del ars?nico
+a=sd(arsenic)*(0.460775) 
+abs(a);abs(d)
+# de modo que el arsénico es mas importante, 
+# pero para decirlo por probabilidades:
+```
+
+
+# Probit
+
+# Tobit
+
+# Referencias

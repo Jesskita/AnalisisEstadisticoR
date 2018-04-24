@@ -59,7 +59,7 @@ $$
 **Pruebas**
 
 
-#### ¿Qué medidas pueden tomarse para aliviar el problema de multicolinealidad?\\
+#### ¿Qué medidas pueden tomarse para aliviar el problema de multicolinealidad?
 
 - No hacer nada
 - Eliminar variables
