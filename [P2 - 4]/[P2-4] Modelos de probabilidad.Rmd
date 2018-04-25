@@ -6,14 +6,14 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "24 de abril de 2018"
 output: 
-  md_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
 knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documents/Consultorias&Cursos/DataLectures")) 
 ```
 
@@ -183,6 +183,8 @@ $$
 <!-- E[Y]&=& P(Y = 1) = \frac{e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}}{1+e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}} \nonumber -->
 <!-- \end{eqnarray} -->
 
+#### Ejemplo 1
+
 -  Abra la base de datos `wells.dat`
 -  Note que existe una variable llamada `switch`. Dado que esta palabra es un condicional, debemos cambiar el nombre de la variable: `names(datos)[1]="Switch"`
 -  Realice un gráfico del cambio vs arsénico e interprete
@@ -200,7 +202,7 @@ plot(Switch~arsenic, main="Cambio VS contenido de arsenico")
 -  Interpretación: Si la distancia es cero, la probabilidad de cambio es de $0.6$, es decir $60\%$
 
 ```{r}
-dist1=dist/100
+dist1 <- dist/100
 ajuste2 <- glm(Switch~dist1,family=binomial(link="logit"), x = T)
 summary(ajuste2)
 ```
@@ -252,14 +254,83 @@ cambio?
 
 ```{r}
 #este es el coeficiente estandarizado de la distancia
-d=sd(dist1)*(-0.896644) 
+d <- sd(dist1)*(-0.896644) 
 # este es el coeficiente estandarizado del ars?nico
-a=sd(arsenic)*(0.460775) 
+a <- sd(arsenic)*(0.460775) 
 abs(a);abs(d)
 # de modo que el arsénico es mas importante, 
 # pero para decirlo por probabilidades:
 ```
 
+#### Ejemplo 2
+
+Abra la tabla 15.7 
+
+
+
+
+-   Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI) sobre las calificaciones.
+    -   Calificación $Y = 1$ si la calificación final fue A
+    -   $Y = 0$ si la calificación final fue B o C
+    -   `TUCE` = calificación en un examen presentado al comienzo del curso para evaluar los conocimientos previos de macroeconomía
+    -   `PSI` = 1 con el nuevo método de enseñanza, 0 en otro caso
+    -   `GPA` = promedio de puntos de calificación inicial
+-   Ajuste el siguiente modelo:
+`ajuste1 <- glm(GRADE~GPA+TUCE+PSI,
+family=binomial(link="logit"),x=T)`
+-   Interprete el modelo
+
+
+En los modelos cuya variable regresada binaria, la bondad del ajuste tiene una importancia secundaria. Lo que interesa son los signos esperados de los coeficientes de la regresión y su importancia práctica y/o estadística
+
+
+Importamos los datos y revisamos la variable dependiente:
+
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla15_7.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+attach(datos)
+table(GRADE)
+```
+
+
+Ajustamos el modelo:
+
+```{r}
+ajuste1 <- glm(GRADE~GPA+TUCE+PSI,family=binomial(link="logit"),x=T)
+summary(ajuste1)
+```
+
+
+Para la interpretación:
+
+```{r}
+ea <- maBina(w = ajuste1, x.mean = TRUE, rev.dum = TRUE)
+ea$out
+```
+
+
+
+¿Son, en conjunto, los coeficientes significativos?: Test de razón de verosimilitud
+
+`with(ajuste1, pchisq(null.deviance - deviance, 
+	df.null - df.residual, lower.tail = FALSE))`
+
+-   Odds Ratio:
+
+`exp(coef(ajuste1))`
+
+
+```{r}
+# el análogo de la prueba F
+with(ajuste1, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
+# Odds ratio:
+exp(coef(ajuste1))
+```
+
+
+Esto indica que los estudiantes expuestos al nuevo método de enseñanza son por encima de 10 veces más propensos a obtener una A que quienes no están expuestos al nuevo método, en tanto no cambien los demás factores.
 
 # Probit
 

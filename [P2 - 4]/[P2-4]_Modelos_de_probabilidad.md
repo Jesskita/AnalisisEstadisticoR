@@ -1,5 +1,7 @@
 -   [Probabilidad lineal](#probabilidad-lineal)
 -   [Logit](#logit)
+    -   [Ejemplo 1](#ejemplo-1)
+    -   [Ejemplo 2](#ejemplo-2)
 -   [Probit](#probit)
 -   [Tobit](#tobit)
 -   [Referencias](#referencias)
@@ -236,6 +238,8 @@ $$
 <!-- f(z) &=& \frac{e^{z}}{1+e^{z}}\nonumber \\ -->
 <!-- E[Y]&=& P(Y = 1) = \frac{e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}}{1+e^{\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}}} \nonumber -->
 <!-- \end{eqnarray} -->
+#### Ejemplo 1
+
 -   Abra la base de datos `wells.dat`
 -   Note que existe una variable llamada `switch`. Dado que esta palabra
     es un condicional, debemos cambiar el nombre de la variable:
@@ -401,6 +405,19 @@ una unidad respecto a la distancia promedio (0.48)
 
     # de modo que el arsénico es mas importante, 
     # pero para decirlo por probabilidades:
+
+#### Ejemplo 2
+
+Abra la tabla 15.7 - Los datos son el efecto del Sistema de Ense?anza
+Personalizada (PSI) sobre las calificaciones. - Ajuste el siguiente
+modelo:
+`ajuste1 <- glm(GRADE~GPA+TUCE+PSI, family=binomial(link="logit"),x=T)`
+- Interprete el modelo
+
+En los modelos cuya variable regresada binaria, la bondad del ajuste
+tiene una importancia secundaria. Lo que interesa son los signos
+esperados de los coeficientes de la regresión y su importancia práctica
+y/o estadística
 
 Probit
 ======
