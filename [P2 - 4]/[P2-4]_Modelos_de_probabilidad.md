@@ -252,11 +252,6 @@ $$
     datos <- read.csv(url(uu),sep="",dec=".",header=TRUE)
     names(datos)[1]="Switch"
     attach(datos)
-
-    ## The following object is masked from datos (pos = 3):
-    ## 
-    ##     educ
-
     plot(Switch~arsenic, main="Cambio VS contenido de arsenico")
 
 ![](%5BP2-4%5D_Modelos_de_probabilidad_files/figure-markdown_strict/unnamed-chunk-6-1.png)
@@ -269,7 +264,7 @@ $$
 
 <!-- -->
 
-    dist1=dist/100
+    dist1 <- dist/100
     ajuste2 <- glm(Switch~dist1,family=binomial(link="logit"), x = T)
     summary(ajuste2)
 
@@ -310,18 +305,6 @@ $$
 <!-- -->
 
     library(erer)
-
-    ## Loading required package: lmtest
-
-    ## Loading required package: zoo
-
-    ## 
-    ## Attaching package: 'zoo'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
-
     ea <- maBina(w = ajuste2, x.mean = TRUE, rev.dum = TRUE)
     ea$out
 
@@ -394,9 +377,9 @@ una unidad respecto a la distancia promedio (0.48)
 <!-- -->
 
     #este es el coeficiente estandarizado de la distancia
-    d=sd(dist1)*(-0.896644) 
+    d <- sd(dist1)*(-0.896644) 
     # este es el coeficiente estandarizado del ars?nico
-    a=sd(arsenic)*(0.460775) 
+    a <- sd(arsenic)*(0.460775) 
     abs(a);abs(d)
 
     ## [1] 0.5102563
@@ -408,16 +391,101 @@ una unidad respecto a la distancia promedio (0.48)
 
 #### Ejemplo 2
 
-Abra la tabla 15.7 - Los datos son el efecto del Sistema de Ense?anza
-Personalizada (PSI) sobre las calificaciones. - Ajuste el siguiente
-modelo:
-`ajuste1 <- glm(GRADE~GPA+TUCE+PSI, family=binomial(link="logit"),x=T)`
-- Interprete el modelo
+Abra la tabla 15.7
+
+-   Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI)
+    sobre las calificaciones.
+    -   Calificación *Y* = 1 si la calificación final fue A
+    -   *Y* = 0 si la calificación final fue B o C
+    -   `TUCE` = calificación en un examen presentado al comienzo del
+        curso para evaluar los conocimientos previos de macroeconomía
+    -   `PSI` = 1 con el nuevo método de enseñanza, 0 en otro caso
+    -   `GPA` = promedio de puntos de calificación inicial
+-   Ajuste el siguiente modelo:
+    `ajuste1 <- glm(GRADE~GPA+TUCE+PSI, family=binomial(link="logit"),x=T)`
+-   Interprete el modelo
 
 En los modelos cuya variable regresada binaria, la bondad del ajuste
 tiene una importancia secundaria. Lo que interesa son los signos
 esperados de los coeficientes de la regresión y su importancia práctica
 y/o estadística
+
+Importamos los datos y revisamos la variable dependiente:
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla15_7.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+    table(GRADE)
+
+    ## GRADE
+    ##  0  1 
+    ## 21 11
+
+Ajustamos el modelo:
+
+    ajuste1 <- glm(GRADE~GPA+TUCE+PSI,family=binomial(link="logit"),x=T)
+    summary(ajuste1)
+
+    ## 
+    ## Call:
+    ## glm(formula = GRADE ~ GPA + TUCE + PSI, family = binomial(link = "logit"), 
+    ##     x = T)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.9551  -0.6453  -0.2570   0.5888   2.0966  
+    ## 
+    ## Coefficients:
+    ##              Estimate Std. Error z value Pr(>|z|)   
+    ## (Intercept) -13.02135    4.93127  -2.641  0.00828 **
+    ## GPA           2.82611    1.26293   2.238  0.02524 * 
+    ## TUCE          0.09516    0.14155   0.672  0.50143   
+    ## PSI           2.37869    1.06456   2.234  0.02545 * 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 41.183  on 31  degrees of freedom
+    ## Residual deviance: 25.779  on 28  degrees of freedom
+    ## AIC: 33.779
+    ## 
+    ## Number of Fisher Scoring iterations: 5
+
+Para la interpretación:
+
+    ea <- maBina(w = ajuste1, x.mean = TRUE, rev.dum = TRUE)
+    ea$out
+
+    ##             effect error t.value p.value
+    ## (Intercept) -2.460 0.818  -3.008   0.006
+    ## GPA          0.534 0.237   2.252   0.032
+    ## TUCE         0.018 0.026   0.685   0.499
+    ## PSI          0.456 0.181   2.521   0.018
+
+¿Son, en conjunto, los coeficientes significativos?: Test de razón de
+verosimilitud
+
+`with(ajuste1, pchisq(null.deviance - deviance,      df.null - df.residual, lower.tail = FALSE))`
+
+-   Odds Ratio:
+
+`exp(coef(ajuste1))`
+
+    # el análogo de la prueba F
+    with(ajuste1, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
+
+    ## [1] 0.001501879
+
+    # Odds ratio:
+    exp(coef(ajuste1))
+
+    ##  (Intercept)          GPA         TUCE          PSI 
+    ## 2.212590e-06 1.687971e+01 1.099832e+00 1.079073e+01
+
+Esto indica que los estudiantes expuestos al nuevo método de enseñanza
+son por encima de 10 veces más propensos a obtener una A que quienes no
+están expuestos al nuevo método, en tanto no cambien los demás factores.
 
 Probit
 ======
