@@ -3,7 +3,13 @@
     -   [Ejemplo 1](#ejemplo-1)
     -   [Ejemplo 2](#ejemplo-2)
 -   [Probit](#probit)
+    -   [Ejemplo 1](#ejemplo-1-1)
+    -   [Ejemplo 2](#ejemplo-2-1)
+    -   [Ejemplo 3](#ejemplo-3)
+    -   [Test de Wald](#test-de-wald)
+    -   [Conclusiones:](#conclusiones)
 -   [Tobit](#tobit)
+    -   [Ejemplo](#ejemplo)
 -   [Referencias](#referencias)
 
 <!--
@@ -393,7 +399,7 @@ una unidad respecto a la distancia promedio (0.48)
 
 Abra la tabla 15.7
 
--   Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI)
+-   Los datos son el efecto del Sistema de Enseñanza Personalizada (PSI)
     sobre las calificaciones.
     -   Calificación *Y* = 1 si la calificación final fue A
     -   *Y* = 0 si la calificación final fue B o C
@@ -490,8 +496,398 @@ están expuestos al nuevo método, en tanto no cambien los demás factores.
 Probit
 ======
 
+En los modelos logia se propuso la logística, en este caso se propone la
+Función de Distribución Acumulada Normal. Suponga que la variable de
+respuesta es binaria, 1 o 0. *Y* podría representar la
+presencia/ausencia de una condición, éxito/fracaso, si/no. Se tiene
+también un vector de regresoras *X*, el modelo toma la forma:
+
+Pr(*Y* = 1 ∣ *X*)=*Φ*(*X*<sup>*T*</sup>*β*),
+
+donde *P**r* es la prbabilidad y *Φ* distribución acumulada de la normal
+estándar
+${\\displaystyle \\Phi (x)={\\frac {1}{\\sqrt {2\\pi }}}\\int \_{-\\infty }^{x}e^{-t^{2}/2}\\,dt}$.
+Los parámetros *β* se estiman típicamente con el método de máxima
+verosimilitud.
+
+#### Ejemplo 1
+
+-   Realizamos el mismo procedimiento que en el logit
+-   Abra la tabla 15.7
+-   Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI)
+    sobre las calificaciones.
+-   Ajuste el siguiente modelo:
+
+`ajuste1 <- glm(GRADE~GPA+TUCE+PSI, family=binomial(link="probit"),x=T)`
+
+-   Interprete el modelo
+
+<!-- -->
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla15_7.csv"
+    datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+    attach(datos)
+
+    ajuste2 <- glm(GRADE~GPA+TUCE+PSI,family=binomial(link="probit"),x=T)
+    summary(ajuste2)
+
+    ## 
+    ## Call:
+    ## glm(formula = GRADE ~ GPA + TUCE + PSI, family = binomial(link = "probit"), 
+    ##     x = T)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.9392  -0.6508  -0.2229   0.5934   2.0451  
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error z value Pr(>|z|)   
+    ## (Intercept) -7.45231    2.57152  -2.898  0.00376 **
+    ## GPA          1.62581    0.68973   2.357  0.01841 * 
+    ## TUCE         0.05173    0.08119   0.637  0.52406   
+    ## PSI          1.42633    0.58695   2.430  0.01510 * 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 41.183  on 31  degrees of freedom
+    ## Residual deviance: 25.638  on 28  degrees of freedom
+    ## AIC: 33.638
+    ## 
+    ## Number of Fisher Scoring iterations: 6
+
+    ajuste3 <- glm(GRADE~GPA+PSI,family=binomial(link="probit"),x=T)
+    summary(ajuste2)
+
+    ## 
+    ## Call:
+    ## glm(formula = GRADE ~ GPA + TUCE + PSI, family = binomial(link = "probit"), 
+    ##     x = T)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.9392  -0.6508  -0.2229   0.5934   2.0451  
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error z value Pr(>|z|)   
+    ## (Intercept) -7.45231    2.57152  -2.898  0.00376 **
+    ## GPA          1.62581    0.68973   2.357  0.01841 * 
+    ## TUCE         0.05173    0.08119   0.637  0.52406   
+    ## PSI          1.42633    0.58695   2.430  0.01510 * 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 41.183  on 31  degrees of freedom
+    ## Residual deviance: 25.638  on 28  degrees of freedom
+    ## AIC: 33.638
+    ## 
+    ## Number of Fisher Scoring iterations: 6
+
+En la media muestral de *G**P**A* de 3.117, el efecto de *P**S**I* sobre
+la probabilidad es 0.465.
+
+    library(erer)
+    ea1 <- maBina(w = ajuste2, x.mean = TRUE, rev.dum = TRUE)
+    ea1$out
+
+    ##             effect error t.value p.value
+    ## (Intercept) -2.445 0.765  -3.198   0.003
+    ## GPA          0.533 0.227   2.353   0.026
+    ## TUCE         0.017 0.026   0.645   0.524
+    ## PSI          0.464 0.171   2.712   0.011
+
+En el caso actual, el efecto marginal para PSI de 0.456 nos dice que,
+para dos individuos hipotéticos con valores promedio en *G**P**A* (3.12)
+y *T**U**C**E* (21.94), la probabilidad de éxito prevista es 0.456 mayor
+para el individuo en *P**S**I* que para alguien que está en un aula
+tradicional.
+
+Los efectos marginales para variables continuas miden la tasa de cambio
+instantáneo, que puede o no estar cerca del efecto en *P*(*Y* = 1) de un
+aumento de una unidad en *X*<sub>*k*</sub>. Lo que el efecto marginal
+más o menos le dice es que, si, por ejemplo, *X*<sub>*k*</sub> aumentara
+en una cantidad muy pequeña (por ejemplo, 0.001), entonces *P*(*Y* = 1)
+aumentaría en aproximadamente 0.001 \* 0.534 = .000534, por ejemplo.
+
+#### Ejemplo 2
+
+Volvamos al ejemplo del cambio debido al arsénico
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wells.dat"
+    datos <- read.csv(url(uu),sep="",dec=".",header=TRUE)
+    names(datos)[1]="Switch"
+    datos$dist1 <- datos$dist/100
+    ajuste1 <- glm(Switch~dist1,family=binomial(link="probit"),x=T,data = datos)
+    ea <- maBina(w = ajuste1, x.mean = T, rev.dum = TRUE)
+    ea$out
+
+    ##             effect error t.value p.value
+    ## (Intercept)  0.148 0.014  10.410       0
+    ## dist1       -0.152 0.024  -6.419       0
+
+Se puede apreciar que no siempre deseamos evaluar las cosas en la
+*media*. En `R` se puede programar una función para este caso.
+Comprobemos los resultados de la media funcionalmente.
+
+    punt_eval<-function(x){
+        t = coef(ajuste1)[1] + 
+            coef(ajuste1)[2]*x 
+        t
+    }
+    # Si quiero evaluar en la media como comprobación:
+    x <- as.numeric(punt_eval(mean(datos$dist1)))
+    dnorm(x,0,1)*coef(ajuste1)[2]
+
+    ##      dist1 
+    ## -0.1517748
+
+    # Si quiero evaluar en el máximo:
+    x <- as.numeric(punt_eval(max(datos$dist1)))
+    dnorm(x,0,1)*coef(ajuste1)[2]
+
+    ##      dist1 
+    ## -0.0995863
+
+#### Ejemplo 3
+
+Se desea saber si la variable ranking es significativa en la admisión.
+
+    rm(list=ls())
+    admisiones <- read.csv(file="https://stats.idre.ucla.edu/stat/data/binary.csv", 
+                          header=T, sep=",", dec=".")
+    head(admisiones)
+
+    ##   admit gre  gpa rank
+    ## 1     0 380 3.61    3
+    ## 2     1 660 3.67    3
+    ## 3     1 800 4.00    1
+    ## 4     1 640 3.19    4
+    ## 5     0 520 2.93    4
+    ## 6     1 760 3.00    2
+
+    attach(admisiones)
+    # estudiantes aplicando a un posgrado 1 si es admitido 0 si no
+    aj.adm <- glm(admit~gre+gpa+factor(rank), 
+                 family = binomial(link="probit"),x=T)           #modelo probit 
+    summary(aj.adm)
+
+    ## 
+    ## Call:
+    ## glm(formula = admit ~ gre + gpa + factor(rank), family = binomial(link = "probit"), 
+    ##     x = T)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.6163  -0.8710  -0.6389   1.1560   2.1035  
+    ## 
+    ## Coefficients:
+    ##                Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)   -2.386836   0.673946  -3.542 0.000398 ***
+    ## gre            0.001376   0.000650   2.116 0.034329 *  
+    ## gpa            0.477730   0.197197   2.423 0.015410 *  
+    ## factor(rank)2 -0.415399   0.194977  -2.131 0.033130 *  
+    ## factor(rank)3 -0.812138   0.208358  -3.898 9.71e-05 ***
+    ## factor(rank)4 -0.935899   0.245272  -3.816 0.000136 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 499.98  on 399  degrees of freedom
+    ## Residual deviance: 458.41  on 394  degrees of freedom
+    ## AIC: 470.41
+    ## 
+    ## Number of Fisher Scoring iterations: 4
+
+Para dos individuos hipotéticos con valores promedio en *g**r**e* (580)
+y *g**p**a* (3.39), la probabilidad de éxito prevista es 0.4153 menor
+para el individuo en el ranking 2 que para alguien que está en el
+ranking 1.
+
+#### Test de Wald
+
+Se usa para ver la significancia de uno o varios coeficientes del modelo
+de manera conjunta. En el caso univariado, el Wald estadística es
+
+$$
+{\\displaystyle {\\frac {({\\widehat {\\theta }}-\\theta\_{0})^{2}}{\\operatorname {var} ({\\hat {\\theta }})}}}
+$$
+
+que se compara contra una distribución de chi-cuadrada.
+
+    library(aod)
+    wald.test(b=coef(aj.adm), Sigma = vcov(aj.adm), Term=4:6)
+
+    ## Wald test:
+    ## ----------
+    ## 
+    ## Chi-squared test:
+    ## X2 = 21.4, df = 3, P(> X2) = 8.9e-05
+
+La variable es significativa.
+
+Encontremos las probabilidades de ser aceptado en función de algunos
+datos, se obtienen de la siguiente manera:
+
+    nuevos.datos <- data.frame(gre=c(350,450,550,650),
+                              gpa=c(2.5,3,3.5,3.99), rank=factor(c(1,1,2,2)))
+    nuevos.datos
+
+    ##   gre  gpa rank
+    ## 1 350 2.50    1
+    ## 2 450 3.00    1
+    ## 3 550 3.50    2
+    ## 4 650 3.99    2
+
+    predict(aj.adm, nuevos.datos, type="response",se.fit=T)
+
+    ## $fit
+    ##         1         2         3         4 
+    ## 0.2385252 0.3689520 0.3543489 0.4992185 
+    ## 
+    ## $se.fit
+    ##          1          2          3          4 
+    ## 0.08062956 0.07428600 0.04308419 0.06150729 
+    ## 
+    ## $residual.scale
+    ## [1] 1
+
+#### Conclusiones:
+
+-   Los modelos probit y logit arrojan probabilidades semejantes (en
+    términos marginales)
+-   La diferencia principal es que la distribución logística tiene las
+    colas un poco más anchas
+-   En general se prefiere usar modelos logit por su facilidad de
+    implementación matemática e interpretación más rápida
+
 Tobit
 =====
+
+Una extensión del modelo probit es el modelo tobit, desarrollado por
+James Tobin, economista laureado con el Nobel.
+
+-   Se lo conoce también como *modelos de datos censurados*
+-   Se persigue el mismo objetivo que la regresión lineal, pero tomando
+    en cuenta toda la muestra.
+
+![](RL_8.png)
+
+#### Ejemplo
+
+Las variables del modelo son:
+
+-   *Y*: Num de relaciones extramaritales durante el año anterior
+-   *Z*1: 0 para mujer y 1 hombre; *Z*2: edad
+-   *Z*3: Número de años de matrimonio
+-   *Z*4: 0 si no tienen hijos, 1 si tienen
+-   *Z*5: religiosidad en escala ascendente
+-   *Z*6: escolaridad; *Z*7:ocupación; *Z*8: autoevaluación del
+    matrimonio (1 muy infeliz 5 muy feliz)
+
+Abramos y exploremos los datos:
+
+    rm(list=ls())
+    a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt"
+    rex <- read.csv(file=a, sep="", dec=".")
+    attach(rex)
+    head(rex)
+
+    ##   ID X1 X2 Z1 Z2    Z3 Z4 Z5 Z6   X3 Z7 Z8 Y X4 X5
+    ## 1  4  0  1  1 37 10.00  0  3 18 40.0  7  4 0  0  1
+    ## 2  5  0  1  0 27  4.00  0  4 14 20.0  6  4 0  0  1
+    ## 3 11  0  1  0 32 15.00  1  1 12 12.5  1  4 0  0  1
+    ## 4 16  0  1  1 57 15.00  1  5 18 12.5  6  5 0  0  1
+    ## 5 23  0  1  1 22  0.75  0  2 17  7.5  6  3 0  0  1
+    ## 6 29  0  1  0 32  1.50  0  2 17  7.5  5  5 0  0  1
+
+    # 7 es una codificacion [4,10]
+    table(Y)
+
+    ## Y
+    ##   0   1   2   3   7  12 
+    ## 451  34  17  19  42  38
+
+    plot(Y~Z6) # Z6 es escolaridad
+
+![](%5BP2-4%5D_Modelos_de_probabilidad_files/figure-markdown_strict/unnamed-chunk-24-1.png)
+
+Ajustemos el modelo:
+
+    library(AER)
+    aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8,
+                   left=0,right=Inf,dist = "gaussian")
+    summary(aj.rex)
+
+    ## 
+    ## Call:
+    ## tobit(formula = Y ~ Z1 + Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8, left = 0, 
+    ##     right = Inf, dist = "gaussian")
+    ## 
+    ## Observations:
+    ##          Total  Left-censored     Uncensored Right-censored 
+    ##            601            451            150              0 
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)  7.60849    3.90599   1.948 0.051426 .  
+    ## Z1           0.94579    1.06287   0.890 0.373548    
+    ## Z2          -0.19270    0.08097  -2.380 0.017316 *  
+    ## Z3           0.53319    0.14661   3.637 0.000276 ***
+    ## Z4           1.01918    1.27957   0.797 0.425741    
+    ## Z5          -1.69900    0.40548  -4.190 2.79e-05 ***
+    ## Z6           0.02536    0.22767   0.111 0.911304    
+    ## Z7           0.21298    0.32116   0.663 0.507220    
+    ## Z8          -2.27328    0.41541  -5.472 4.44e-08 ***
+    ## Log(scale)   2.11123    0.06715  31.439  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Scale: 8.258 
+    ## 
+    ## Gaussian distribution
+    ## Number of Newton-Raphson Iterations: 4 
+    ## Log-likelihood: -704.7 on 10 Df
+    ## Wald-statistic: 68.13 on 8 Df, p-value: 1.1547e-11
+
+Dejemos únicamente las variables significativas:
+
+    aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian")
+    summary(aj.rex2)
+
+    ## 
+    ## Call:
+    ## tobit(formula = Y ~ Z2 + Z3 + Z5 + Z8, left = 0, right = Inf, 
+    ##     dist = "gaussian")
+    ## 
+    ## Observations:
+    ##          Total  Left-censored     Uncensored Right-censored 
+    ##            601            451            150              0 
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)  9.08289    2.65881   3.416 0.000635 ***
+    ## Z2          -0.16034    0.07772  -2.063 0.039095 *  
+    ## Z3           0.53890    0.13417   4.016 5.91e-05 ***
+    ## Z5          -1.72337    0.40471  -4.258 2.06e-05 ***
+    ## Z8          -2.26735    0.40813  -5.556 2.77e-08 ***
+    ## Log(scale)   2.11310    0.06712  31.482  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Scale: 8.274 
+    ## 
+    ## Gaussian distribution
+    ## Number of Newton-Raphson Iterations: 4 
+    ## Log-likelihood: -706.4 on 6 Df
+    ## Wald-statistic:  66.4 on 4 Df, p-value: 1.3044e-13
+
+Interpretación: El coeficiente negativo de *Z*8 (felicidad marital)
+significa que mientras más feliz se es, menor es la incidencia de las
+relaciones extramaritales.
 
 Referencias
 ===========

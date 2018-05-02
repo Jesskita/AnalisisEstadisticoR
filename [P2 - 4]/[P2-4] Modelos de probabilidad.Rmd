@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "24 de abril de 2018"
 output: 
-  md_document:
+  pdf_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -139,7 +139,7 @@ $$
 \sigma (t)={\frac {e^{t}}{e^{t}+1}}={\frac {1}{1+e^{-t}}}
 $$
 
-donde $ t\in \mathbb{R}$ y $0\leq\sigma (t)\leq1$.
+donde $t\in \mathbb{R}$ y $0\leq\sigma (t)\leq1$.
 
 Asumiento $t$ como una función lineal de una variable explicativa $x$, tenemos:
 
@@ -267,9 +267,7 @@ abs(a);abs(d)
 Abra la tabla 15.7 
 
 
-
-
--   Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI) sobre las calificaciones.
+-   Los datos son el efecto del Sistema de Enseñanza Personalizada (PSI) sobre las calificaciones.
     -   Calificación $Y = 1$ si la calificación final fue A
     -   $Y = 0$ si la calificación final fue B o C
     -   `TUCE` = calificación en un examen presentado al comienzo del curso para evaluar los conocimientos previos de macroeconomía
@@ -334,6 +332,201 @@ Esto indica que los estudiantes expuestos al nuevo método de enseñanza son por
 
 # Probit
 
+En los modelos logia se propuso la logística, en este caso se propone la Función de Distribución Acumulada Normal. Suponga que la variable de respuesta es binaria, 1 o 0. $Y$ podría representar la presencia/ausencia de una condición, éxito/fracaso, si/no. Se tiene también un vector de regresoras $X$, el modelo toma la forma:
+
+$$
+{\displaystyle \Pr(Y=1\mid X)=\Phi (X^{T}\beta ),}
+$$
+
+donde $Pr$ es la prbabilidad y $\Phi$ distribución acumulada de la normal estándar ${\displaystyle \Phi (x)={\frac {1}{\sqrt {2\pi }}}\int _{-\infty }^{x}e^{-t^{2}/2}\,dt}$. Los parámetros $\beta$ se estiman típicamente con el método de máxima verosimilitud.
+
+
+#### Ejemplo 1
+
+-  Realizamos el mismo procedimiento que en el logit
+-  Abra la tabla 15.7 
+-  Los datos son el efecto del Sistema de Ense?anza Personalizada (PSI) sobre las calificaciones.
+-  Ajuste el siguiente modelo:
+
+`ajuste1 <- glm(GRADE~GPA+TUCE+PSI,
+family=binomial(link="probit"),x=T)`
+
+- Interprete el modelo
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/tabla15_7.csv"
+datos <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
+attach(datos)
+```
+
+```{r}
+ajuste2 <- glm(GRADE~GPA+TUCE+PSI,family=binomial(link="probit"),x=T)
+summary(ajuste2)
+
+ajuste3 <- glm(GRADE~GPA+PSI,family=binomial(link="probit"),x=T)
+summary(ajuste2)
+```
+
+En la media muestral de $GPA$ de $3.117$, el efecto de $PSI$ sobre la probabilidad es $0.465$.
+
+```{r}
+library(erer)
+ea1 <- maBina(w = ajuste2, x.mean = TRUE, rev.dum = TRUE)
+ea1$out
+```
+
+En el caso actual, el efecto marginal para PSI de $0.456$ nos dice que, para dos individuos hipotéticos con valores promedio en $GPA$ ($3.12$) y $TUCE$ ($21.94$), la probabilidad de éxito prevista es $0.456$ mayor para el individuo en $PSI$ que para alguien que está en un aula tradicional.
+
+
+
+Los efectos marginales para variables continuas miden la tasa de cambio instantáneo, que puede o no estar cerca del efecto en $P(Y = 1)$ de un aumento de una unidad en $X_k$.  Lo que el efecto marginal más o menos le dice es que, si, por ejemplo, $X_k$ aumentara en una cantidad muy pequeña (por ejemplo, $0.001$), entonces $P(Y = 1)$ aumentaría en aproximadamente $0.001 * 0.534 = .000534$, por ejemplo.
+
+
+#### Ejemplo 2
+
+Volvamos al ejemplo del cambio debido al arsénico
+
+```{r}
+
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wells.dat"
+datos <- read.csv(url(uu),sep="",dec=".",header=TRUE)
+names(datos)[1]="Switch"
+datos$dist1 <- datos$dist/100
+ajuste1 <- glm(Switch~dist1,family=binomial(link="probit"),x=T,data = datos)
+ea <- maBina(w = ajuste1, x.mean = T, rev.dum = TRUE)
+ea$out
+```
+
+Se puede apreciar que no siempre deseamos evaluar las cosas en la *media*. En `R` se puede programar una función para este caso. Comprobemos los resultados de la media funcionalmente.
+
+
+```{r}
+punt_eval<-function(x){
+    t = coef(ajuste1)[1] + 
+        coef(ajuste1)[2]*x 
+    t
+}
+# Si quiero evaluar en la media como comprobación:
+x <- as.numeric(punt_eval(mean(datos$dist1)))
+dnorm(x,0,1)*coef(ajuste1)[2]
+# Si quiero evaluar en el máximo:
+x <- as.numeric(punt_eval(max(datos$dist1)))
+dnorm(x,0,1)*coef(ajuste1)[2]
+```
+
+
+#### Ejemplo 3
+
+Se desea saber si la variable ranking es significativa en la admisión.
+
+```{r}
+rm(list=ls())
+admisiones <- read.csv(file="https://stats.idre.ucla.edu/stat/data/binary.csv", 
+                      header=T, sep=",", dec=".")
+head(admisiones)
+attach(admisiones)
+# estudiantes aplicando a un posgrado 1 si es admitido 0 si no
+aj.adm <- glm(admit~gre+gpa+factor(rank), 
+             family = binomial(link="probit"),x=T)           #modelo probit 
+summary(aj.adm)
+```
+
+
+Para dos individuos hipotéticos con valores promedio en $gre$ ($580$) y $gpa$ ($3.39$), la probabilidad de éxito prevista es $0.4153$ menor para el individuo en el ranking 2 que para alguien que está en el ranking 1.
+
+#### Test de Wald
+
+Se usa para ver la significancia de uno o varios coeficientes del modelo de manera conjunta. En el caso univariado, el Wald estadística es
+
+$$
+{\displaystyle {\frac {({\widehat {\theta }}-\theta_{0})^{2}}{\operatorname {var} ({\hat {\theta }})}}}
+$$
+
+que se compara contra una distribución de chi-cuadrada.
+
+
+```{r}
+library(aod)
+wald.test(b=coef(aj.adm), Sigma = vcov(aj.adm), Term=4:6)
+```
+
+La variable es significativa.
+
+
+Encontremos las probabilidades de ser aceptado en función de algunos datos, se obtienen de la siguiente manera:
+
+```{r}
+nuevos.datos <- data.frame(gre=c(350,450,550,650),
+                          gpa=c(2.5,3,3.5,3.99), rank=factor(c(1,1,2,2)))
+nuevos.datos
+predict(aj.adm, nuevos.datos, type="response",se.fit=T)
+```
+
+#### Conclusiones:
+
+-   Los modelos probit y logit arrojan probabilidades semejantes (en términos marginales)
+-   La diferencia principal es que la distribución logística tiene las colas un poco más anchas
+-   En general se prefiere usar modelos logit  por su facilidad de implementación matemática e interpretación más rápida
+
 # Tobit
+
+Una extensión del modelo probit es el modelo tobit, desarrollado por James Tobin, economista
+laureado con el Nobel.
+
+
+-    Se lo conoce también como *modelos de datos censurados*
+-    Se persigue el mismo objetivo que la regresión lineal, pero tomando en cuenta toda la muestra.
+
+![](RL_8.png)
+
+
+#### Ejemplo
+
+Las variables del modelo son:
+
+-  $Y$: Num de relaciones extramaritales durante el año anterior 
+-  $Z1$: 0 para mujer y 1 hombre; $Z2$: edad
+-  $Z3$: Número de años de matrimonio 
+-  $Z4$: 0 si no tienen hijos, 1 si tienen 
+-  $Z5$: religiosidad en escala ascendente 
+-  $Z6$: escolaridad; $Z7$:ocupación; $Z8$: autoevaluación del matrimonio (1 muy infeliz 5 muy feliz)
+
+
+Abramos y exploremos los datos:
+
+```{r}
+rm(list=ls())
+a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt"
+rex <- read.csv(file=a, sep="", dec=".")
+attach(rex)
+head(rex)
+# 7 es una codificacion [4,10]
+table(Y)
+plot(Y~Z6) # Z6 es escolaridad
+```
+
+
+Ajustemos el modelo:
+
+
+```{r}
+library(AER)
+aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8,
+               left=0,right=Inf,dist = "gaussian")
+summary(aj.rex)
+```
+
+Dejemos únicamente las variables significativas:
+
+
+
+```{r}
+aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian")
+summary(aj.rex2)
+```
+
+
+
+Interpretación: El coeficiente negativo de $Z8$ (felicidad marital) significa que mientras más feliz se es, menor es la incidencia de las relaciones extramaritales.
 
 # Referencias
