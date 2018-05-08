@@ -72,19 +72,19 @@ Resúmen estadístico
     x <- rnorm(50)
     mean(x)
 
-    ## [1] -0.1580121
+    ## [1] -0.03807992
 
     sd(x)
 
-    ## [1] 0.8311881
+    ## [1] 0.9502236
 
     var(x)
 
-    ## [1] 0.6908737
+    ## [1] 0.902925
 
     median(x)
 
-    ## [1] -0.04787898
+    ## [1] -0.0810994
 
 Recuerda que estamos usando la generación de números aleatorios, de modo
 que nuestros resultados no van a coincidir.
@@ -95,8 +95,8 @@ que nuestros resultados no van a coincidir.
 
     quantile(x)
 
-    ##          0%         25%         50%         75%        100% 
-    ## -2.43332873 -0.71189232 -0.04787898  0.38089319  1.48899755
+    ##         0%        25%        50%        75%       100% 
+    ## -2.0075091 -0.6792376 -0.0810994  0.6183571  1.9315538
 
 Nota que por defecto obtienes el mínimo, máximo y tres *cuartiles* (esto
 es, los *cuantiles* 0.25, 0.50 y 0.75), se llaman así porque se divide
@@ -118,10 +118,10 @@ alterniativa *robusta* a la desviación estándar.
 
     quantile(x,pvec)
 
-    ##          0%         10%         20%         30%         40%         50% 
-    ## -2.43332873 -1.18135273 -0.86857859 -0.54637826 -0.30359245 -0.04787898 
-    ##         60%         70%         80%         90%        100% 
-    ##  0.08440118  0.27965998  0.47124375  0.76199665  1.48899755
+    ##         0%        10%        20%        30%        40%        50% 
+    ## -2.0075091 -1.1322445 -0.9019447 -0.5794439 -0.3575649 -0.0810994 
+    ##        60%        70%        80%        90%       100% 
+    ##  0.1994234  0.4608486  0.7398540  1.2765420  1.9315538
 
 Veamos un ejemplo cuando hay datos perdidos.
 
@@ -488,7 +488,7 @@ probabilidad de obtener un valor en un intervalo particular es el área
 correspondiente debajo de la curva.
 
 Para distribuciones discretas, el término *densidad* se usa para
-probabilidad puntual - la probabilidad de obtener exactamente el valor
+probabilidad puntual, la probabilidad de obtener exactamente el valor
 *x*.
 
 Un ejemplo:
@@ -536,14 +536,14 @@ de confianza. Veamos un ejemplo:
 Si tenemos *n* datos distribuidos normalmente con la misma media *μ* y
 desviación estándar *σ*, entonces el promedio $\\bar{x}$ se distribuye
 de forma normal centrado en *μ* con desviación estándar
-$\\sigma/\\sqrt{n}$. Un intervalo del 95% del confianza para *μ* se
-puede obtener así:
+$\\sigma\\sqrt{n}$. Un intervalo del 95% del confianza para *μ* se puede
+obtener así:
 
 $$
 \\bar{x}+\\frac{\\sigma}{\\sqrt{n}} \\times N\_{0.025} \\leq \\bar{x} + \\frac{\\sigma}{\\sqrt{n}} \\times N\_{0.975}
 $$
 
-Donde *N*<sub>0.025</sub> es el cuantil 2.5 en la distribución normal.
+Donde *N*<sub>0.025</sub> es el cuantil 2.5% en la distribución normal.
 
 Si *σ* = 12, *n* = 5 y encontramos un promedio de $\\bar{x}=83$,
 entonces:
@@ -643,7 +643,7 @@ Analicemos el resultado como Jack el Destripador (por partes).
     interesante. Arroja el valor del estadístico t, los grados de
     libertad y el valor p. Como tenemos el valor p, no es necesario ir a
     la tabla de valores de la distribución t. Con un nivel de
-    significancia de 5, en este caso se rechaza la hipótesis nula.
+    significancia de 5%, en este caso se rechaza la hipótesis nula.
 
 -   `alternative hypothesis: true mean is not equal to 7725`. Esto
     contiene dos pedazos de información importante:
@@ -917,7 +917,7 @@ Veamos un ejemplo donde *y* = *e**x**p*(*x*):
 
     cor(x,y,method="pearson")
 
-    ## [1] 0.8371131
+    ## [1] 0.923178
 
     cor(x,y,method="spearman")
 
@@ -1007,7 +1007,7 @@ Abrir la base de datos `Mundo.csv` (recuerden usar attach)
 
 Una exploración gráfica:
 
-    plot(PNB_PC,tasa_mort,col="blue")
+    plot((PNB_PC),tasa_mort,col="blue")
     abline(coef(reg1),col="red") 
 
 ![](%5BP2-1%5D_Estadística_Descriptiva_files/figure-markdown_strict/unnamed-chunk-55-1.png)

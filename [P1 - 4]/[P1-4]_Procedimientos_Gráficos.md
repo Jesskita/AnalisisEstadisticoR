@@ -94,7 +94,7 @@ Funciones Gráficas
 <tbody>
 <tr class="odd">
 <td align="center"><code>add=FALSE</code></td>
-<td align="center">si es TRUE superpone el gra ́fico en el ya existente (si existe)</td>
+<td align="center">si es TRUE superpone el gráfico en el ya existente (si existe)</td>
 </tr>
 <tr class="even">
 <td align="center"><code>axes=TRUE</code></td>
@@ -106,7 +106,7 @@ Funciones Gráficas
 </tr>
 <tr class="even">
 <td align="center"><code>xlim=</code>, <code>ylim=</code></td>
-<td align="center">especifica los l ́ımites inferiores y superiores de los ejes; por ejemplo con <code>xlim=c(1, 10)</code> o <code>xlim=range(x)</code></td>
+<td align="center">especifica los límites inferiores y superiores de los ejes; por ejemplo con <code>xlim=c(1, 10)</code> o <code>xlim=range(x)</code></td>
 </tr>
 <tr class="odd">
 <td align="center"><code>main=</code></td>

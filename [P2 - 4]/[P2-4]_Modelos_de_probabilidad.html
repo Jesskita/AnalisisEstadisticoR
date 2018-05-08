@@ -270,7 +270,7 @@ y={\begin{cases}1&amp;\beta_{1}+\beta_{2}X_{1}+\cdots+\beta_{k}X_{k}+u &gt;0\\0&
 <p><span class="math display">\[
 \sigma (t)={\frac {e^{t}}{e^{t}+1}}={\frac {1}{1+e^{-t}}}
 \]</span></p>
-<p>donde $ t$ y <span class="math inline">\(0\leq\sigma (t)\leq1\)</span>.</p>
+<p>donde <span class="math inline">\(t\in \mathbb{R}\)</span> y <span class="math inline">\(0\leq\sigma (t)\leq1\)</span>.</p>
 <p>Asumiento <span class="math inline">\(t\)</span> como una función lineal de una variable explicativa <span class="math inline">\(x\)</span>, tenemos:</p>
 <p><span class="math display">\[
 t=\beta _{0}+\beta _{1}x
@@ -371,11 +371,6 @@ ea$out</code></pre>
 <ul>
 <li>Ajuste un nuevo modelo incluyendo la variable <em>arsenic</em></li>
 <li>Calcule los efectos marginales</li>
-<li>Interpretación:
-<ul>
-<li>cambio disminuye <span class="math inline">\(22\%\)</span> para una casa que está a una unidad adicional de la distancia promedio.</li>
-<li>a una distancia fija, comparando un pozo de contenido de arsénico promedio más una unidad, la probabilidad aumenta un <span class="math inline">\(11\%\)</span></li>
-</ul></li>
 </ul>
 <pre class="r"><code>ajuste3 &lt;- glm(Switch~dist1+arsenic,family=binomial(link=&quot;logit&quot;), x = T)
 summary(ajuste3)</code></pre>
@@ -409,6 +404,13 @@ ea$out</code></pre>
 ## (Intercept)  0.001 0.019   0.035   0.972
 ## dist1       -0.218 0.025  -8.598   0.000
 ## arsenic      0.112 0.010  11.217   0.000</code></pre>
+<ul>
+<li>Interpretación:
+<ul>
+<li>cambio disminuye <span class="math inline">\(22\%\)</span> para una casa que está a una unidad adicional de la distancia promedio.</li>
+<li>a una distancia fija, comparando un pozo de contenido de arsénico promedio más una unidad, la probabilidad aumenta un <span class="math inline">\(11\%\)</span></li>
+</ul></li>
+</ul>
 <p>¿Cual de las dos variables es más importante en la decisión de cambio?</p>
 <ul>
 <li>Se debe calcular los coeficientes estandarizados.</li>

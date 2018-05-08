@@ -185,7 +185,7 @@ $$
 \\sigma (t)={\\frac {e^{t}}{e^{t}+1}}={\\frac {1}{1+e^{-t}}}
 $$
 
-donde $ t$ y 0 ≤ *σ*(*t*)≤1.
+donde *t* ∈ ℝ y 0 ≤ *σ*(*t*)≤1.
 
 Asumiento *t* como una función lineal de una variable explicativa *x*,
 tenemos:
@@ -332,11 +332,6 @@ una unidad respecto a la distancia promedio (0.48)
 
 -   Ajuste un nuevo modelo incluyendo la variable *arsenic*
 -   Calcule los efectos marginales
--   Interpretación:
-    -   cambio disminuye 22% para una casa que está a una unidad
-        adicional de la distancia promedio.
-    -   a una distancia fija, comparando un pozo de contenido de
-        arsénico promedio más una unidad, la probabilidad aumenta un 11%
 
 <!-- -->
 
@@ -375,6 +370,12 @@ una unidad respecto a la distancia promedio (0.48)
     ## (Intercept)  0.001 0.019   0.035   0.972
     ## dist1       -0.218 0.025  -8.598   0.000
     ## arsenic      0.112 0.010  11.217   0.000
+
+-   Interpretación:
+    -   cambio disminuye 22% para una casa que está a una unidad
+        adicional de la distancia promedio.
+    -   a una distancia fija, comparando un pozo de contenido de
+        arsénico promedio más una unidad, la probabilidad aumenta un 11%
 
 ¿Cual de las dos variables es más importante en la decisión de cambio?
 

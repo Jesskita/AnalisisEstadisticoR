@@ -98,7 +98,7 @@ Recuerda que estamos usando la generación de números aleatorios, de modo que n
 quantile(x)
 ```
 
-Nota que por defecto obtienes el mínimo, máximo y tres *cuartiles* (esto es, los *cuantiles* 0.25, 0.50 y 0.75), se llaman así porque se divide en 4 partes. Se puede tener *deciles*.
+Nota que por defecto obtienes el mínimo, máximo y tres *cuartiles* (esto es, los *cuantiles* $0.25$, $0.50$ y $0.75$), se llaman así porque se divide en 4 partes. Se puede tener *deciles*.
 
 A la diferencia entre el primer y tercer cuartil se llama *rango intercuartil* (IQR - siglas en inglés) y a veces es usando como una alterniativa *robusta* a la desviación estándar.
 
@@ -185,7 +185,7 @@ brk <- c(0,5,10,16,17,18,20,25,60,80)
 hist(age.acc, breaks = brk)
 ```
 
-Nota que el eje $y$ está en unidades de densidad, es decir, la proporción de los datos por unidad $x$ tal que el total del área del histograma es 1. Si se desea que el histograma que la altura de las barras se mida en números absolutos, se puede especificar la opción `freq = TRUE`.
+Nota que el eje $y$ está en unidades de densidad, es decir, la proporción de los datos por unidad $x$ tal que el total del área del histograma es $1$. Si se desea que el histograma que la altura de las barras se mida en números absolutos, se puede especificar la opción `freq = TRUE`.
 
 ### Disfribución empírica acumulativa
 
@@ -231,7 +231,7 @@ caff.marital
 Un objeto `tabla` no es *exactamente* lo mismo que una matriz. Las tablas tienen atributos especiales, pero podemos convertir una matriz en tabla usando `as.table(caff.marital)`. Esto crea un objeto `tabla`. 
 
 
-Para casos elementales, en principio, no existe distinción entre tablas y matrices de $2 \times 2$ por ejemplo. Un caso importante en el que se necesita `as.tables` es:
+Para casos elementales, en principio, no existe distinción entre tablas y matrices de $2\times 2$ por ejemplo. Un caso importante en el que se necesita `as.tables` es:
 
 ```{r}
 as.data.frame(as.table(caff.marital))
@@ -324,7 +324,7 @@ Cuatro ítems fundamentales pueden ser calculados para una distribución de prob
 
 La densidad de una distribución continua es una medida de la probabilidad relativa de *obtener un valor cercano a $x$*. La probabilidad de obtener un valor en un intervalo particular es el área correspondiente debajo de la curva. 
 
-Para distribuciones discretas, el término *densidad* se usa para probabilidad puntual - la probabilidad de obtener exactamente el valor $x$.
+Para distribuciones discretas, el término *densidad* se usa para probabilidad puntual, la probabilidad de obtener exactamente el valor $x$.
 
 Un ejemplo:
 
@@ -351,7 +351,7 @@ Digamos por ejemplo que la salud de los individuos se describe adecuadamente por
 1-pnorm(160,mean=132,sd=13)
 ```
 
-un 1.5% de la población que tiene ese valor o más.
+un $1.5\%$ de la población que tiene ese valor o más.
 
 ### Quantiles
 
@@ -359,14 +359,14 @@ Esta función es la inversa de la distribución acumulada. El cuantil *p* es el 
 
 Los cuantiles teóricos se usan comúnmente para el cálculo de intervalos de confianza. Veamos un ejemplo:
 
-Si tenemos $n$ datos distribuidos normalmente con la misma media $\mu$ y desviación estándar $\sigma$, entonces el promedio $\bar{x}$ se distribuye de forma normal centrado en $\mu$ con desviación estándar $\sigma/\sqrt{n}$. Un intervalo del 95% del confianza para $\mu$ se puede obtener así:
+Si tenemos $n$ datos distribuidos normalmente con la misma media $\mu$ y desviación estándar $\sigma$, entonces el promedio $\bar{x}$ se distribuye de forma normal centrado en $\mu$ con desviación estándar $\sigma\sqrt{n}$. Un intervalo del $95\%$ del confianza para $\mu$ se puede obtener así:
 
 $$
 \bar{x}+\frac{\sigma}{\sqrt{n}} \times N_{0.025} \leq \bar{x} + \frac{\sigma}{\sqrt{n}} \times N_{0.975}
 $$
 
 
-Donde $N_{0.025}$ es el cuantil $2.5%$ en la distribución normal.
+Donde $N_{0.025}$ es el cuantil $2.5\%$ en la distribución normal.
 
 Si $\sigma=12$, $n = 5$ y encontramos un promedio de $\bar{x}=83$, entonces:
 
@@ -381,7 +381,7 @@ xbar + sem * qnorm(0.025)
 xbar + sem * qnorm(0.975)
 ```
 
-entonces el intervalo de confianza al 95% para $\mu$ está entre 72.48 a 93.52.
+entonces el intervalo de confianza al $95\%$ para $\mu$ está entre $72.48$ a $93.52$.
 
 ## Test sobre una y dos muestras
 
@@ -389,7 +389,7 @@ Se introducen dos funciones: `t.test` y `wilcox.test` para el test *t* y el test
 
 ### El test t
 
-Este test se basa en el supuesto de normalidad de los datos. Es decir que los datos $x_1 \ldots, x_n$ se asumen como realizaciones independientes de variables aleatorias con media $\mu$ y media $\sigma ^2$, $N(\mu,\sigma^2)$. Se tiene que la hipótesis nula es que $\mu = \mu_0$. 
+Este test se basa en el supuesto de normalidad de los datos. Es decir que los datos $x_1 \ldots, x_n$ se asumen como realizaciones independientes de variables aleatorias con media $\mu$ y media $\sigma^2$, $N(\mu,\sigma^2)$. Se tiene que la hipótesis nula es que $\mu = \mu_0$. 
 
 Se puede estimar los parámetros $\mu$ y $\sigma$ por la media $\bar{x}$ y la desviación estándar $\sigma$, aunque recuerde que solo son estimaciones del valor real.
 
@@ -405,7 +405,7 @@ significa que si se repitiera el experimento varias veces y se calculara el prom
 -->
 
 
-Veamos un ejemplo del consuo diario de calorías de 11 mujeres:
+Veamos un ejemplo del consuo diario de calorías de $11$ mujeres:
 
 ```{r}
 daily.intake <- c(5260,5470,5640,6180,6390,6515,
@@ -432,7 +432,7 @@ Analicemos el resultado como Jack el Destripador (por partes).
 
 - `One Sample t-test`: Muestra el tipo de test.
 - `data: daily.intake`: Indica los datos usados para el test
-- `t = -2.8208, df = 10, p-value = 0.01814`: Aquí se empieza a poner interesante. Arroja el valor del estadístico t, los grados de libertad y el valor p. Como tenemos el valor p, no es necesario ir a la tabla de valores de la distribución t. Con un nivel de significancia de $5%$, en este caso se rechaza la hipótesis nula.
+- `t = -2.8208, df = 10, p-value = 0.01814`: Aquí se empieza a poner interesante. Arroja el valor del estadístico t, los grados de libertad y el valor p. Como tenemos el valor p, no es necesario ir a la tabla de valores de la distribución t. Con un nivel de significancia de $5\%$, en este caso se rechaza la hipótesis nula.
 
 - `alternative hypothesis: true mean is not equal to 7725`. Esto contiene dos pedazos de información importante:
       + El valor puntual sobre el que realizamos el test.

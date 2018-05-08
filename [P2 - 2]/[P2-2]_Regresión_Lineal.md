@@ -129,12 +129,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         15.9038           0.6321
+    ##         21.9536           0.5656
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##       15.903840        0.632065
+    ##      21.9535637       0.5656048
 
     abline(coef(ajuste.1))
 

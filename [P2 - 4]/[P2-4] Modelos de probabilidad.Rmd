@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "24 de abril de 2018"
 output: 
-  pdf_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -236,9 +236,7 @@ coef(ajuste2)/4
 
 - Ajuste un nuevo modelo incluyendo la variable *arsenic*
 - Calcule los efectos marginales
-- Interpretación: 
-    - cambio disminuye $22\%$ para una casa que está a una unidad adicional de la distancia promedio.
-    - a una distancia fija, comparando un pozo de contenido de arsénico promedio más una unidad, la probabilidad aumenta un $11\%$
+
     
 ```{r}
 ajuste3 <- glm(Switch~dist1+arsenic,family=binomial(link="logit"), x = T)
@@ -246,6 +244,11 @@ summary(ajuste3)
 ea <- maBina(w = ajuste3, x.mean = TRUE, rev.dum = TRUE)
 ea$out
 ```
+
+- Interpretación: 
+    - cambio disminuye $22\%$ para una casa que está a una unidad adicional de la distancia promedio.
+    - a una distancia fija, comparando un pozo de contenido de arsénico promedio más una unidad, la probabilidad aumenta un $11\%$
+
 
 ¿Cual de las dos variables es más importante en la decisión de
 cambio?
