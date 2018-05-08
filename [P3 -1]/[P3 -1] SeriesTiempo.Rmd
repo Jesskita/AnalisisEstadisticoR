@@ -1,0 +1,589 @@
+---
+title: 'Análisis Estadístico con R'
+subtitle: "Series de Tiempo"
+author: 
+- name: VMO
+  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+date: "21 de marzo de 2018"
+output: 
+  md_document:
+    toc: true
+    toc_depth: 2
+bibliography: bibliography.bib
+---
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ TeX: { equationNumbers: {autoNumber: "all"} } });
+  </script>
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = normalizePath("~/Documents/Consultorias&Cursos/DataLectures")) 
+```
+
+# Introducción
+
+Una serie de tiempo es una sucesión de variables aleatorias ordenadas de acuerdo a una
+unidad de tiempo, $Y_{1}, \ldots, Y_{T}$.
+
+
+¿Por qué usar series de tiempo?
+
+-  Pronósticos
+-  Entender el mecanismo de generación de datos (no visible al inicio de una investigación)
+
+
+# [Rezagos y operadores en diferencia](http://www.economia.unam.mx/biblioteca/redeco/Pdf/Rezagos%20y%20Operadores%20de%20Diferencia.pdf)
+
+##  Operadores de rezagos
+
+Definción:
+
+$$
+\Delta Y_{t-i} = Y_t-Y_{t-i}
+$$
+
+Ejemplos:
+
+$$
+\Delta Y_{t} = Y_t-Y_{t-1}
+$$
+
+Caso general:
+
+$$
+L^{j}Y_t=Y_{t-j}
+$$
+
+Ejemplos:
+
+$$
+L^1Y_t=LY_t=Y_{t-1}
+$$
+$$
+L^2Y_t=Y_{t-2}
+$$
+
+$$
+L^{-2}Y_t=Y_{t+2}
+$$
+
+$$
+L^{i}L^{j}=L^{i+j}=Y_{t-(i+j)}
+$$
+# Manipulando `ts` en `R
+
+-   Abrir `IPCEcuador.csv`
+-   Se puede ver una inflación variable
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/IPCEcuador.csv"
+datos <- read.csv(url(uu),header=T,dec=".",sep=",")
+IPC <- ts(datos$IPC,start=c(2005,1),freq=12)
+plot(IPC)
+```
+
+La serie tiene tendencia creciente. Tratemos de quitar esa tendencia:
+
+```{r}
+plot(diff(IPC)) # Se puede ver una inlfacion estable
+abline(h=0)
+```
+
+
+Se ha estabilizado, pero podemos hacerlo aún más con el logartimo de la diferencia:
+
+```{r}
+plot(diff(log(IPC))) #Tasa de variacion del IPC
+```
+
+La serie no tiene tendecia y es estable. Ahora, si deseo trabajar con un subconjunto de datos, puedo...
+
+```{r}
+# Solo quiero trabajar con los datos de agosto 2008
+IPC2 <- window(IPC,start=c(2008,8),freq=1)
+plot(IPC2)
+
+# IPC de todos los diciembres
+IPC.dic <- window(IPC,start=c(2005,12),freq=T)
+plot(IPC.dic)
+points(IPC.dic)
+```
+
+Si tengo mensuales y necsito trabajar con el IPC anual:
+
+```{r}
+aggregate(IPC)
+```
+
+A continuación algunas transformaciones frecuentes y su [interpretación](https://www.ucm.es/data/cont/docs/518-2013-10-25-Tema_6_EctrGrado.pdf):
+
+
+| Transformación                | Interpretación                               |
+|--------------------------------------|--------------------------------------------------|
+| $z_t=\nabla y_t=y_t-y_{t-1}$ | Cambio en $y_t$. Es un indicador de crecimiento absoluto.                   |
+| $z_t=ln(y_t)-ln(y_{t-1})\approx \frac{y_t-y_{t-1}}{y_{t-1}}$ | Es la tasa logarítmica de variación de una variable. Es un indicador de crecimiento relativo. Si se multiplica por 100 es la tasa de crecimiento porcentual de la variable                   |
+|$z_t=\nabla[ln(y_t)-ln(y_{t-1})]$   | Es el cambio en la tasa logarítmica de variación de una variable. Es un indicador de la aceleración de la tasa de crecimiento relativo de una variable. |
+
+
+### Ejemplo
+
+
+
+Veamos un gráfico más interesante usando un conjunto de datos anterior, vamos a:
+
+-   Abrir la base `estadísticas Turismo.csv`
+-   Agregar de manera mensual
+-   Convertir a `ts` y graficar
+
+```{r,message=FALSE}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/estadisticas%20Turismo.csv"
+datos<-read.csv(url(uu),header=T,dec=".",sep=";")
+attach(datos)
+
+# Visitas a Areas Naturales Protegidas
+
+# Sumar por mes y año
+
+mensual<-aggregate(TOTALMENSUAL,by=list(mesnum,Year),FUN="sum") # Los datos sin mes es el total de ese anio
+
+TOTALmensual<-ts(mensual[,3],start=c(2006,1),freq=12)
+plot(TOTALmensual)
+```
+
+Se ve una tendencia creciente y también una cierta estacionalidad. Veamos la misma serie en gráficos más atractivos:
+
+```{r,message=FALSE,warning=FALSE}
+library(latticeExtra)
+library(RColorBrewer)
+library(lattice)
+xyplot(TOTALmensual)
+asTheEconomist(xyplot(TOTALmensual,
+                      main="TOTAL VISITAS MENUSALES \n AREAS PROTEGIDAS")
+               ,xlab="Year_mes",ylab="Visitantes")
+```
+
+
+# Descomposición de una serie de tiempo
+
+Componentes
+
+-   Tendencia-ciclo: representa los cambios de largo plazo en el nivel de la serie de tiempo
+-   Estacionalidad:  Caracteriza fluctuaciones periódicas de longitud constante causadas por factores tales como temperatura, estación del año, periodo vacacional, políticas, etc.
+
+$$
+Y_t = f(S_t,T_t,E_t)
+$$
+donde $Y_t$ es la serie observada, $S_t$ es el componente estacional, $T_t$ es la tendencia y $E_t$ es el término de error.
+
+La forma de $f$ en la ecuación anterior determina tipos de [descomposiciones](https://seriesdetiempo.files.wordpress.com/2012/08/descomposicic3b3n-de-series-de-tiempo-base-cap-3-makridakis-et-al-fe-ago-2012.pdf):
+
+| Descomposición                | Expresión                               |
+|--------------------------------------|--------------------------------------------------|
+| Aditiva | $Y_t = S_t +T_t+E_t$                   |
+| Multiplicativa | $Y_t = S_t *T_t*E_t$                   |
+|  Transformación logaritmica| $log(Y_t) = log(S_t) +log(T_t)+log(E_t)$ |
+|Ajuste estacional|$Y_t - S_t =T_t+E_t$|
+
+### Ejemplo
+
+```{r}
+visitas.descompuesta<-decompose(TOTALmensual, type="additive")
+plot(visitas.descompuesta)
+```
+
+Dentro de `visitas.decompuesta` tenemos los siguientes elementos:
+
+-   `$x` = serie original
+-   `$seasonal` = componente estacional de los datos EJ: en marzo hay un decremento de 2502 (para cada dato)
+-   `$trend` = tendencia
+-   `$random` = visitas no explicadas por la tendencia o la estacionalidad
+-   `$figure` = estacionalidad (mismo que `seasonal` pero sin repetición)
+
+### Descomposición: ¿aditiva o multiplicativa?
+
+Visualmenete:
+
+- Aditivo: 
+    -   las fluctuaciones estacionales lucen aproximadamente constantes en tamaño con el tiempo y 
+    -   no parecen depender del nivel de la serie temporal, 
+    -   y las fluctuaciones aleatorias también parecen ser más o menos constantes en tamaño a lo largo del tiempo
+    
+- Multiplciativo
+      -   Si el efecto estacional tiende a aumentar a medida que aumenta la tendencia
+      -   la varianza de la serie original y la tendencia aumentan con el tiempo
+
+
+Forma alternativa de elegir: ver cuál es la que tiene un componente aleatorio menor.
+
+### Ejemplo:
+
+Los datos en el archivo `wine.dat` son ventas mensuales de vino australiano por categoría, en miles de litros, desde enero de 1980 hasta julio de 1995. Las categorías son blanco fortificado (`fortw`), blanco seco (`dryw`), blanco dulce (`sweetw`), rojo (`red`), rosa (`rose`) y espumoso (`spark`).
+
+
+```{r}
+direccion<- "https://raw.githubusercontent.com/dallascard/Introductory_Time_Series_with_R_datasets/master/wine.dat"
+wine<-read.csv(direccion,header=T,sep="")
+attach(wine)
+head(wine)
+dulce <- ts(sweetw,start=c(1980,12), freq=12)
+plot(dulce)
+```
+
+
+Tratemos la serie como un caso aditivo:
+
+En funcion del grafico de la variable, se decide el "type" de la descomposicion
+La estacionalidad tiene valores negativos porque se plantea respecto de la tendencia
+
+```{r}
+dulce.descompuesta<-decompose(dulce, type="additive") 
+plot(dulce.descompuesta)
+
+a<-dulce.descompuesta$trend[27] # La tendencia era de 130 en mayo del 82
+b<-dulce.descompuesta$seasonal[27] # El componente de la estacionalidad era este
+c<-dulce.descompuesta$random[27]  # Es el componente aleatorio
+
+a+b+c # La sumatoria de la descomposicion de la serie da el valor real, si es aditiva
+```
+
+
+Veamos el caso multiplicativo:
+
+```{r}
+# Multiplicativa
+dulce.descompuesta1<-decompose(dulce, type="multiplicative")
+a<-dulce.descompuesta1$trend[27] # La tendencia era de 130 en mayo del 82
+b<-dulce.descompuesta1$seasonal[27] # El componente de la estacionalidad era este
+c<-dulce.descompuesta1$random[27]  # Es el componente aleatorio
+
+a*b*c # La sumatoria de la descomposicion de la serie da el valor real, si es aditiva
+```
+
+Veamos la forma alternativa de elección:
+
+```{r}
+u1<-var(dulce.descompuesta$random,na.rm=T)
+u2<-var(dulce.descompuesta1$random,na.rm=T)
+cbind(u1,u2)
+```
+
+Se escoge la multiplicativa en este caso.
+
+### Detrend:
+
+Las series se ofrecen generalmente sin tendencia ni estacionalidad
+
+```{r}
+dulce.detrended <- dulce-dulce.descompuesta$trend
+plot(dulce.detrended)
+abline(h=0)
+```
+
+Parece ser que hay un cambio en la varianza desde el 85.
+
+Si descomponemos multiplicativamente en vez de restar se debe dividir.
+
+```{r}
+plot(dulce-dulce.descompuesta$trend)
+plot(dulce/dulce.descompuesta1$trend)
+```
+
+
+
+Existen formas de descomponer más sofisticadas, por ejemplo, usando la función `stl`.
+
+```{r}
+dulce.stl<-stl(dulce,s.window="per")
+plot(dulce.stl)
+```
+
+En este caso el calculo de la tendencia cambia, se calcula con formas no parametricas. La barra del final es la desviacion estándar.
+
+## Suavizamiento: Holt-Winters
+
+El método se resume en las f?rmulas siguientes:
+\begin{eqnarray}
+a_{t} &=& \alpha(x_{t}-s_{t-p})+(1-\alpha)(a_{t-1}+b_{t-1}) \nonumber \\
+b_{t} &=& \beta(a_{t}-a_{t-1})+(1-\beta)b_{t-1} \nonumber \\
+s_{t} &=& \gamma(x_{t}-a_{t})+(1-\gamma)s_{t-p} \nonumber
+\end{eqnarray}
+
+El método de Holt-Winters generaliza el método de suavizamiento exponencial.
+
+
+### Ejemplo 
+
+Veamos un modelo más sencillo:
+
+\begin{eqnarray}
+x_{t} &=& \mu_{t}+w_{t} \nonumber \\
+\mu_{t}=a_{t}&=& \alpha x_{t} + (1-\alpha) a_{t-1} \nonumber
+\end{eqnarray}
+
+```{r}
+dulce.se <- HoltWinters(dulce,beta=0,gamma=0)
+plot(dulce.se) 
+```
+
+Es un suavizamiento HW sin tendencia y sin componente estacional.
+La serie roja son los datos con suavizamiento exponencial y la negra son los observados. `R` buscó el alpha que le pareció apropiado.
+
+Usemos un alpha deliberado:
+
+```{r}
+dulce.se1 <- HoltWinters(dulce,alpha=0.8,beta=0,gamma=0)
+plot(dulce.se1)
+```
+
+¿Qué pasó con los errores?
+
+```{r}
+dulce.se$SSE # Suma de los residuos al cuadrado (de un paso)
+dulce.se1$SSE # Suma de los residuos al cuadrado (de un paso)
+```
+
+### Ejemplo
+
+Total mensual de pasajeros (en miles) de líneas aéreas internacionales, de 1949 a 1960.
+
+```{r}
+data(AirPassengers)
+str(AirPassengers)
+plot(AirPassengers)
+```
+
+Se aprecia tendencia y variabilidad. Podemos usar HW para predicción:
+
+```{r}
+ap.hw<- HoltWinters(AirPassengers,seasonal="mult")
+plot(ap.hw)
+ap.prediccion <- predict(ap.hw,n.ahead=48)
+ts.plot(AirPassengers,ap.prediccion,lty=1:2,
+col=c("blue","red"))
+```
+
+
+# Modelos de series de tiempo
+
+
+## Ruido blanco
+
+```{r}
+n   <-200
+mu  <- 0
+sdt <- 3
+w <- rnorm(n,mu,sdt)
+```
+
+
+
+¿Cómo se si algo tiene ruido blanco? : Analizo la funcion de autocorrelacion muestral.
+
+$$
+\hat\rho_k = \frac{\hat\gamma_k}{\hat\gamma_0}
+$$
+donde
+$$
+\hat\gamma_k = \frac{\sum(Y_t-\bar{Y})(Y_{t+k}-\bar{Y})}{n}
+$$
+$$
+\hat\gamma_0 = \frac{\sum(Y_t-\bar{Y})^2}{n}
+$$
+
+
+Se asume que $\hat\rho_k \sim N(0,1/n)$
+
+```{r}
+acf(w)
+```
+
+Si se sale de las franjas, si hay correlacion y no hay ruido blanco
+
+
+# El modelo Autoregresivo
+
+Proceso estocástico autoregresivo de primer orden
+
+\begin{eqnarray}
+(Y_{t}-\delta) = \alpha_{1}(Y_{t-1}-\delta)+u_{t} \nonumber
+\end{eqnarray}
+
+Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/WCURRNS.csv"
+datos <- read.csv(url(uu),header=T,sep=";")
+names(datos)
+attach(datos)
+value.ts <- ts(VALUE, start=c(1975,1),freq=54)
+ts.plot(value.ts)
+```
+
+Estacionariedad: La serie es estacionaria si la varianza no cambia
+
+
+```{r}
+acf(value.ts)
+```
+
+Esta es la marca de una serie que NO es estacionaria, dado que la autocorrelacion decrece muy lentamente.
+
+
+```{r}
+plot(stl(value.ts,s.window="per"))  
+```
+
+Una forma de trabajar con una serie esacionaria es quitarle el trend
+
+```{r}
+valuetrend<- value.ts- stl(value.ts,s.window="per")$time.series[,2]
+plot(valuetrend)
+```
+
+Reminder es lo que queda sin tendencia ni estacionalidad
+
+```{r}
+valuereminder<-
+stl(value.ts,s.window="per")$time.series[,3]
+```
+
+Veamos cómo quedo la serie:
+
+```{r}
+acf(valuereminder)
+```
+
+Se puede decir que la hicimos una serie estacionaria
+
+Otra forma de hacer estacionaria una serie es trabajar con las diferencias
+
+```{r}
+acf(diff(value.ts))
+```
+
+
+Nos indica que hay una estructura en la serie que no es ruido blanco pero SI estacionaria (cae de 1 a "casi"" cero)
+
+### Simulación:
+
+El siguiente paso es modelar esta estructura. Un modelo para ello es un modelo autorregresivo. Simular un AR(1)
+
+```{r}
+y <- arima.sim(list(ar=c(0.99),sd=1),n=200)
+plot(y)
+acf(y)
+```
+
+¿Cuáles son los parámetros del `arima.sim`? Hemos simulado $Y_t = \phi_{0}+\phi_{1}Y_{t-1} = \phi_{0}+0.99Y_{t-1}$.
+
+Simulemos el modelo: $Y_t = 0.5Y_{t-1} - 0.7Y_{t-2} + 0.6Y_{t-3}$
+
+```{r}
+ar3 <- arima.sim(n=200,list(ar=c(0.5,-0.7,0.6)),sd=5) 
+ar3.ts = ts(ar3)
+plot(ar3.ts)
+acf(ar3)
+```
+
+Las autocorrelaciones decaen exponencialemente a cero
+
+**Autocorrelaciones parciales**: nos ayunda a determinar el orden del modelo.
+
+La autocorrelación parcial es la correlación entre $Y_t$ y $Y_{t-k}$ después de eliminar el efecto de las Y intermedias.
+
+En los datos de series de tiempo, una gran proporción de la correlación entre $Y_t$ y $Y_{t-k}$ puede deberse a sus correlaciones con los rezagos intermedios $Y_1,Y_2,\lpoints,Y_{t-k+1}$. La correlación parcial elimina la influencia de estas variables intermedias.
+
+
+```{r}
+pacf(ar3) 
+ar(ar3)$aic
+```
+
+La tercera autocorrelación es la que esta fuera de las bandas, esto indica que el modelo es un AR(3)
+
+#### Ejemplo
+
+Datos: precio de huevos desde 1901
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/PrecioHuevos.csv"
+datos <- read.csv(url(uu),header=T,sep=";")
+ts.precio <- ts(datos$precio,start=1901)
+plot(ts.precio)
+```
+
+Veamos las autocorrelaciones:
+
+```{r}
+par(mfrow=c(2,1))
+acf(ts.precio)
+pacf(ts.precio)
+par(mfrow=c(1,1))
+```
+
+Las auto si decaen, no lo hacen tan rápido. No se puede decir si es estacionario o no.
+
+Evaluemos un modelo:
+
+```{r}
+modelo1 <- arima(ts.precio, order=c(1,0,0))
+print(modelo1)
+modelo1$var.coef
+```
+
+¿Qué nos recomienda `R`?
+
+```{r}
+ar.precio <- ar(ts.precio)
+ar.precio
+```
+
+
+
+
+Analicemos los residuos
+
+
+
+```{r}
+residuos = ar.precio$resid
+# Los residuos debe estar sin ninguna estructura
+par(mfrow = c(2,1))
+plot(residuos)
+abline(h=0,col="red")
+abline(v=1970,col="blue")
+acf(residuos,na.action=na.pass)
+```
+
+### Prueba de Ljung-Box
+
+La prueba de Ljung-Box se puede definir de la siguiente manera.
+
+$H_0$: Los datos se distribuyen de forma independiente (es decir, las correlaciones en la población de la que se toma la muestra son 0, de modo que cualquier correlación observada en los datos es el resultado de la aleatoriedad del proceso de muestreo).
+
+
+$H_a$: Los datos no se distribuyen de forma independiente.
+
+La estadística de prueba es:
+
+$$
+Q=n\left(n+2\right)\sum _{k=1}^{h}{\frac {{\hat {\rho }}_{k}^{2}}{n-k}}
+$$
+
+donde n es el tamaño de la muestra, $\hat\rho_{k}$ es la autocorrelación de la muestra en el retraso k y h es el número de retardos que se están probando. Por nivel de significación $\alpha$, la región crítica para el rechazo de la hipótesis de aleatoriedad es
+$$
+Q>\chi _{1-\alpha ,h}^{2}
+$$
+
+donde $\chi _{1-\alpha ,h}^{2}$ es la $\alpha$-cuantil de la distribución chi-cuadrado con $m$ grados de libertad.
+
+La prueba de Ljung-Box se utiliza comúnmente en autorregresivo integrado de media móvil de modelado (ARIMA). Tenga en cuenta que se aplica a los residuos de un modelo ARIMA equipada, no en la serie original, y en tales aplicaciones, la hipótesis de hecho objeto del ensayo es que los residuos del modelo ARIMA no tienen autocorrelación. Al probar los residuales de un modelo ARIMA estimado, los grados de libertad deben ser ajustados para reflejar la estimación de parámetros. Por ejemplo, para un modelo ARIMAa (p,0,q), los grados de libertad se debe establecer en $h-p-q$.
+
+```{r}
+Box.test(residuos,lag=20,type="Ljung")
+```
+
+¿Es ruido blanco?
+
+# Referencias

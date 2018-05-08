@@ -1,0 +1,78 @@
+---
+title: "Análisis Estadísico con R"
+author: "VMO"
+date: "19/3/2018"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Generalidades
+
+Duración: 45 horas
+Fecha de Inicio: 20 de marzo
+Fecha de Inicio: 17 de mayo
+Horario: Martes y jueves de 17h30 a 20h30.
+Lugar: FLACSO
+
+
+
+## Justificación
+
+Convertir datos en información es relevante para la toma de decisiones en la gestión pública y privada. R es un paquete versátil que permite el manejo efectivo de información. Tiene un enfoque especializado de carácter estadístico sin dejar de lado otras múltiples aplicaciones. Es importante el hecho de que es un software de uso libre ampliamente utilizado por la comunidad científica mundial.
+Sin duda alguna existe una gran diferencia entre un estudiante/profesional de cualquier área que conoce y maneja R con aquel que no.
+
+
+## Dirigido a:
+
+Estudiantes de áreas relacionadas a: economía, ingeniería, matemática, estadística. Profesionales que desean adquirir/reforzar destreza en la herramienta R.
+
+
+
+## Objetivos:
+
+-   Analizar datos desde una perspectiva descriptiva y analítica.
+-   Elaborar y analizar modelos lineales y series de tiempo en R.
+-   Realizar técnicas de diagnóstico de modelos lineales y series de tiempo en R.
+
+
+## Requisitos
+
+Conocimiento básico de ofimática.
+
+## Cronograma
+
+
+
+| Semana | Sesión | Día       | Fecha            | Parte                        | Contenido                                                          |
+|--------|--------|-----------|------------------|------------------------------|--------------------------------------------------------------------|
+| 1      | 1      | Lunes     | 20 de marzo 2018 | 1. Introducción              | Instalacion, Introducción, Números y Vectores                      |
+|        | 2      | Míercoles | 22 de marzo 2018 |                              | Objetos, apply, aggregate, by, bucles                              |
+| 2      | 3      | Lunes     | 27 de marzo 2018 |                              | Gráficos y simulación básica, práctica                             |
+|        | 4      | Míercoles | 29 de marzo 2018 | 2. Estadística descriptiva   | Análisis de resúmenes estadísticos, Análsis de varianza            |
+| 3      | 5      | Lunes     | 03 de abril 2018 |                              | Salidas gráficas de distribuciones y tablas                        |
+|        | 6      | Míercoles | 05 de abril 2018 |                              | Test de hipótesis, simulaciones TLC                                |
+| 4      | 7      | Lunes     | 10 de abril 2018 |                              | Regresión lineal, primeras ideas, Análisis de varianza. Práctica   |
+|        | 8      | Míercoles | 12 de abril 2018 | 3. Principios de Econometría | Regresión lineal simple                                            |
+| 5      | 9      | Lunes     | 17 de abril 2018 |                              | Regresión linea múltiple, Técnicas de diagnóstico                  |
+|        | 10     | Míercoles | 19 de abril 2018 |                              | Regresión con variables dicotómicas, Modelo de probabilidad lineal |
+| 6      | 11     | Lunes     | 24 de abril 2018 |                              | Estimación e intrepretación de modelos de probabilidad no lineal   |
+|        | 12     | Míercoles | 26 de abril 2018 |                              | Significancia de parámetros, Medidas de bondad de ajuste           |
+| 7      | 13     | Lunes     | 31 de abril 2018 |                              | Objetos ts, manipulación, Descomposición y suavizamiento. Práctica |
+|        | 14     | Míercoles | 03 de mayo 2018  | 4. Series de tiempo          | Aditivos VS mutiplicativos                                         |
+| 8      | 15     | Lunes     | 09 de mayo 2018  |                              | Metodología Box-Jenkins                                            |
+|        | 16     | Míercoles | 10 de mayo 2018  |                              | Estimación de modelos ARMA, pronóstico                             |
+| 9      | 17     | Lunes     | 15 de mayo 2018  |                              | Introducción a los modelos VAR                                     |
+|        | 18     | Míercoles | 17 de mayo 2018  |                              | Examen                                                             |
+
+
+
+
+## Evaluación
+
+Al final de cada temática se enviará un trabajo/taller/laboratorio que debe ser entregado 5 días después de enviado. Además, tendrán un examen final que aborde un ejercicio de cada trabajo. Los trabajos tienen una ponderación del $20\%$ y la prueba del $40\%$. El curso se aprueba con $70\%$ o más, de lo contrario tendrán únicamente un certificado de asistencia de haber cumplido con, al menos, el $70\%$ de asistencia.
+
+
+
