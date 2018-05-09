@@ -15,6 +15,13 @@
 -   [El modelo Autoregresivo](#el-modelo-autoregresivo)
     -   [Simulación:](#simulacion)
     -   [Prueba de Ljung-Box](#prueba-de-ljung-box)
+-   [Proceso de Medias Móviles (MA)](#proceso-de-medias-moviles-ma)
+-   [Proceso ARIMA](#proceso-arima)
+-   [Buscando el *mejor* modelo](#buscando-el-mejor-modelo)
+    -   [Ejemplo 1](#ejemplo-1-1)
+    -   [Ejemplo 2](#ejemplo-2-1)
+    -   [Test de Dickey Fuller](#test-de-dickey-fuller)
+-   [Cointegración:](#cointegracion)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -261,7 +268,7 @@ Visualmenete:
     -   no parecen depender del nivel de la serie temporal,
     -   y las fluctuaciones aleatorias también parecen ser más o menos
         constantes en tamaño a lo largo del tiempo
--   Multiplciativo
+-   Multiplicativo
     -   Si el efecto estacional tiende a aumentar a medida que aumenta
         la tendencia
     -   la varianza de la serie original y la tendencia aumentan con el
@@ -319,6 +326,10 @@ Veamos el caso multiplicativo:
 
     # Multiplicativa
     dulce.descompuesta1<-decompose(dulce, type="multiplicative")
+    plot(dulce.descompuesta1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+
     a<-dulce.descompuesta1$trend[27] # La tendencia era de 130 en mayo del 82
     b<-dulce.descompuesta1$seasonal[27] # El componente de la estacionalidad era este
     c<-dulce.descompuesta1$random[27]  # Es el componente aleatorio
@@ -340,13 +351,14 @@ Se escoge la multiplicativa en este caso.
 
 ### Detrend:
 
-Las series se ofrecen generalmente sin tendencia ni estacionalidad
+Las series se ofrecen generalmente sin tendencia ni estacionalidad.
+Veamos la serie sin tendencia:
 
     dulce.detrended <- dulce-dulce.descompuesta$trend
     plot(dulce.detrended)
     abline(h=0)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-14-1.png)
 
 Parece ser que hay un cambio en la varianza desde el 85.
 
@@ -354,11 +366,11 @@ Si descomponemos multiplicativamente en vez de restar se debe dividir.
 
     plot(dulce-dulce.descompuesta$trend)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
     plot(dulce/dulce.descompuesta1$trend)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-14-2.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-15-2.png)
 
 Existen formas de descomponer más sofisticadas, por ejemplo, usando la
 función `stl`.
@@ -366,15 +378,16 @@ función `stl`.
     dulce.stl<-stl(dulce,s.window="per")
     plot(dulce.stl)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-16-1.png)
 
 En este caso el calculo de la tendencia cambia, se calcula con formas no
-parametricas. La barra del final es la desviacion estándar.
+paramétricas. La barra del final es la desviacion estándar.
 
 Suavizamiento: Holt-Winters
 ---------------------------
 
-El método se resume en las f?rmulas siguientes:
+El método se resume en las fórmulas siguientes:
+
 El método de Holt-Winters generaliza el método de suavizamiento
 exponencial.
 
@@ -385,7 +398,7 @@ Veamos un modelo más sencillo:
     dulce.se <- HoltWinters(dulce,beta=0,gamma=0)
     plot(dulce.se) 
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-16-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-17-1.png)
 
 Es un suavizamiento HW sin tendencia y sin componente estacional. La
 serie roja son los datos con suavizamiento exponencial y la negra son
@@ -396,7 +409,7 @@ Usemos un alpha deliberado:
     dulce.se1 <- HoltWinters(dulce,alpha=0.8,beta=0,gamma=0)
     plot(dulce.se1)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-17-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-18-1.png)
 
 ¿Qué pasó con los errores?
 
@@ -407,6 +420,9 @@ Usemos un alpha deliberado:
     dulce.se1$SSE # Suma de los residuos al cuadrado (de un paso)
 
     ## [1] 1132577
+
+Es decir, el criterio para la busqueda de los parámetros es la
+minimización del SSE.
 
 ### Ejemplo
 
@@ -420,20 +436,20 @@ de 1949 a 1960.
 
     plot(AirPassengers)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-19-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-20-1.png)
 
 Se aprecia tendencia y variabilidad. Podemos usar HW para predicción:
 
     ap.hw<- HoltWinters(AirPassengers,seasonal="mult")
     plot(ap.hw)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-20-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-21-1.png)
 
     ap.prediccion <- predict(ap.hw,n.ahead=48)
     ts.plot(AirPassengers,ap.prediccion,lty=1:2,
     col=c("blue","red"))
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-20-2.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-21-2.png)
 
 Modelos de series de tiempo
 ===========================
@@ -446,8 +462,8 @@ Ruido blanco
     sdt <- 3
     w <- rnorm(n,mu,sdt)
 
-¿Cómo se si algo tiene ruido blanco? : Analizo la funcion de
-autocorrelacion muestral.
+¿Cómo se si algo tiene ruido blanco? : Analizo la función de
+autocorrelación muestral.
 
 $$
 \\hat\\rho\_k = \\frac{\\hat\\gamma\_k}{\\hat\\gamma\_0}
@@ -464,9 +480,9 @@ Se asume que $\\hat\\rho\_k \\sim N(0,1/n)$
 
     acf(w)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-22-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-23-1.png)
 
-Si se sale de las franjas, si hay correlacion y no hay ruido blanco
+Si se sale de las franjas, si hay correlación y no hay ruido blanco
 
 El modelo Autoregresivo
 =======================
@@ -474,7 +490,12 @@ El modelo Autoregresivo
 Proceso estocástico autoregresivo de primer orden
 
 Donde *δ* es la media de *Y* y *u*<sub>*i*</sub> es un ruido blanco no
-correlacionado
+correlacionado.
+
+Trabajaremos con datos de *M*1
+([WCURRNS](https://fred.stlouisfed.org/series/WCURRNS) dinero en
+circuación fuera de los Estados Unidos) semanales de los Estados Unidos
+desde enero de 1975.
 
     uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/WCURRNS.csv"
     datos <- read.csv(url(uu),header=T,sep=";")
@@ -486,29 +507,29 @@ correlacionado
     value.ts <- ts(VALUE, start=c(1975,1),freq=54)
     ts.plot(value.ts)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-23-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-24-1.png)
 
 Estacionariedad: La serie es estacionaria si la varianza no cambia
 
     acf(value.ts)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-24-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-25-1.png)
 
 Esta es la marca de una serie que NO es estacionaria, dado que la
-autocorrelacion decrece muy lentamente.
+autocorrelación decrece muy lentamente.
 
     plot(stl(value.ts,s.window="per"))  
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-25-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-26-1.png)
 
-Una forma de trabajar con una serie esacionaria es quitarle el trend
+Una forma de trabajar con una serie esacionaria es quitarle el *trend*
 
     valuetrend<- value.ts- stl(value.ts,s.window="per")$time.series[,2]
     plot(valuetrend)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-26-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-27-1.png)
 
-Reminder es lo que queda sin tendencia ni estacionalidad
+*Reminder* es lo que queda sin tendencia ni estacionalidad
 
     valuereminder<-
     stl(value.ts,s.window="per")$time.series[,3]
@@ -517,7 +538,7 @@ Veamos cómo quedo la serie:
 
     acf(valuereminder)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-28-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-29-1.png)
 
 Se puede decir que la hicimos una serie estacionaria
 
@@ -526,7 +547,7 @@ diferencias
 
     acf(diff(value.ts))
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-29-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-30-1.png)
 
 Nos indica que hay una estructura en la serie que no es ruido blanco
 pero SI estacionaria (cae de 1 a "casi"" cero)
@@ -534,16 +555,16 @@ pero SI estacionaria (cae de 1 a "casi"" cero)
 ### Simulación:
 
 El siguiente paso es modelar esta estructura. Un modelo para ello es un
-modelo autorregresivo. Simular un AR(1)
+modelo autorregresivo. Simular un *A**R*(1).
 
     y <- arima.sim(list(ar=c(0.99),sd=1),n=200)
     plot(y)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-30-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-31-1.png)
 
     acf(y)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-30-2.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-31-2.png)
 
 ¿Cuáles son los parámetros del `arima.sim`? Hemos simulado
 *Y*<sub>*t*</sub> = *ϕ*<sub>0</sub> + *ϕ*<sub>1</sub>*Y*<sub>*t* − 1</sub> = *ϕ*<sub>0</sub> + 0.99*Y*<sub>*t* − 1</sub>.
@@ -555,11 +576,11 @@ Simulemos el modelo:
     ar3.ts = ts(ar3)
     plot(ar3.ts)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-31-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-32-1.png)
 
     acf(ar3)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-31-2.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-32-2.png)
 
 Las autocorrelaciones decaen exponencialemente a cero
 
@@ -573,23 +594,24 @@ intermedias.
 En los datos de series de tiempo, una gran proporción de la correlación
 entre *Y*<sub>*t*</sub> y *Y*<sub>*t* − *k*</sub> puede deberse a sus
 correlaciones con los rezagos intermedios
-$Y\_1,Y\_2,\\lpoints,Y\_{t-k+1}$. La correlación parcial elimina la
-influencia de estas variables intermedias.
+*Y*<sub>1</sub>, *Y*<sub>2</sub>, …, *Y*<sub>*t* − *k* + 1</sub>. La
+correlación parcial elimina la influencia de estas variables
+intermedias.
 
     pacf(ar3) 
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-32-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-33-1.png)
 
     ar(ar3)$aic
 
     ##          0          1          2          3          4          5 
-    ## 184.479991 184.838627  91.914972   0.000000   1.931100   3.923678 
+    ## 192.859463 194.119736  74.750263   0.000000   1.765192   1.140607 
     ##          6          7          8          9         10         11 
-    ##   4.901181   6.687842   8.534966  10.022077  11.985459  13.635207 
+    ##   3.112054   3.875521   5.838569   4.271208   3.919511   4.547110 
     ##         12         13         14         15         16         17 
-    ##  15.081464  16.607561  18.260433  20.241681  22.207918  23.924108 
+    ##   5.983478   7.404252   9.367714  11.367082  11.156541  12.991742 
     ##         18         19         20         21         22         23 
-    ##  23.773030  22.467178  23.933922  25.719837  27.626298  29.615839
+    ##  12.227606  13.940330  14.370791  11.054540  13.054190  13.785198
 
 La tercera autocorrelación es la que esta fuera de las bandas, esto
 indica que el modelo es un AR(3)
@@ -603,7 +625,7 @@ Datos: precio de huevos desde 1901
     ts.precio <- ts(datos$precio,start=1901)
     plot(ts.precio)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-33-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-34-1.png)
 
 Veamos las autocorrelaciones:
 
@@ -611,7 +633,7 @@ Veamos las autocorrelaciones:
     acf(ts.precio)
     pacf(ts.precio)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-34-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-35-1.png)
 
     par(mfrow=c(1,1))
 
@@ -665,7 +687,7 @@ Analicemos los residuos
     abline(v=1970,col="blue")
     acf(residuos,na.action=na.pass)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-37-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-38-1.png)
 
 ### Prueba de Ljung-Box
 
@@ -711,7 +733,648 @@ un modelo ARIMAa (p,0,q), los grados de libertad se debe establecer en
     ## data:  residuos
     ## X-squared = 20.526, df = 20, p-value = 0.4255
 
+*H**o*: Ruido Blanco ¿Es ruido blanco?
+
+Probemos un segundo modelo
+
+    modelo2 <- arima(ts.precio, order=c(2,0,0))
+    print(modelo2)
+
+    ## 
+    ## Call:
+    ## arima(x = ts.precio, order = c(2, 0, 0))
+    ## 
+    ## Coefficients:
+    ##          ar1     ar2  intercept
+    ##       0.8456  0.1134   193.5287
+    ## s.e.  0.1026  0.1046    53.9009
+    ## 
+    ## sigma^2 estimated as 703:  log likelihood = -442.7,  aic = 893.4
+
+Comparemos los resultados:
+
+    ar2.precio <- ar(ts.precio,FALSE,2)
+    ar2.precio$aic
+
+    ##          0          1          2 
+    ## 178.338243   0.000000   1.869475
+
+    modelo2$aic
+
+    ## [1] 893.401
+
+    modelo1$aic
+
+    ## [1] 892.563
+
+Se escoge el modelo de menor AIC.
+
+Proceso de Medias Móviles (MA)
+==============================
+
+Simulemos un modelo:
+
+    simulcion.ma <- arima.sim(200,model=list(ma=c(0.8)))
+    plot(simulcion.ma)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-42-1.png)
+
+    acf(simulcion.ma)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-42-2.png)
+
+    pacf(simulcion.ma)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-42-3.png)
+
+-   Las *p* primeras autocorrelaciones van a ser diferentes de cero
+-   La autocorrelación parcial decae exponencialmente
+
+Veamos otro ejemplo
+
+    simulcion.ma1 <- arima.sim(200, model =list(ma=c(2.1,-0.9,4.7)))
+    plot(simulcion.ma1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-43-1.png)
+
+    acf(simulcion.ma1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-43-2.png)
+
+    pacf(simulcion.ma1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-43-3.png)
+
+Proceso ARIMA
+=============
+
+Simulemos el proceso:
+
+    simulcion.ma2 <- arima.sim(1000, model=list(order=c(1,0,1),ar=c(-0.1),ma=c(0.1)))
+    plot(simulcion.ma2)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-44-1.png)
+
+    acf(simulcion.ma2)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-44-2.png)
+
+    pacf(simulcion.ma2)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-44-3.png)
+
+Buscando el *mejor* modelo
+==========================
+
+### Ejemplo 1
+
+Datos: Serie de tiempo (1952-1988) del ingreso nacional real en China
+por sector (año base: 1952)
+
+    library(AER)
+
+    ## Loading required package: car
+
+    ## Loading required package: lmtest
+
+    ## Loading required package: zoo
+
+    ## 
+    ## Attaching package: 'zoo'
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     as.Date, as.Date.numeric
+
+    ## Loading required package: sandwich
+
+    ## Loading required package: survival
+
+    data(ChinaIncome)
+    str(ChinaIncome)
+
+    ##  Time-Series [1:37, 1:5] from 1952 to 1988: 100 102 103 112 116 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : NULL
+    ##   ..$ : chr [1:5] "agriculture" "commerce" "construction" "industry" ...
+
+    transporte <- ChinaIncome[,"transport"]
+    ts.plot(transporte)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-45-1.png)
+
+Parece no ser estacionario. Hacemos una transformación para tratar de
+confirmar la estacionariedad.
+
+    ltrans <- log(transporte)
+    ts.plot(ltrans)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-46-1.png)
+
+Notamos que persiste el porblema, sigue sin ser estacionario. Probemos
+con la diferencia:
+
+    dltrans <- diff(ltrans)
+    ts.plot(dltrans)
+    abline(h=0)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-47-1.png)
+
+Asumamos estacionariedad (después haremos una prueba específica para
+verificar estacionariedad) y busquemos el mejor modelo.
+
+Usaremos el `acf` y el `pacf` para evaluar si es MA o AR.
+
+    acf(dltrans)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-48-1.png)
+
+    pacf(dltrans)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-48-2.png)
+
+Ajustando según la gráfica, tendríamos un proceso *M**A*(2)
+
+¿Qué recomienda `R`?
+
+    ar(dltrans)$aic
+
+    ##         0         1         2         3         4         5         6 
+    ##  8.140754  5.473906  1.951624  0.000000  1.990078  3.975236  5.400529 
+    ##         7         8         9        10        11        12        13 
+    ##  6.622877  6.428684  8.083145  9.975465 10.326488 12.291432 14.227677 
+    ##        14        15 
+    ## 16.183322 17.644775
+
+Según esta recomendación, estamos ante un proceso *A**R*(3).
+
+    modelo1 <- arima(dltrans,order = c(3,0,0))
+    modelo1$aic
+
+    ## [1] -32.75694
+
+Ajustemos el *M**A*(2) y comparemos:
+
+    modelo2 <- arima(dltrans,order = c(0,0,2))
+    modelo2$aic
+
+    ## [1] -28.01574
+
+Recuerda: Un menor AIC es mejor. ¿Con qué modelo te quedas?
+
+Ajustemos un *M**A*(3):
+
+    modelo3 <- arima(dltrans,order = c(0,0,3))
+    print(modelo3)
+
+    ## 
+    ## Call:
+    ## arima(x = dltrans, order = c(0, 0, 3))
+    ## 
+    ## Coefficients:
+    ##          ma1      ma2      ma3  intercept
+    ##       0.1763  -0.4596  -0.7167     0.0621
+    ## s.e.  0.1883   0.1640   0.1925     0.0053
+    ## 
+    ## sigma^2 estimated as 0.01625:  log likelihood = 21.26,  aic = -32.53
+
+    modelo3$aic
+
+    ## [1] -32.52547
+
+Este modelo es mejor que el *M**A*(2), pero peor que *A**R*(3).
+
+Probemos algunas combinaciones
+
+    # Ajustando un ARMA(1,1)
+    modelo4 <- arima(dltrans,order = c(1,0,1))
+    modelo4$aic
+
+    ## [1] -27.49033
+
+    # Ajustando un ARMA(2,1)
+    modelo5 <- arima(dltrans,order = c(2,0,1))
+    modelo5$aic
+
+    ## [1] -32.45195
+
+    # Ajustando un ARMA(1,2)
+    modelo6 <- arima(dltrans,order = c(1,0,2))
+    modelo6$aic
+
+    ## [1] -29.86264
+
+Nos quedamos con el *A**R*(3). Revisemos los residuos:
+
+    AR3Resid <- (modelo1$resid)
+    ts.plot(AR3Resid)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-54-1.png)
+
+    acf(AR3Resid)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-54-2.png)
+
+    pacf(AR3Resid)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-54-3.png)
+No hay autocorrelación, No hay autocorrelación parcial.
+
+Veamos si se trata de un ruido blanco
+
+    Box.test(AR3Resid)
+
+    ## 
+    ##  Box-Pierce test
+    ## 
+    ## data:  AR3Resid
+    ## X-squared = 0.00015103, df = 1, p-value = 0.9902
+
 ¿Es ruido blanco?
+
+Realicemos una proyección a 5 años
+
+    pred5 <- predict(modelo1, n.ahead=5,se=T)
+    pred5se <- pred5$se
+
+intervalos de confianza:
+
+    ic = pred5$pred + cbind(-2*pred5$se,2*pred5$se)
+    ts.plot(dltrans,pred5$pred,ic,
+    col=c("black","blue","red","red"))
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-57-1.png)
+
+Los intervalos son grandes, podría ser por la cantidad de datos
+
+### Ejemplo 2
+
+Datos: Índice de desempleo trimestal en Canada desde el 62
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/CAEMP.DAT"
+    datos <- read.csv(url(uu),sep=",",header=T)
+    emp.ts <- ts(datos,st=1962,fr=4)
+    plot(emp.ts)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-58-1.png)
+
+Veamos sus autocorrelaciones y AIC:
+
+    acf(emp.ts)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-59-1.png)
+
+    pacf(emp.ts)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-59-2.png)
+
+    ar(emp.ts)$aic
+
+    ##          0          1          2          3          4          5 
+    ## 347.493734   8.048336   0.000000   1.386627   2.471906   4.195572 
+    ##          6          7          8          9         10         11 
+    ##   6.015058   7.925583   9.390454  10.273560  10.989316  12.924608 
+    ##         12         13         14         15         16         17 
+    ##  14.892737  16.870041  18.803523  20.117383  22.114279  23.215372 
+    ##         18         19         20         21 
+    ##  25.038216  26.186319  28.019605  29.975609
+
+Decae linealmente el ACF, esto es señal de que no es un proceso AR
+
+Comparemos modelos:
+
+    mode1 <- arima(emp.ts,order=c(2,0,0))
+    mode2 <- arima(emp.ts,order=c(0,0,4))
+    Box.test(mode1$resid,t="Ljung",lag=20)
+
+    ## 
+    ##  Box-Ljung test
+    ## 
+    ## data:  mode1$resid
+    ## X-squared = 16.546, df = 20, p-value = 0.6822
+
+    Box.test(mode2$resid,t="Ljung",lag=20)
+
+    ## 
+    ##  Box-Ljung test
+    ## 
+    ## data:  mode2$resid
+    ## X-squared = 113.23, df = 20, p-value = 4.996e-15
+
+mode1 es ruido, pero mode2 no lo es. Analicemos los resíduos:
+
+    ts.plot(mode1$resid)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-61-1.png)
+
+    ts.plot(mode2$resid)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-61-2.png)
+
+    tsdiag(mode1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-61-3.png)
+
+Probemos un modelo ARMA
+
+    arma.21 <- arima(emp.ts,order=c(2,0,1))
+    arma.21$aic
+
+    ## [1] 494.8726
+
+    arma.21
+
+    ## 
+    ## Call:
+    ## arima(x = emp.ts, order = c(2, 0, 1))
+    ## 
+    ## Coefficients:
+    ##          ar1      ar2      ma1  intercept
+    ##       1.5745  -0.5987  -0.1612    97.9320
+    ## s.e.  0.1534   0.1522   0.1922     4.0145
+    ## 
+    ## sigma^2 estimated as 2.011:  log likelihood = -242.44,  aic = 494.87
+
+    tsdiag(arma.21)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-62-1.png)
+
+    arma.21$coef
+
+    ##        ar1        ar2        ma1  intercept 
+    ##  1.5744680 -0.5986826 -0.1612365 97.9320375
+
+    arma.21$var.coef
+
+    ##                   ar1         ar2         ma1   intercept
+    ## ar1        0.02353470 -0.02327060 -0.02640964  0.09975805
+    ## ar2       -0.02327060  0.02316479  0.02602775 -0.11240983
+    ## ma1       -0.02640964  0.02602775  0.03693592 -0.10423546
+    ## intercept  0.09975805 -0.11240983 -0.10423546 16.11644493
+
+    polyroot(c(1,-1.57,0.59)) # Estacionario (Las raíces son |x|>1)
+
+    ## [1] 1.056032+0i 1.604985-0i
+
+    polyroot(c(1,-0.16)) # Invertible
+
+    ## [1] 6.25+0i
+
+    # Si se cumplen ambas, el proceso ARMA es estacionario. 
+
+Test de Dickey Fuller
+---------------------
+
+> La Prueba de Dickey-Fuller busca determinar la existencia o no de
+> raíces unitarias en una serie de tiempo. La hipótesis nula de esta
+> prueba es que existe una raíz unitaria en la serie.
+
+    library(tseries)
+    adf.test(emp.ts)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  emp.ts
+    ## Dickey-Fuller = -2.6391, Lag order = 5, p-value = 0.3106
+    ## alternative hypothesis: stationary
+
+    adf.test(diff(emp.ts))
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  diff(emp.ts)
+    ## Dickey-Fuller = -4.0972, Lag order = 5, p-value = 0.01
+    ## alternative hypothesis: stationary
+
+### Ejemplo 3
+
+Datos: 14 series macroeconómicas:
+
+-   indice de precios del consumidor (`cpi`),
+-   producción industrial (`ip`),
+-   PNB Nominal (`gnp.nom`),
+-   Velocidad (`vel`),
+-   Empleo (`emp`),
+-   Tasa de interés (`int.rate`),
+-   Sueldos nominales (`nom.wages`),
+-   Deflactor del PIB (`gnp.def`),
+-   Stock de dinero (`money.stock`),
+-   PNB real (`gnp.real`),
+-   Precios de stock (`stock.prices`),
+-   PNB per cápita (`gnp.capita`),
+-   Salario real (`real.wages`), y
+-   Desempleo (`unemp`).
+
+Tienen diferentes longitudes pero todas terminan en 1988. Trabajaremos
+con `cpi`
+
+    data(NelPlo)
+    plot(cpi)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-65-1.png)
+La serie parece no ser estacionaria ni lineal.
+
+Veamos las raíces unitarias:
+
+    adf.test(cpi)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  cpi
+    ## Dickey-Fuller = -1.6131, Lag order = 5, p-value = 0.7374
+    ## alternative hypothesis: stationary
+
+¿Es estacionaria?
+
+Probemos con las diferencias
+
+    dife <- diff(cpi)
+    plot(dife)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-67-1.png)
+
+    adf.test(dife)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  dife
+    ## Dickey-Fuller = -4.4814, Lag order = 5, p-value = 0.01
+    ## alternative hypothesis: stationary
+
+La serie en diferencias si es estacionaria. Veamos qué modelo sugiere R:
+
+    ar(dife)
+
+    ## 
+    ## Call:
+    ## ar(x = dife)
+    ## 
+    ## Coefficients:
+    ##       1        2        3  
+    ##  0.8067  -0.3494   0.1412  
+    ## 
+    ## Order selected 3  sigma^2 estimated as  0.001875
+
+Hasta mi última revisión, no existe una función `ma` como `ar`, pero:
+
+    #### Busquemos el mejor MA #####
+    N=10
+    AICMA=matrix(0,ncol=1,nrow=N)
+    for (i in 1:N){
+    AICMA[i] = arima(diff(cpi),order=c(0,0,i))$aic
+    }
+    which.min(AICMA)
+
+    ## [1] 3
+
+    AICMA
+
+    ##            [,1]
+    ##  [1,] -432.7692
+    ##  [2,] -435.4208
+    ##  [3,] -436.1922
+    ##  [4,] -434.4117
+    ##  [5,] -432.4410
+    ##  [6,] -432.1389
+    ##  [7,] -432.3631
+    ##  [8,] -430.4594
+    ##  [9,] -428.4612
+    ## [10,] -429.8065
+
+Se sugiere un *M**A*(3).
+
+Evaluemos el modelo MA con una diferencia:
+
+    mode1 <- arima(cpi,order=c(0,1,3))
+    mode1
+
+    ## 
+    ## Call:
+    ## arima(x = cpi, order = c(0, 1, 3))
+    ## 
+    ## Coefficients:
+    ##          ma1     ma2     ma3
+    ##       0.8782  0.3754  0.1898
+    ## s.e.  0.0876  0.1172  0.0890
+    ## 
+    ## sigma^2 estimated as 0.00185:  log likelihood = 220.67,  aic = -433.34
+
+    tsdiag(mode1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-70-1.png)
+
+Cointegración:
+==============
+
+Datos: tasas de cambio mensuales de Estados Unidos, Inglaterra y Nueva
+Zelanda desde 2004.
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/us_rates.txt"
+    datos <- read.csv(url(uu),sep="",header=T)
+
+    # Tasas de cambio, datos mensuales
+    uk.ts <- ts(datos$UK,st=2004,fr=12)
+    eu.ts <- ts(datos$EU,st=2004,fr=12)
+
+Revisemos si las series son estacionarias:
+
+    # Tets de Phillips Perron
+    pp.test(uk.ts)
+
+    ## 
+    ##  Phillips-Perron Unit Root Test
+    ## 
+    ## data:  uk.ts
+    ## Dickey-Fuller Z(alpha) = -10.554, Truncation lag parameter = 7,
+    ## p-value = 0.521
+    ## alternative hypothesis: stationary
+
+    pp.test(eu.ts)
+
+    ## 
+    ##  Phillips-Perron Unit Root Test
+    ## 
+    ## data:  eu.ts
+    ## Dickey-Fuller Z(alpha) = -6.812, Truncation lag parameter = 7,
+    ## p-value = 0.7297
+    ## alternative hypothesis: stationary
+
+Tienen raíces unitarias
+
+Objetivo: Se piensa que la libra esterlina y el euro tienen alguna
+relación
+
+    #Test de Phillips Ollearis
+    po.test(cbind(uk.ts,eu.ts))
+
+    ## 
+    ##  Phillips-Ouliaris Cointegration Test
+    ## 
+    ## data:  cbind(uk.ts, eu.ts)
+    ## Phillips-Ouliaris demeaned = -21.662, Truncation lag parameter =
+    ## 10, p-value = 0.04118
+
+La *H**o*: NO COINTEGRADAS.
+
+Si son cointegradas, es decir que hay una tendencia a largo plazo.
+
+Veamos la relación:
+
+    reg <- lm(uk.ts~eu.ts)
+    summary(reg)
+
+    ## 
+    ## Call:
+    ## lm(formula = uk.ts ~ eu.ts)
+    ## 
+    ## Residuals:
+    ##        Min         1Q     Median         3Q        Max 
+    ## -0.0216256 -0.0068351  0.0004963  0.0061439  0.0284938 
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept) 0.074372   0.004983   14.92   <2e-16 ***
+    ## eu.ts       0.587004   0.006344   92.53   <2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 0.008377 on 1001 degrees of freedom
+    ## Multiple R-squared:  0.8953, Adjusted R-squared:  0.8952 
+    ## F-statistic:  8561 on 1 and 1001 DF,  p-value: < 2.2e-16
+
+Analicemos los resíduos:
+
+    residuos = resid(reg)
+    plot(resid(reg),t="l")
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-76-1.png)
+
+Presentan una estructura, debemos modelizarlos.
+
+    arma11 <- arima(residuos,order=c(1,0,1))
+    arma11
+
+    ## 
+    ## Call:
+    ## arima(x = residuos, order = c(1, 0, 1))
+    ## 
+    ## Coefficients:
+    ##          ar1     ma1  intercept
+    ##       0.9797  0.1013     0.0015
+    ## s.e.  0.0072  0.0331     0.0029
+    ## 
+    ## sigma^2 estimated as 3.031e-06:  log likelihood = 4947.45,  aic = -9886.9
+
+    tsdiag(arma11)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-77-1.png)
+
+Encontramos un modelo en los errores que si es estacionario, la relación
+a largo plazo entonces es el coeficiente de la regresión: 0.58.
 
 Referencias
 ===========

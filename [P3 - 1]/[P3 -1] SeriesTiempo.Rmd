@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "21 de marzo de 2018"
 output: 
-  html_document:
+  pdf_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -661,7 +661,8 @@ pacf(simulcion.ma2)
 Datos: Serie de tiempo (1952-1988) del ingreso nacional real en China por sector (año base: 1952)
 
 ```{r}
-data("ChinaIncome")
+library(AER)
+data(ChinaIncome)
 str(ChinaIncome)
 transporte <- ChinaIncome[,"transport"]
 ts.plot(transporte)
@@ -987,10 +988,6 @@ tsdiag(arma11)
 
 Encontramos un modelo en los errores que si es estacionario, la relación a largo plazo entonces es el coeficiente de la regresión: $0.58$.
 
-
-Resúmen de test:
-
-`Box.test`: 
 
 
 
