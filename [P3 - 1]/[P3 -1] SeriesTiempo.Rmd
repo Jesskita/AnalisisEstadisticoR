@@ -2,11 +2,11 @@
 title: 'Análisis Estadístico con R'
 subtitle: "Series de Tiempo"
 author: 
-- name: VMO
+- name: Víctor Morales-Oñate
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "21 de marzo de 2018"
 output: 
-  md_document:
+  html_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -209,7 +209,7 @@ Visualmenete:
     -   no parecen depender del nivel de la serie temporal, 
     -   y las fluctuaciones aleatorias también parecen ser más o menos constantes en tamaño a lo largo del tiempo
     
-- Multiplciativo
+- Multiplicativo
       -   Si el efecto estacional tiende a aumentar a medida que aumenta la tendencia
       -   la varianza de la serie original y la tendencia aumentan con el tiempo
 
@@ -253,12 +253,18 @@ Veamos el caso multiplicativo:
 ```{r}
 # Multiplicativa
 dulce.descompuesta1<-decompose(dulce, type="multiplicative")
+plot(dulce.descompuesta1)
+```
+
+```{r}
 a<-dulce.descompuesta1$trend[27] # La tendencia era de 130 en mayo del 82
 b<-dulce.descompuesta1$seasonal[27] # El componente de la estacionalidad era este
 c<-dulce.descompuesta1$random[27]  # Es el componente aleatorio
 
 a*b*c # La sumatoria de la descomposicion de la serie da el valor real, si es aditiva
 ```
+
+
 
 Veamos la forma alternativa de elección:
 
@@ -272,7 +278,7 @@ Se escoge la multiplicativa en este caso.
 
 ### Detrend:
 
-Las series se ofrecen generalmente sin tendencia ni estacionalidad
+Las series se ofrecen generalmente sin tendencia ni estacionalidad. Veamos la serie sin tendencia:
 
 ```{r}
 dulce.detrended <- dulce-dulce.descompuesta$trend
@@ -289,8 +295,6 @@ plot(dulce-dulce.descompuesta$trend)
 plot(dulce/dulce.descompuesta1$trend)
 ```
 
-
-
 Existen formas de descomponer más sofisticadas, por ejemplo, usando la función `stl`.
 
 ```{r}
@@ -298,11 +302,12 @@ dulce.stl<-stl(dulce,s.window="per")
 plot(dulce.stl)
 ```
 
-En este caso el calculo de la tendencia cambia, se calcula con formas no parametricas. La barra del final es la desviacion estándar.
+En este caso el calculo de la tendencia cambia, se calcula con formas no paramétricas. La barra del final es la desviacion estándar.
 
 ## Suavizamiento: Holt-Winters
 
-El método se resume en las f?rmulas siguientes:
+El método se resume en las fórmulas siguientes:
+
 \begin{eqnarray}
 a_{t} &=& \alpha(x_{t}-s_{t-p})+(1-\alpha)(a_{t-1}+b_{t-1}) \nonumber \\
 b_{t} &=& \beta(a_{t}-a_{t-1})+(1-\beta)b_{t-1} \nonumber \\
@@ -310,7 +315,6 @@ s_{t} &=& \gamma(x_{t}-a_{t})+(1-\gamma)s_{t-p} \nonumber
 \end{eqnarray}
 
 El método de Holt-Winters generaliza el método de suavizamiento exponencial.
-
 
 ### Ejemplo 
 
@@ -342,6 +346,9 @@ plot(dulce.se1)
 dulce.se$SSE # Suma de los residuos al cuadrado (de un paso)
 dulce.se1$SSE # Suma de los residuos al cuadrado (de un paso)
 ```
+
+
+Es decir, el criterio para la busqueda de los parámetros es la minimización del SSE.
 
 ### Ejemplo
 
@@ -377,8 +384,7 @@ w <- rnorm(n,mu,sdt)
 ```
 
 
-
-¿Cómo se si algo tiene ruido blanco? : Analizo la funcion de autocorrelacion muestral.
+¿Cómo se si algo tiene ruido blanco? : Analizo la función de autocorrelación muestral.
 
 $$
 \hat\rho_k = \frac{\hat\gamma_k}{\hat\gamma_0}
@@ -398,7 +404,7 @@ Se asume que $\hat\rho_k \sim N(0,1/n)$
 acf(w)
 ```
 
-Si se sale de las franjas, si hay correlacion y no hay ruido blanco
+Si se sale de las franjas, si hay correlación y no hay ruido blanco
 
 
 # El modelo Autoregresivo
@@ -409,7 +415,9 @@ Proceso estocástico autoregresivo de primer orden
 (Y_{t}-\delta) = \alpha_{1}(Y_{t-1}-\delta)+u_{t} \nonumber
 \end{eqnarray}
 
-Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado
+Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado.
+
+Trabajaremos con datos de $M1$ ([WCURRNS](https://fred.stlouisfed.org/series/WCURRNS) dinero en circuación fuera de los Estados Unidos) semanales de los Estados Unidos desde enero de 1975.
 
 ```{r}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/WCURRNS.csv"
@@ -422,26 +430,25 @@ ts.plot(value.ts)
 
 Estacionariedad: La serie es estacionaria si la varianza no cambia
 
-
 ```{r}
 acf(value.ts)
 ```
 
-Esta es la marca de una serie que NO es estacionaria, dado que la autocorrelacion decrece muy lentamente.
+Esta es la marca de una serie que NO es estacionaria, dado que la autocorrelación decrece muy lentamente.
 
 
 ```{r}
 plot(stl(value.ts,s.window="per"))  
 ```
 
-Una forma de trabajar con una serie esacionaria es quitarle el trend
+Una forma de trabajar con una serie esacionaria es quitarle el *trend*
 
 ```{r}
 valuetrend<- value.ts- stl(value.ts,s.window="per")$time.series[,2]
 plot(valuetrend)
 ```
 
-Reminder es lo que queda sin tendencia ni estacionalidad
+*Reminder* es lo que queda sin tendencia ni estacionalidad
 
 ```{r}
 valuereminder<-
@@ -467,7 +474,7 @@ Nos indica que hay una estructura en la serie que no es ruido blanco pero SI est
 
 ### Simulación:
 
-El siguiente paso es modelar esta estructura. Un modelo para ello es un modelo autorregresivo. Simular un AR(1)
+El siguiente paso es modelar esta estructura. Un modelo para ello es un modelo autorregresivo. Simular un $AR(1)$.
 
 ```{r}
 y <- arima.sim(list(ar=c(0.99),sd=1),n=200)
@@ -492,7 +499,7 @@ Las autocorrelaciones decaen exponencialemente a cero
 
 La autocorrelación parcial es la correlación entre $Y_t$ y $Y_{t-k}$ después de eliminar el efecto de las Y intermedias.
 
-En los datos de series de tiempo, una gran proporción de la correlación entre $Y_t$ y $Y_{t-k}$ puede deberse a sus correlaciones con los rezagos intermedios $Y_1,Y_2,\lpoints,Y_{t-k+1}$. La correlación parcial elimina la influencia de estas variables intermedias.
+En los datos de series de tiempo, una gran proporción de la correlación entre $Y_t$ y $Y_{t-k}$ puede deberse a sus correlaciones con los rezagos intermedios $Y_1,Y_2,\ldots,Y_{t-k+1}$. La correlación parcial elimina la influencia de estas variables intermedias.
 
 
 ```{r}
@@ -584,6 +591,408 @@ La prueba de Ljung-Box se utiliza comúnmente en autorregresivo integrado de med
 Box.test(residuos,lag=20,type="Ljung")
 ```
 
+$Ho$: Ruido Blanco ¿Es ruido blanco?
+
+
+Probemos un segundo modelo
+
+```{r}
+modelo2 <- arima(ts.precio, order=c(2,0,0))
+print(modelo2)
+```
+
+
+Comparemos los resultados:
+
+```{r}
+ar2.precio <- ar(ts.precio,FALSE,2)
+ar2.precio$aic
+modelo2$aic
+modelo1$aic
+```
+
+Se escoge el modelo de menor AIC.
+
+# Proceso de Medias Móviles (MA)
+
+Simulemos un modelo:
+
+```{r}
+simulcion.ma <- arima.sim(200,model=list(ma=c(0.8)))
+plot(simulcion.ma)
+acf(simulcion.ma)
+pacf(simulcion.ma)
+```
+
+
+-   Las $p$ primeras autocorrelaciones van a ser diferentes de cero
+-   La autocorrelación parcial decae exponencialmente
+
+
+Veamos otro ejemplo
+
+
+```{r}
+simulcion.ma1 <- arima.sim(200, model =list(ma=c(2.1,-0.9,4.7)))
+plot(simulcion.ma1)
+acf(simulcion.ma1)
+pacf(simulcion.ma1)
+```
+
+
+# Proceso ARIMA
+
+Simulemos el proceso:
+
+```{r}
+simulcion.ma2 <- arima.sim(1000, model=list(order=c(1,0,1),ar=c(-0.1),ma=c(0.1)))
+plot(simulcion.ma2)
+acf(simulcion.ma2)
+pacf(simulcion.ma2)
+
+```
+
+
+# Buscando el *mejor* modelo
+
+
+### Ejemplo 1
+
+Datos: Serie de tiempo (1952-1988) del ingreso nacional real en China por sector (año base: 1952)
+
+```{r}
+data("ChinaIncome")
+str(ChinaIncome)
+transporte <- ChinaIncome[,"transport"]
+ts.plot(transporte)
+```
+
+
+Parece no ser estacionario. Hacemos una transformación para tratar de confirmar la estacionariedad.
+
+```{r}
+ltrans <- log(transporte)
+ts.plot(ltrans)
+```
+
+Notamos que persiste el porblema, sigue sin ser estacionario. Probemos con la diferencia:
+
+
+```{r}
+dltrans <- diff(ltrans)
+ts.plot(dltrans)
+abline(h=0)
+```
+
+Asumamos estacionariedad  (después haremos una prueba específica para verificar estacionariedad) y busquemos el mejor modelo.
+
+Usaremos el `acf` y el `pacf` para evaluar si es MA o AR.
+
+```{r}
+acf(dltrans)
+pacf(dltrans)
+```
+
+Ajustando según la gráfica, tendríamos un proceso $MA(2)$
+
+¿Qué recomienda `R`?
+
+```{r}
+ar(dltrans)$aic
+```
+
+Según esta recomendación, estamos ante un proceso $AR(3)$.
+
+```{r}
+modelo1 <- arima(dltrans,order = c(3,0,0))
+modelo1$aic
+```
+
+Ajustemos el $MA(2)$ y comparemos:
+
+```{r}
+modelo2 <- arima(dltrans,order = c(0,0,2))
+modelo2$aic
+```
+
+Recuerda: Un menor AIC es mejor. ¿Con qué modelo te quedas?
+
+Ajustemos un $MA(3)$:
+
+```{r}
+modelo3 <- arima(dltrans,order = c(0,0,3))
+print(modelo3)
+modelo3$aic
+```
+
+Este modelo es mejor que el $MA(2)$, pero peor que $AR(3)$.
+
+
+Probemos algunas combinaciones
+
+
+```{r}
+# Ajustando un ARMA(1,1)
+modelo4 <- arima(dltrans,order = c(1,0,1))
+modelo4$aic
+# Ajustando un ARMA(2,1)
+modelo5 <- arima(dltrans,order = c(2,0,1))
+modelo5$aic
+# Ajustando un ARMA(1,2)
+modelo6 <- arima(dltrans,order = c(1,0,2))
+modelo6$aic
+```
+
+Nos quedamos con el $AR(3)$. Revisemos los residuos:
+
+```{r}
+AR3Resid <- (modelo1$resid)
+ts.plot(AR3Resid)
+acf(AR3Resid)
+pacf(AR3Resid)
+```
+No hay autocorrelación, No hay autocorrelación parcial.
+
+
+Veamos si se trata de un ruido blanco
+```{r}
+Box.test(AR3Resid)
+```
+
 ¿Es ruido blanco?
+
+
+Realicemos una proyección a 5 años
+
+
+```{r}
+pred5 <- predict(modelo1, n.ahead=5,se=T)
+pred5se <- pred5$se
+```
+
+
+intervalos de confianza:
+```{r}
+ic = pred5$pred + cbind(-2*pred5$se,2*pred5$se)
+ts.plot(dltrans,pred5$pred,ic,
+col=c("black","blue","red","red"))
+```
+
+Los intervalos son grandes, podría ser por la cantidad de datos
+
+### Ejemplo 2
+
+Datos: Índice de desempleo trimestal en Canada desde el 62
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/CAEMP.DAT"
+datos <- read.csv(url(uu),sep=",",header=T)
+emp.ts <- ts(datos,st=1962,fr=4)
+plot(emp.ts)
+```
+
+
+Veamos sus autocorrelaciones y AIC:
+
+```{r}
+acf(emp.ts)
+pacf(emp.ts)
+ar(emp.ts)$aic
+```
+
+Decae linealmente el ACF, esto es señal de que no es un proceso AR
+
+Comparemos modelos:
+
+```{r}
+mode1 <- arima(emp.ts,order=c(2,0,0))
+mode2 <- arima(emp.ts,order=c(0,0,4))
+Box.test(mode1$resid,t="Ljung",lag=20)
+Box.test(mode2$resid,t="Ljung",lag=20)
+```
+
+mode1 es ruido, pero mode2 no lo es. Analicemos los resíduos:
+
+```{r}
+ts.plot(mode1$resid)
+ts.plot(mode2$resid)
+tsdiag(mode1)
+```
+
+
+Probemos un modelo ARMA
+
+```{r}
+arma.21 <- arima(emp.ts,order=c(2,0,1))
+arma.21$aic
+arma.21
+
+tsdiag(arma.21)
+
+arma.21$coef
+arma.21$var.coef
+```
+
+
+
+
+```{r}
+polyroot(c(1,-1.57,0.59)) # Estacionario (Las raíces son |x|>1)
+polyroot(c(1,-0.16)) # Invertible
+# Si se cumplen ambas, el proceso ARMA es estacionario. 
+```
+
+
+## Test de Dickey Fuller
+
+> La Prueba de Dickey-Fuller busca determinar la existencia o no de raíces unitarias en una serie de tiempo. La hipótesis nula de esta prueba es que existe una raíz unitaria en la serie.
+
+```{r,warning=FALSE,message=FALSE}
+library(tseries)
+adf.test(emp.ts)
+adf.test(diff(emp.ts))
+```
+
+### Ejemplo 3
+
+Datos: 14 series macroeconómicas: 
+
+  -   indice de precios del consumidor (`cpi`), 
+  -   producción industrial (`ip`),
+  -   PNB Nominal (`gnp.nom`), 
+  -   Velocidad (`vel`), 
+  -   Empleo (`emp`), 
+  -   Tasa de interés (`int.rate`), 
+  -   Sueldos nominales (`nom.wages`), 
+  -   Deflactor del PIB (`gnp.def`), 
+  -   Stock de dinero (`money.stock`), 
+  -   PNB real (`gnp.real`), 
+  -   Precios de stock (`stock.prices`), 
+  -   PNB per cápita (`gnp.capita`), 
+  -   Salario real (`real.wages`), y 
+  -   Desempleo (`unemp`). 
+
+Tienen diferentes longitudes pero todas terminan en 1988. Trabajaremos con `cpi`
+
+```{r}
+data(NelPlo)
+plot(cpi)
+```
+La serie parece no ser estacionaria ni lineal.
+
+Veamos las raíces unitarias:
+
+```{r}
+adf.test(cpi)
+```
+
+¿Es estacionaria?
+
+Probemos con las diferencias
+
+```{r,warning=FALSE}
+dife <- diff(cpi)
+plot(dife)
+adf.test(dife)
+```
+
+La serie en diferencias si es estacionaria. Veamos qué modelo sugiere R:
+
+```{r}
+ar(dife)
+```
+
+Hasta mi última revisión, no existe una función `ma` como `ar`, pero:
+
+```{r}
+#### Busquemos el mejor MA #####
+N=10
+AICMA=matrix(0,ncol=1,nrow=N)
+for (i in 1:N){
+AICMA[i] = arima(diff(cpi),order=c(0,0,i))$aic
+}
+which.min(AICMA)
+AICMA
+```
+
+Se sugiere un $MA(3)$.
+
+Evaluemos el modelo MA con una diferencia:
+
+```{r}
+mode1 <- arima(cpi,order=c(0,1,3))
+mode1
+tsdiag(mode1)
+```
+
+# Cointegración:
+
+Datos: tasas de cambio mensuales de Estados Unidos, Inglaterra y Nueva Zelanda desde 2004.
+
+```{r}
+uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/us_rates.txt"
+datos <- read.csv(url(uu),sep="",header=T)
+```
+
+
+```{r}
+# Tasas de cambio, datos mensuales
+uk.ts <- ts(datos$UK,st=2004,fr=12)
+eu.ts <- ts(datos$EU,st=2004,fr=12)
+```
+
+
+Revisemos si las series son estacionarias:
+
+```{r}
+# Tets de Phillips Perron
+pp.test(uk.ts)
+pp.test(eu.ts)
+```
+
+Tienen raíces unitarias
+
+Objetivo: Se piensa que la libra esterlina y el euro tienen alguna relación
+
+```{r}
+#Test de Phillips Ollearis
+po.test(cbind(uk.ts,eu.ts))
+```
+
+La $Ho$: NO COINTEGRADAS.
+
+Si son cointegradas, es decir que hay una tendencia a largo plazo.
+
+Veamos la relación:
+
+```{r}
+reg <- lm(uk.ts~eu.ts)
+summary(reg)
+```
+
+Analicemos los resíduos:
+
+```{r}
+residuos = resid(reg)
+plot(resid(reg),t="l")
+```
+
+Presentan una estructura, debemos modelizarlos.
+
+```{r}
+arma11 <- arima(residuos,order=c(1,0,1))
+arma11
+tsdiag(arma11)
+```
+
+Encontramos un modelo en los errores que si es estacionario, la relación a largo plazo entonces es el coeficiente de la regresión: $0.58$.
+
+
+Resúmen de test:
+
+`Box.test`: 
+
+
+
 
 # Referencias
