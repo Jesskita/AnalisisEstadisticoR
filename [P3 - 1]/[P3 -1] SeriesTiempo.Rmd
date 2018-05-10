@@ -376,6 +376,16 @@ col=c("blue","red"))
 
 ## Ruido blanco
 
+Una serie $(\epsilon_t,t\in \mathbb{Z)}$ se dice que es Ruido Blanco si cumple
+
+-   $E(\epsilon_t)=0$ (media cero)
+-   $Var(\epsilon_t)=\sigma^2$ (varianza constante)
+-   $\forall k\neq 0$, $Cov(\epsilon_t,\epsilon_{t+k})=0$ (Incorrelación)
+
+
+Si además cumple que $\epsilon_t\sim N(0,\sigma^2)$ se dice que $\epsilon_t$ es Ruido Blanco Gaussiano (RBG).
+
+
 ```{r}
 n   <-200
 mu  <- 0
@@ -391,14 +401,18 @@ $$
 $$
 donde
 $$
-\hat\gamma_k = \frac{\sum(Y_t-\bar{Y})(Y_{t+k}-\bar{Y})}{n}
+\hat\gamma_k = \frac{\sum(Y_t-\bar{Y})(Y_{t-k}-\bar{Y})}{n}
 $$
 $$
 \hat\gamma_0 = \frac{\sum(Y_t-\bar{Y})^2}{n}
 $$
 
 
-Se asume que $\hat\rho_k \sim N(0,1/n)$
+Se asume que $\hat\rho_k \sim N(0,1/n)$. Es decir:
+
+$$
+\hat\rho_k = \frac{\sum_{t=k+1}^{T}(Y_t-\bar{Y})(Y_{t-k}-\bar{Y})}{\sum_{t=1}^{T}(Y_t-\bar{Y})^2}
+$$
 
 ```{r}
 acf(w)
@@ -407,15 +421,68 @@ acf(w)
 Si se sale de las franjas, si hay correlación y no hay ruido blanco
 
 
-# El modelo Autoregresivo
+## Serie estacionaria (en covarianza)
 
-Proceso estocástico autoregresivo de primer orden
+Una serie $(Y_t, t \in Z)$ se dice estacionaria en covarianza o simplemente estacionaria si cumple dos condiciones:
 
-\begin{eqnarray}
-(Y_{t}-\delta) = \alpha_{1}(Y_{t-1}-\delta)+u_{t} \nonumber
-\end{eqnarray}
+1.   $E(Y_t)=\mu$
+2.   $Cov(Y_{t_1},Y_{t_2})=R(t_2-t_1)$ con $R$ función par ($f(-x)=f(x)$)
 
-Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado.
+Es decir, la covarianza entre $Y_{t_1}$ y $Y_{t_2}$ depende únicamente de la distancia entre los tiempo $t_2$ y $t_1$, $|t_2-t_1|$.
+
+# Procesos ARMA(p,q)
+
+En los modelos de descomposición $Y_t = T_t + S_t + \epsilon_t$, $t = 1, 2,\ldots$ se estima $\hat\epsilon_t$ y se determina si es o no ruido blanco mediante, por ejemplo, las pruebas LjungBox y DurbinWatson.
+
+En caso de encontrar que $\hat\epsilon_t$ no es ruido blanco, el siguiente paso es modelar esta componente mediante tres posibles modelos:
+
+1. Medias Móviles de orden $q$, $MA(q)$.
+2. Autoregresivos de orden $q$, $AR(p)$.
+3. Medias Móviles Autoregresivos, $ARMA(p, q)$.
+ 
+# El modelo Autoregresivo AR(p)
+
+Se dice que $Y_n$, $n \in \mathbb{Z}$ sigue un proceso $AR(p)$ de media cero si
+
+
+$$
+Y_t = \phi_1Y_{t-1}+\phi_2Y_{t-2}+\cdots+\phi_pY_{t-p}+\epsilon_t
+$$
+
+donde $\epsilon_t\sim RB(0,\sigma^2)$ y $p = 1,2,\ldots$. Usando el operador de rezago $L$ se puede escribir como:
+
+$$
+\phi_p(L)(Y_n) =\epsilon_n
+$$
+
+con $\phi_p(z)=1-\phi_1z-\phi_2z^2-\cdots-\phi_pz^p$,el polinomio autorregresivo.
+
+
+**Condición Suficiente para que un $AR(p)$ sea Estacionario en Covarianza**
+
+La condición suficiente para que $Y_t \sim AR(p)$ sea estacionario en covarianza es que las $p$ raíces de la ecuación $\phi_p(z) = 0$, $z_i$, $i =1,2,\ldots,p$ cumplan
+
+$$
+|z_i|>1.\label{eq2}
+$$
+
+En palabras, la condición $\ref{eq2}$ se describe como *para que un proceso autorregresivo de orden $p$ sea estacionario en covarianza, es suficiente que las raíces del polinomio autorregresivo estén por fuera del círculo unitario*
+
+Si el proceso $Y_t$ es estacionario en covarianza se cumple que su media es constante, $Y_t = \mu$
+
+**Propiedades**
+
+1. $E(Y_t) = 0$
+2. $\sum_{j=1}^{p}\phi_j<1$
+
+
+<!-- Proceso estocástico autoregresivo de primer orden -->
+
+<!-- \begin{eqnarray} -->
+<!-- (Y_{t}-\delta) = \alpha_{1}(Y_{t-1}-\delta)+u_{t} \nonumber -->
+<!-- \end{eqnarray} -->
+
+<!-- Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado. -->
 
 Trabajaremos con datos de $M1$ ([WCURRNS](https://fred.stlouisfed.org/series/WCURRNS) dinero en circuación fuera de los Estados Unidos) semanales de los Estados Unidos desde enero de 1975.
 
@@ -497,7 +564,15 @@ Las autocorrelaciones decaen exponencialemente a cero
 
 **Autocorrelaciones parciales**: nos ayunda a determinar el orden del modelo.
 
-La autocorrelación parcial es la correlación entre $Y_t$ y $Y_{t-k}$ después de eliminar el efecto de las Y intermedias.
+La autocorrelación parcial es la correlación entre $Y_t$ y $Y_{t-k}$ después de eliminar el efecto de las $Y$ intermedias.
+
+
+**Definición**
+Suponga que $(Y_t, t \in Z)$ es estacionaria. La pacf muestral es una función de $k$,
+
+1. $\hat{\alpha}(1)=\hat\rho(1)$
+2. $\hat{\alpha}(2)$: se regresa $Y_t$ sobre $Y_{t-1}$ y $Y_{t-2}$ tal que $Y_t=\phi_{21}Y_{t-1}+\phi_{22}Y_{t-2}+\epsilon_t$ entonces $\hat{\alpha}(2)=\phi_{22}$
+3. $\hat{\alpha}(k)$: se regresa $Y_t$ sobre $Y_{t-1}\ldots Y_{t-k}$ tal que $Y_t=\phi_{k1}Y_{t-1}+\ldots+\phi_{kk}Y_{t-2}+\epsilon_t$ entonces $\hat{\alpha}(k)=\phi_{kk}$
 
 En los datos de series de tiempo, una gran proporción de la correlación entre $Y_t$ y $Y_{t-k}$ puede deberse a sus correlaciones con los rezagos intermedios $Y_1,Y_2,\ldots,Y_{t-k+1}$. La correlación parcial elimina la influencia de estas variables intermedias.
 
@@ -585,7 +660,7 @@ $$
 
 donde $\chi _{1-\alpha ,h}^{2}$ es la $\alpha$-cuantil de la distribución chi-cuadrado con $m$ grados de libertad.
 
-La prueba de Ljung-Box se utiliza comúnmente en autorregresivo integrado de media móvil de modelado (ARIMA). Tenga en cuenta que se aplica a los residuos de un modelo ARIMA equipada, no en la serie original, y en tales aplicaciones, la hipótesis de hecho objeto del ensayo es que los residuos del modelo ARIMA no tienen autocorrelación. Al probar los residuales de un modelo ARIMA estimado, los grados de libertad deben ser ajustados para reflejar la estimación de parámetros. Por ejemplo, para un modelo ARIMAa (p,0,q), los grados de libertad se debe establecer en $h-p-q$.
+La prueba de Ljung-Box se utiliza comúnmente en autorregresivo integrado de media móvil de modelado (ARIMA). Tenga en cuenta que se aplica a los residuos de un modelo ARIMA equipada, no en la serie original, y en tales aplicaciones, la hipótesis de hecho objeto del ensayo es que los residuos del modelo ARIMA no tienen autocorrelación. Al probar los residuales de un modelo ARIMA estimado, los grados de libertad deben ser ajustados para reflejar la estimación de parámetros. Por ejemplo, para un modelo $ARIMA (p,0,q)$, los grados de libertad se debe establecer en $h-p-q$.
 
 ```{r}
 Box.test(residuos,lag=20,type="Ljung")
@@ -601,7 +676,6 @@ modelo2 <- arima(ts.precio, order=c(2,0,0))
 print(modelo2)
 ```
 
-
 Comparemos los resultados:
 
 ```{r}
@@ -614,6 +688,72 @@ modelo1$aic
 Se escoge el modelo de menor AIC.
 
 # Proceso de Medias Móviles (MA)
+
+Recordemos el polinomio de rezagos:
+
+$$
+B_p{(L)} = \beta_0+\beta_1L+\beta_2L^2+\cdots++\beta_pL^p
+$$
+
+combinados con una serie de tiempo:
+
+$$
+B_p{(L)}(Y_t) = (\beta_0+\beta_1L+\beta_2L^2+\cdots++\beta_pL^p)(Y_t)
+$$
+
+$$
+B_p{(L)}(Y_t) =\sum_{j=0}^{p}\beta_jL^jY_t
+$$
+$$
+B_p{(L)}(Y_t) =\sum_{j=0}^{p}\beta_jL^jY_t
+$$
+
+**Definición**
+
+Se dice que una serie $Y_t$ sigue un proceso $MA(q)$, $q =1, 2,\ldots$ de media móvil de orden $q$, si se cumple que
+
+$$
+Y_t = \epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t-q}
+$$
+para constantes $\theta_1,\ldots,\theta_p$ y $\epsilon_t\sim N(0,\sigma^2)$. La expresión con el operador $L$ es, si se define el polinomio.
+
+$$
+\theta_p(L) = 1+\theta_1L+\cdots+\theta_qL^q
+$$
+
+entonces la ecuación queda $Y_t = \theta_q(L)(\epsilon_t)$
+
+**Propiedades**
+
+1. $E(Y_t)=0$
+2. $Var(Y_t)= (1+\theta_1^2+\cdots+\theta_q^2)\sigma^2$
+
+luego $Var(Y_t) > Var(\epsilon_t)$, en general.
+3. $Cov(Y_t,Y_{t+k}) = R(k)$, donde
+
+$$
+R(K) = \sigma^2\sum_{j=0}^{q-k}\theta_j\theta_{j+k}\label{cov}
+$$
+
+donde $\theta_0=1$ y $k<q+1$. $R(K)=0$ si $k\geq q+1$.
+
+4. Un $MA(q)$ siempre es un proceso estacionario con ACF, $p(k)=\frac{R(k)}{R(0)}$
+
+La ecuación $\eqref{cov}$ se puede interpretar como una indicación de que un $MA(q)$ es un proceso d´ebilmente correlacionado, ya que su autocovarianza es cero a partir de un valor. Por esta razón se puede ver los procesos $MA(q)$ como alternativas al Ruido Blanco completamente incorrelacionado.
+
+**Ejemplo**
+
+Sea $Y_t\sim MA(2)$ dado por:
+
+$$
+y_t = \epsilon_t+\theta_1\epsilon_{t-1}+\theta_2\epsilon_{t-2}
+$$
+donde $\epsilon_{t} \sim N(0,9)$, con $\theta_1=-0.4$,$\theta_2=0.4$.
+
+De acuerdo con $\eqref{cov}$, si la fac muestral de una serie Yt termina abruptamente puede tratarse de un $MA(q)$.
+
+
+
 
 Simulemos un modelo:
 
@@ -640,7 +780,18 @@ pacf(simulcion.ma1)
 ```
 
 
-# Proceso ARIMA
+# Proceso ARMA
+
+**Definición**
+
+Un proceso $Yt \sim ARMA(p, q)$ se define mediante
+
+$$
+\phi_p(L)(Y_t)=\theta_q(L)\epsilon_t
+$$
+donde $\epsilon_t\sim RB(0,\sigma^2)$ y $\phi_p(z)=1-\sum_{j=1}^{p}\phi_jz^j$, $\theta_q(z)=1+\sum_{j=1}^q\theta_jz^j$ son los polinomios autoregresivo y de media móvil respectivamente.
+
+se asume que las raíces de las ecuaciones $\phi_p(z) = 0$ y $\theta_q(z) = 0$ están fuera del círculo unitario. Además se asume que estos polinomios no tienen raíces en común. Si se cumplen estas condiciones el proceso $Yt \sim ARMA(p, q)$ es estacionario e identificable.
 
 Simulemos el proceso:
 
@@ -660,7 +811,7 @@ pacf(simulcion.ma2)
 
 Datos: Serie de tiempo (1952-1988) del ingreso nacional real en China por sector (año base: 1952)
 
-```{r}
+```{r,warning=FALSE,message=FALSE}
 library(AER)
 data(ChinaIncome)
 str(ChinaIncome)
@@ -836,12 +987,28 @@ arma.21$var.coef
 
 
 
-
 ```{r}
 polyroot(c(1,-1.57,0.59)) # Estacionario (Las raíces son |x|>1)
 polyroot(c(1,-0.16)) # Invertible
 # Si se cumplen ambas, el proceso ARMA es estacionario. 
 ```
+
+
+
+**Condición de invertibilidad del Proceso $MA(q)$**
+
+Dado un proceso $MA(q)$, $Y_t = \theta q(L)(\epsilon_t)$ donde $\theta_q(L) = 1+\theta_1L+\theta_2L^2+\cdots+\theta_qL^q$, entonces considerando el polinomio en $z\in \mathbb{C}, \theta_q(z) = 1+\theta_1z+\cdots+\theta_qz^q$ y sus $q$ raíces $(z_1, z_2,\ldots,z_q)\in \mathbb{C}$, es decir, valores $z \in \mathbb{C}$ tales que $\theta_q(z) = 0$, se dice que el proceso $Y_t$ es invertible si se cumple
+
+$$
+|z_j|>1, \quad \forall j = 1,\ldots,q \label{eq1}
+$$
+o también, si $\theta_q(z) \neq 0,\forall z, |z|\leq  1$. Note que $\eqref{eq1}$ es equivalente a
+
+$$
+\frac{1}{z_j}<1, \quad \forall j = 1,\ldots,q
+$$
+
+es decir, los inversos de las raíces deben caer dentro del círculo unitario complejo.
 
 
 ## Test de Dickey Fuller
@@ -987,9 +1154,5 @@ tsdiag(arma11)
 ```
 
 Encontramos un modelo en los errores que si es estacionario, la relación a largo plazo entonces es el coeficiente de la regresión: $0.58$.
-
-
-
-
 
 # Referencias

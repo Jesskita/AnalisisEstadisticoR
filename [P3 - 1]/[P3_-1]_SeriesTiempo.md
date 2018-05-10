@@ -12,11 +12,14 @@
     -   [Suavizamiento: Holt-Winters](#suavizamiento-holt-winters)
 -   [Modelos de series de tiempo](#modelos-de-series-de-tiempo)
     -   [Ruido blanco](#ruido-blanco)
--   [El modelo Autoregresivo](#el-modelo-autoregresivo)
+    -   [Serie estacionaria (en
+        covarianza)](#serie-estacionaria-en-covarianza)
+-   [Procesos ARMA(p,q)](#procesos-armapq)
+-   [El modelo Autoregresivo AR(p)](#el-modelo-autoregresivo-arp)
     -   [Simulación:](#simulacion)
     -   [Prueba de Ljung-Box](#prueba-de-ljung-box)
 -   [Proceso de Medias Móviles (MA)](#proceso-de-medias-moviles-ma)
--   [Proceso ARIMA](#proceso-arima)
+-   [Proceso ARMA](#proceso-arma)
 -   [Buscando el *mejor* modelo](#buscando-el-mejor-modelo)
     -   [Ejemplo 1](#ejemplo-1-1)
     -   [Ejemplo 2](#ejemplo-2-1)
@@ -457,6 +460,17 @@ Modelos de series de tiempo
 Ruido blanco
 ------------
 
+Una serie (*ϵ*<sub>*t*</sub>, *t* ∈ ℤ) se dice que es Ruido Blanco si
+cumple
+
+-   *E*(*ϵ*<sub>*t*</sub>)=0 (media cero)
+-   *V**a**r*(*ϵ*<sub>*t*</sub>)=*σ*<sup>2</sup> (varianza constante)
+-   ∀*k* ≠ 0, *C**o**v*(*ϵ*<sub>*t*</sub>, *ϵ*<sub>*t* + *k*</sub>)=0
+    (Incorrelación)
+
+Si además cumple que *ϵ*<sub>*t*</sub> ∼ *N*(0, *σ*<sup>2</sup>) se dice
+que *ϵ*<sub>*t*</sub> es Ruido Blanco Gaussiano (RBG).
+
     n   <-200
     mu  <- 0
     sdt <- 3
@@ -470,13 +484,17 @@ $$
 $$
  donde
 $$
-\\hat\\gamma\_k = \\frac{\\sum(Y\_t-\\bar{Y})(Y\_{t+k}-\\bar{Y})}{n}
+\\hat\\gamma\_k = \\frac{\\sum(Y\_t-\\bar{Y})(Y\_{t-k}-\\bar{Y})}{n}
 $$
 $$
 \\hat\\gamma\_0 = \\frac{\\sum(Y\_t-\\bar{Y})^2}{n}
 $$
 
-Se asume que $\\hat\\rho\_k \\sim N(0,1/n)$
+Se asume que $\\hat\\rho\_k \\sim N(0,1/n)$. Es decir:
+
+$$
+\\hat\\rho\_k = \\frac{\\sum\_{t=k+1}^{T}(Y\_t-\\bar{Y})(Y\_{t-k}-\\bar{Y})}{\\sum\_{t=1}^{T}(Y\_t-\\bar{Y})^2}
+$$
 
     acf(w)
 
@@ -484,14 +502,81 @@ Se asume que $\\hat\\rho\_k \\sim N(0,1/n)$
 
 Si se sale de las franjas, si hay correlación y no hay ruido blanco
 
-El modelo Autoregresivo
-=======================
+Serie estacionaria (en covarianza)
+----------------------------------
 
-Proceso estocástico autoregresivo de primer orden
+Una serie (*Y*<sub>*t*</sub>, *t* ∈ *Z*) se dice estacionaria en
+covarianza o simplemente estacionaria si cumple dos condiciones:
 
-Donde *δ* es la media de *Y* y *u*<sub>*i*</sub> es un ruido blanco no
-correlacionado.
+1.  *E*(*Y*<sub>*t*</sub>)=*μ*
+2.  *C**o**v*(*Y*<sub>*t*<sub>1</sub></sub>, *Y*<sub>*t*<sub>2</sub></sub>)=*R*(*t*<sub>2</sub> − *t*<sub>1</sub>)
+    con *R* función par (*f*(−*x*)=*f*(*x*))
 
+Es decir, la covarianza entre *Y*<sub>*t*<sub>1</sub></sub> y
+*Y*<sub>*t*<sub>2</sub></sub> depende únicamente de la distancia entre
+los tiempo *t*<sub>2</sub> y *t*<sub>1</sub>,
+|*t*<sub>2</sub> − *t*<sub>1</sub>|.
+
+Procesos ARMA(p,q)
+==================
+
+En los modelos de descomposición
+*Y*<sub>*t*</sub> = *T*<sub>*t*</sub> + *S*<sub>*t*</sub> + *ϵ*<sub>*t*</sub>,
+*t* = 1, 2, … se estima $\\hat\\epsilon\_t$ y se determina si es o no
+ruido blanco mediante, por ejemplo, las pruebas LjungBox y DurbinWatson.
+
+En caso de encontrar que $\\hat\\epsilon\_t$ no es ruido blanco, el
+siguiente paso es modelar esta componente mediante tres posibles
+modelos:
+
+1.  Medias Móviles de orden *q*, *M**A*(*q*).
+2.  Autoregresivos de orden *q*, *A**R*(*p*).
+3.  Medias Móviles Autoregresivos, *A**R**M**A*(*p*, *q*).
+
+El modelo Autoregresivo AR(p)
+=============================
+
+Se dice que *Y*<sub>*n*</sub>, *n* ∈ ℤ sigue un proceso *A**R*(*p*) de
+media cero si
+
+*Y*<sub>*t*</sub> = *ϕ*<sub>1</sub>*Y*<sub>*t* − 1</sub> + *ϕ*<sub>2</sub>*Y*<sub>*t* − 2</sub> + ⋯ + *ϕ*<sub>*p*</sub>*Y*<sub>*t* − *p*</sub> + *ϵ*<sub>*t*</sub>
+
+donde *ϵ*<sub>*t*</sub> ∼ *R**B*(0, *σ*<sup>2</sup>) y *p* = 1, 2, ….
+Usando el operador de rezago *L* se puede escribir como:
+
+*ϕ*<sub>*p*</sub>(*L*)(*Y*<sub>*n*</sub>)=*ϵ*<sub>*n*</sub>
+
+con
+*ϕ*<sub>*p*</sub>(*z*)=1 − *ϕ*<sub>1</sub>*z* − *ϕ*<sub>2</sub>*z*<sup>2</sup> − ⋯ − *ϕ*<sub>*p*</sub>*z*<sup>*p*</sup>,el
+polinomio autorregresivo.
+
+**Condición Suficiente para que un *A**R*(*p*) sea Estacionario en
+Covarianza**
+
+La condición suficiente para que *Y*<sub>*t*</sub> ∼ *A**R*(*p*) sea
+estacionario en covarianza es que las *p* raíces de la ecuación
+*ϕ*<sub>*p*</sub>(*z*)=0, *z*<sub>*i*</sub>, *i* = 1, 2, …, *p* cumplan
+
+|*z*<sub>*i*</sub>|&gt;1.
+
+En palabras, la condición $\\ref{eq2}$ se describe como *para que un
+proceso autorregresivo de orden *p* sea estacionario en covarianza, es
+suficiente que las raíces del polinomio autorregresivo estén por fuera
+del círculo unitario*
+
+Si el proceso *Y*<sub>*t*</sub> es estacionario en covarianza se cumple
+que su media es constante, *Y*<sub>*t*</sub> = *μ*
+
+**Propiedades**
+
+1.  *E*(*Y*<sub>*t*</sub>)=0
+2.  $\\sum\_{j=1}^{p}\\phi\_j&lt;1$
+
+<!-- Proceso estocástico autoregresivo de primer orden -->
+<!-- \begin{eqnarray} -->
+<!-- (Y_{t}-\delta) = \alpha_{1}(Y_{t-1}-\delta)+u_{t} \nonumber -->
+<!-- \end{eqnarray} -->
+<!-- Donde $\delta$ es la media de $Y$ y $u_{i}$ es un ruido blanco no correlacionado. -->
 Trabajaremos con datos de *M*1
 ([WCURRNS](https://fred.stlouisfed.org/series/WCURRNS) dinero en
 circuación fuera de los Estados Unidos) semanales de los Estados Unidos
@@ -588,8 +673,21 @@ Las autocorrelaciones decaen exponencialemente a cero
 modelo.
 
 La autocorrelación parcial es la correlación entre *Y*<sub>*t*</sub> y
-*Y*<sub>*t* − *k*</sub> después de eliminar el efecto de las Y
+*Y*<sub>*t* − *k*</sub> después de eliminar el efecto de las *Y*
 intermedias.
+
+**Definición** Suponga que (*Y*<sub>*t*</sub>, *t* ∈ *Z*) es
+estacionaria. La pacf muestral es una función de *k*,
+
+1.  $\\hat{\\alpha}(1)=\\hat\\rho(1)$
+2.  $\\hat{\\alpha}(2)$: se regresa *Y*<sub>*t*</sub> sobre
+    *Y*<sub>*t* − 1</sub> y *Y*<sub>*t* − 2</sub> tal que
+    *Y*<sub>*t*</sub> = *ϕ*<sub>21</sub>*Y*<sub>*t* − 1</sub> + *ϕ*<sub>22</sub>*Y*<sub>*t* − 2</sub> + *ϵ*<sub>*t*</sub>
+    entonces $\\hat{\\alpha}(2)=\\phi\_{22}$
+3.  $\\hat{\\alpha}(k)$: se regresa *Y*<sub>*t*</sub> sobre
+    *Y*<sub>*t* − 1</sub>…*Y*<sub>*t* − *k*</sub> tal que
+    *Y*<sub>*t*</sub> = *ϕ*<sub>*k*1</sub>*Y*<sub>*t* − 1</sub> + … + *ϕ*<sub>*k**k*</sub>*Y*<sub>*t* − 2</sub> + *ϵ*<sub>*t*</sub>
+    entonces $\\hat{\\alpha}(k)=\\phi\_{kk}$
 
 En los datos de series de tiempo, una gran proporción de la correlación
 entre *Y*<sub>*t*</sub> y *Y*<sub>*t* − *k*</sub> puede deberse a sus
@@ -605,13 +703,13 @@ intermedias.
     ar(ar3)$aic
 
     ##          0          1          2          3          4          5 
-    ## 192.859463 194.119736  74.750263   0.000000   1.765192   1.140607 
+    ## 179.728816 180.836179  77.642624   0.000000   1.848879   3.848678 
     ##          6          7          8          9         10         11 
-    ##   3.112054   3.875521   5.838569   4.271208   3.919511   4.547110 
+    ##   5.267756   6.502146   7.448361   9.169717  10.896944  11.396099 
     ##         12         13         14         15         16         17 
-    ##   5.983478   7.404252   9.367714  11.367082  11.156541  12.991742 
+    ##  10.483680  11.616677  13.276752  15.241516  16.343210  17.281529 
     ##         18         19         20         21         22         23 
-    ##  12.227606  13.940330  14.370791  11.054540  13.054190  13.785198
+    ##  16.242251  17.807044  19.274390  17.480498  19.385742  21.370756
 
 La tercera autocorrelación es la que esta fuera de las bandas, esto
 indica que el modelo es un AR(3)
@@ -722,8 +820,8 @@ tales aplicaciones, la hipótesis de hecho objeto del ensayo es que los
 residuos del modelo ARIMA no tienen autocorrelación. Al probar los
 residuales de un modelo ARIMA estimado, los grados de libertad deben ser
 ajustados para reflejar la estimación de parámetros. Por ejemplo, para
-un modelo ARIMAa (p,0,q), los grados de libertad se debe establecer en
-*h* − *p* − *q*.
+un modelo *A**R**I**M**A*(*p*, 0, *q*), los grados de libertad se debe
+establecer en *h* − *p* − *q*.
 
     Box.test(residuos,lag=20,type="Ljung")
 
@@ -772,6 +870,72 @@ Se escoge el modelo de menor AIC.
 Proceso de Medias Móviles (MA)
 ==============================
 
+Recordemos el polinomio de rezagos:
+
+*B*<sub>*p*</sub>(*L*) = *β*<sub>0</sub> + *β*<sub>1</sub>*L* + *β*<sub>2</sub>*L*<sup>2</sup> + ⋯ + +*β*<sub>*p*</sub>*L*<sup>*p*</sup>
+
+combinados con una serie de tiempo:
+
+*B*<sub>*p*</sub>(*L*)(*Y*<sub>*t*</sub>)=(*β*<sub>0</sub> + *β*<sub>1</sub>*L* + *β*<sub>2</sub>*L*<sup>2</sup> + ⋯ + +*β*<sub>*p*</sub>*L*<sup>*p*</sup>)(*Y*<sub>*t*</sub>)
+
+$$
+B\_p{(L)}(Y\_t) =\\sum\_{j=0}^{p}\\beta\_jL^jY\_t
+$$
+$$
+B\_p{(L)}(Y\_t) =\\sum\_{j=0}^{p}\\beta\_jL^jY\_t
+$$
+
+**Definición**
+
+Se dice que una serie *Y*<sub>*t*</sub> sigue un proceso *M**A*(*q*),
+*q* = 1, 2, … de media móvil de orden *q*, si se cumple que
+
+*Y*<sub>*t*</sub> = *ϵ*<sub>*t*</sub> + *θ*<sub>1</sub>*ϵ*<sub>*t* − 1</sub> + ⋯ + *θ*<sub>*q*</sub>*ϵ*<sub>*t* − *q*</sub>
+ para constantes *θ*<sub>1</sub>, …, *θ*<sub>*p*</sub> y
+*ϵ*<sub>*t*</sub> ∼ *N*(0, *σ*<sup>2</sup>). La expresión con el
+operador *L* es, si se define el polinomio.
+
+*θ*<sub>*p*</sub>(*L*)=1 + *θ*<sub>1</sub>*L* + ⋯ + *θ*<sub>*q*</sub>*L*<sup>*q*</sup>
+
+entonces la ecuación queda
+*Y*<sub>*t*</sub> = *θ*<sub>*q*</sub>(*L*)(*ϵ*<sub>*t*</sub>)
+
+**Propiedades**
+
+1.  *E*(*Y*<sub>*t*</sub>)=0
+2.  *V**a**r*(*Y*<sub>*t*</sub>)=(1 + *θ*<sub>1</sub><sup>2</sup> + ⋯ + *θ*<sub>*q*</sub><sup>2</sup>)*σ*<sup>2</sup>
+
+luego *V**a**r*(*Y*<sub>*t*</sub>)&gt;*V**a**r*(*ϵ*<sub>*t*</sub>), en
+general. 3.
+*C**o**v*(*Y*<sub>*t*</sub>, *Y*<sub>*t* + *k*</sub>)=*R*(*k*), donde
+
+$$
+R(K) = \\sigma^2\\sum\_{j=0}^{q-k}\\theta\_j\\theta\_{j+k}\\label{cov}
+$$
+
+donde *θ*<sub>0</sub> = 1 y *k* &lt; *q* + 1. *R*(*K*)=0 si
+*k* ≥ *q* + 1.
+
+1.  Un *M**A*(*q*) siempre es un proceso estacionario con ACF,
+    $p(k)=\\frac{R(k)}{R(0)}$
+
+La ecuación $\\eqref{cov}$ se puede interpretar como una indicación de
+que un *M**A*(*q*) es un proceso d´ebilmente correlacionado, ya que su
+autocovarianza es cero a partir de un valor. Por esta razón se puede ver
+los procesos *M**A*(*q*) como alternativas al Ruido Blanco completamente
+incorrelacionado.
+
+**Ejemplo**
+
+Sea *Y*<sub>*t*</sub> ∼ *M**A*(2) dado por:
+
+*y*<sub>*t*</sub> = *ϵ*<sub>*t*</sub> + *θ*<sub>1</sub>*ϵ*<sub>*t* − 1</sub> + *θ*<sub>2</sub>*ϵ*<sub>*t* − 2</sub>
+ donde *ϵ*<sub>*t*</sub> ∼ *N*(0, 9), con
+*θ*<sub>1</sub> = −0.4,*θ*<sub>2</sub> = 0.4.
+
+De acuerdo con $\\eqref{cov}$, si la fac muestral de una serie Yt
+termina abruptamente puede tratarse de un *M**A*(*q*).
+
 Simulemos un modelo:
 
     simulcion.ma <- arima.sim(200,model=list(ma=c(0.8)))
@@ -805,8 +969,24 @@ Veamos otro ejemplo
 
 ![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-43-3.png)
 
-Proceso ARIMA
-=============
+Proceso ARMA
+============
+
+**Definición**
+
+Un proceso *Y**t* ∼ *A**R**M**A*(*p*, *q*) se define mediante
+
+*ϕ*<sub>*p*</sub>(*L*)(*Y*<sub>*t*</sub>)=*θ*<sub>*q*</sub>(*L*)*ϵ*<sub>*t*</sub>
+ donde *ϵ*<sub>*t*</sub> ∼ *R**B*(0, *σ*<sup>2</sup>) y
+$\\phi\_p(z)=1-\\sum\_{j=1}^{p}\\phi\_jz^j$,
+$\\theta\_q(z)=1+\\sum\_{j=1}^q\\theta\_jz^j$ son los polinomios
+autoregresivo y de media móvil respectivamente.
+
+se asume que las raíces de las ecuaciones *ϕ*<sub>*p*</sub>(*z*)=0 y
+*θ*<sub>*q*</sub>(*z*)=0 están fuera del círculo unitario. Además se
+asume que estos polinomios no tienen raíces en común. Si se cumplen
+estas condiciones el proceso *Y**t* ∼ *A**R**M**A*(*p*, *q*) es
+estacionario e identificable.
 
 Simulemos el proceso:
 
@@ -832,24 +1012,6 @@ Datos: Serie de tiempo (1952-1988) del ingreso nacional real en China
 por sector (año base: 1952)
 
     library(AER)
-
-    ## Loading required package: car
-
-    ## Loading required package: lmtest
-
-    ## Loading required package: zoo
-
-    ## 
-    ## Attaching package: 'zoo'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
-
-    ## Loading required package: sandwich
-
-    ## Loading required package: survival
-
     data(ChinaIncome)
     str(ChinaIncome)
 
@@ -1121,6 +1283,29 @@ Probemos un modelo ARMA
     ## [1] 6.25+0i
 
     # Si se cumplen ambas, el proceso ARMA es estacionario. 
+
+**Condición de invertibilidad del Proceso *M**A*(*q*)**
+
+Dado un proceso *M**A*(*q*),
+*Y*<sub>*t*</sub> = *θ**q*(*L*)(*ϵ*<sub>*t*</sub>) donde
+*θ*<sub>*q*</sub>(*L*)=1 + *θ*<sub>1</sub>*L* + *θ*<sub>2</sub>*L*<sup>2</sup> + ⋯ + *θ*<sub>*q*</sub>*L*<sup>*q*</sup>,
+entonces considerando el polinomio en
+*z* ∈ ℂ, *θ*<sub>*q*</sub>(*z*)=1 + *θ*<sub>1</sub>*z* + ⋯ + *θ*<sub>*q*</sub>*z*<sup>*q*</sup>
+y sus *q* raíces
+(*z*<sub>1</sub>, *z*<sub>2</sub>, …, *z*<sub>*q*</sub>)∈ℂ, es decir,
+valores *z* ∈ ℂ tales que *θ*<sub>*q*</sub>(*z*)=0, se dice que el
+proceso *Y*<sub>*t*</sub> es invertible si se cumple
+
+|*z*<sub>*j*</sub>|&gt;1,  ∀*j* = 1, …, *q*
+ o también, si *θ*<sub>*q*</sub>(*z*)≠0, ∀*z*, |*z*|≤1. Note que
+$\\eqref{eq1}$ es equivalente a
+
+$$
+\\frac{1}{z\_j}&lt;1, \\quad \\forall j = 1,\\ldots,q
+$$
+
+es decir, los inversos de las raíces deben caer dentro del círculo
+unitario complejo.
 
 Test de Dickey Fuller
 ---------------------
