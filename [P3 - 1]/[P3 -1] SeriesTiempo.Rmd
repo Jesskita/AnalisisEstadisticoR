@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "21 de marzo de 2018"
 output: 
-  pdf_document:
+  md_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -1093,14 +1093,258 @@ mode1
 tsdiag(mode1)
 ```
 
-# Cointegración:
+# Cointegración
+
+Esta sección fue tomada de @colonescu2016principles. 
+
+-   Una serie de tiempo no es estacionaria si su distribución, en particular su media, varianza o covarianza en el tiempo cambian con el tiempo. 
+
+-   Las series temporales no estacionarias no se pueden usar en los modelos de regresión porque pueden crear una regresión espuria, una relación falsa debido, por ejemplo, a una tendencia común en variables que de otro modo no estarían relacionadas. 
+
+-   Dos o más series no estacionarias aún pueden ser parte de un modelo de regresión si están cointegradas, es decir, están en una relación estacionaria de algún tipo.
+
+<!-- ## Regresión Espúrea -->
+
+<!-- Ecuaciones de la forma $\ref{eq12}$ -->
+
+<!-- $$ -->
+<!-- y_t = \beta_1x_{t,1}+\beta_2x_{t,2}+\cdots+\beta_Kx_{t,K}+\epsilon_t\label{eq12} -->
+<!-- $$ -->
+
+<!-- para $t = 1,\ldots,T$, son la base de la predicción macroeconómica y de modelos de simulación. $y_t$ es una variable *endógena*, el vector fila $\mathbf{x'_t} = (x_{t,1},x_{t,2},\ldots,x_{t,K})$ son las variables *exógenas* y $e_t$ es un ruido blanco.  -->
+
+<!-- Se asume que las variables utilizadas en el análisis son estacionarias. -->
+
+<!-- ## El concepto de cointegración y modelo de corrección de errores -->
+
+<!-- ## Sistemas de variables cointegradas -->
+
+## Estacionariedad
+
+Hasta ahora hemos realizado procedimientos para averiguar si una serie es estacionaria. Recordemos, por ejemplo, el proceso $AR(1)$:
+
+$$
+y_t = \phi y_{t-1}+\epsilon_t
+$$
+
+Este proceso es **estacionario** si $|\phi|<1$; cuando $\phi=1$ el proceso se llama **caminata aleatoria**.
+
+El siguiente código genera procesos $AR(1)$:
+
+-   con y sin constante
+-   con y sin tendencia
+-   $\phi$ menor que 1.
+
+La ecuación genérica para la simulación es:
+
+$$
+y_t = \alpha-\lambda t+\phi y_{t-1}+\epsilon_t
+$$
+
+
+```{r}
+N <- 500
+a <- 1
+l <- 0.01
+rho <- 0.7
+
+set.seed(246810)
+v <- ts(rnorm(N,0,1))
+
+par(mfrow = c(3,2))
+
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- rho*y[t-1]+v[t]
+}
+plot(y,type='l', ylab="rho*y[t-1]+v[t]",main= "Sin tendencia")
+abline(h=0)
+
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- a+rho*y[t-1]+v[t]
+}
+plot(y,type='l', ylab="a+rho*y[t-1]+v[t]", main= "Con constante")
+abline(h=0)
+
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- a+l*time(y)[t]+rho*y[t-1]+v[t]
+}
+plot(y,type='l', ylab="a+l*time(y)[t]+rho*y[t-1]+v[t]", main = "Con tendencia y constante")
+abline(h=0)
+
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- y[t-1]+v[t]
+}
+plot(y,type='l', ylab="y[t-1]+v[t]", main = "Caminata aleatoria")
+abline(h=0)
+
+a <- 0.1
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- a+y[t-1]+v[t]
+}
+plot(y,type='l', ylab="a+y[t-1]+v[t]", main = "Caminata aleatoria con constante")
+abline(h=0)
+
+y <- ts(rep(0,N))
+for (t in 2:N){
+  y[t]<- a+l*time(y)[t]+y[t-1]+v[t]
+}
+plot(y,type='l', ylab="a+l*time(y)[t]+y[t-1]+v[t]", main = "Caminata aleatoria con constante y tendencia")
+abline(h=0)
+```
+
+
+## Regresión espúrea
+
+La no estacionariedad puede conducir a una regresión espuria, una aparente relación entre variables que, en realidad, no están relacionadas. La siguiente secuencia de código genera dos procesos de paseo aleatorio independientes, $y$ y $x$, hacemos la regresión $y_t=\beta_o+\beta_1x_t$.
+
+Veamos las series y su gráfica de dispersión:
+
+```{r}
+T <- 1000
+set.seed(1357)
+y <- ts(rep(0,T))
+vy <- ts(rnorm(T))
+for (t in 2:T){
+  y[t] <- y[t-1]+vy[t]
+}
+
+set.seed(4365)
+x <- ts(rep(0,T))
+vx <- ts(rnorm(T))
+for (t in 2:T){
+  x[t] <- x[t-1]+vx[t]
+}
+y <- ts(y[300:1000])
+x <- ts(x[300:1000])
+
+par(mfrow = c(1,2))
+ts.plot(y,x, ylab="y & x")
+plot(x, y, type="p", col="grey")
+```
+
+
+```{r}
+spurious.ols <- lm(y~x)
+summary(spurious.ols)
+```
+
+
+El resumen muestra una fuerte correlación entre las dos variables, aunque se han generado de forma independiente. (Sin embargo, no es necesario que ninguno de los dos procesos generados aleatoriamente genere una regresión espuria).
+
+
+## Estacionariedad
+
+Ya hemos trabajado con la prueba de Dickey-Fuller para determinar si una serie es estacionaria. Recuerda que la $H_o$ de esta prueba es *no estacionariedad*. Es decir, **si rechazamos la hipótesis nula, la serie es estacionaria**.
+
+
+Un concepto que está estrechamente relacionado con la estacionalidad es el **orden de integración**, que es *cuántas veces necesitamos diferenciar una serie hasta que se vuelva estacionaria*. 
+
+
+Una serie es $I(0)$, es decir, integrada de orden $0$ si ya es estacionaria (es estacionaria en niveles, no en diferencias); una serie es $I(1)$ si es no estacionara en niveles, pero estacionaria en sus primeras diferencias.
+
+### Ejemplo
+
+Serie trimestral (1984:1 - 2009:4) de los Estados Unidos de las siguientes variables:
+
+-   `gdp` producto interno bruto
+-   `inf` inflacion anual
+-   `f`   tasa de los fondos federales
+-   `b`  tasa a tres años
+
+```{r}
+dir <- "~/Documents/Consultorias&Cursos/DataLectures"
+load(file = paste(dir,"/usa.rda",sep = ""))
+usa.ts <- ts(usa, start=c(1984,1), end=c(2009,4),
+               frequency=4)
+```
+
+
+Analicemos las tasas: f y b
+
+```{r}
+plot.ts(usa.ts[,c("f","b")], main = "Tasa federal y tasa a 3 meses")
+```
+
+Veamos la estacionariedad de las series:
+
+```{r}
+adf.test(usa.ts[,"f"], k=10)
+adf.test(usa.ts[,"b"], k=10)
+```
+
+Las series no son estacionarias. Analicemos sus diferencias
+
+
+```{r}
+adf.test(diff(usa.ts[,"f"]), k=10)
+adf.test(diff(usa.ts[,"b"]), k=10)
+```
+
+Las series en diferencias son estacionarias.
+
+### Prueba de Phillips-Perron
+
+<!-- La hipótesis nula determina si una serie de tiempo es integrada de orden $1$. Se realiza la prueba de DF de la hipótesis nula $\phi=1$ en $\Delta y_{t}=(\phi -1)y_{t-1}+u_{t}$. -->
+
+La hipótesis nula es que la serie tiene una raíz unitaria.
+
+```{r}
+# Tets de Phillips Perron
+pp.test(usa.ts[,"f"])
+pp.test(usa.ts[,"b"])
+```
+
+### Prueba de Cointegración: Phillips-Ouliaris
+
+Peter C. B. Phillips y Sam Ouliaris (1990) muestran que las pruebas de raíz unitaria basadas en residuos aplicadas a los residuos de cointegración estimados no tienen las distribuciones habituales de Dickey-Fuller bajo la **hipótesis nula de no cointegración**. 
+
+Debido al fenómeno de regresión espuria bajo la hipótesis nula, la distribución de estas pruebas tiene distribuciones asintóticas que dependen de 
+
+1.  el número de términos de tendencias deterministas y 
+2.  el número de variables con las que se prueba la cointegración. 
+
+Estas distribuciones se conocen como distribuciones de Phillips-Ouliaris.
+
+```{r}
+bfx <- as.matrix(cbind(usa.ts[,"f"],usa.ts[,"b"]))
+po.test(bfx)
+```
+
+Las series no son cointegradas
+
+```{r}
+fff <- fitted(lm(usa.ts[,"f"]~usa.ts[,"b"]))
+pp.test(fff)
+adf.test(fff, k = 10)
+```
+
+
+
+> Una relación entre las variables $I(1)$ cointegradas es una relación a largo plazo, mientras que una relación entre las variables $I(0)$ es a corto plazo.
+
+
+
+
+## Ejemplo 2
+
 
 Datos: tasas de cambio mensuales de Estados Unidos, Inglaterra y Nueva Zelanda desde 2004.
 
 ```{r}
 uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/us_rates.txt"
 datos <- read.csv(url(uu),sep="",header=T)
+usa.ts <- ts(usa, start=c(1984,1), end=c(2009,4),
+               frequency=4)
 ```
+
+
+
+
 
 
 ```{r}
@@ -1155,4 +1399,6 @@ tsdiag(arma11)
 
 Encontramos un modelo en los errores que si es estacionario, la relación a largo plazo entonces es el coeficiente de la regresión: $0.58$.
 
+
 # Referencias
+

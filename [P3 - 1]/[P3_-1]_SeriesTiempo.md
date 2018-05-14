@@ -24,7 +24,11 @@
     -   [Ejemplo 1](#ejemplo-1-1)
     -   [Ejemplo 2](#ejemplo-2-1)
     -   [Test de Dickey Fuller](#test-de-dickey-fuller)
--   [Cointegración:](#cointegracion)
+-   [Cointegración](#cointegracion)
+    -   [Estacionariedad](#estacionariedad)
+    -   [Regresión espúrea](#regresion-espurea)
+    -   [Estacionariedad](#estacionariedad-1)
+    -   [Ejemplo 2](#ejemplo-2-2)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -702,14 +706,14 @@ intermedias.
 
     ar(ar3)$aic
 
-    ##          0          1          2          3          4          5 
-    ## 179.728816 180.836179  77.642624   0.000000   1.848879   3.848678 
-    ##          6          7          8          9         10         11 
-    ##   5.267756   6.502146   7.448361   9.169717  10.896944  11.396099 
-    ##         12         13         14         15         16         17 
-    ##  10.483680  11.616677  13.276752  15.241516  16.343210  17.281529 
-    ##         18         19         20         21         22         23 
-    ##  16.242251  17.807044  19.274390  17.480498  19.385742  21.370756
+    ##           0           1           2           3           4           5 
+    ## 193.9742719 195.5474325  77.6435639   0.0000000   0.4131241   2.2828989 
+    ##           6           7           8           9          10          11 
+    ##   4.2319411   5.8786786   7.3039153   7.8954734   9.8950108  10.1035868 
+    ##          12          13          14          15          16          17 
+    ##  10.4538340  11.2710208  12.6047862  14.5992319  16.5204080  17.4258475 
+    ##          18          19          20          21          22          23 
+    ##  18.2910591  17.6926615  19.6926517  21.6644408  23.6534865  25.3029210
 
 La tercera autocorrelación es la que esta fuera de las bandas, esto
 indica que el modelo es un AR(3)
@@ -1452,14 +1456,341 @@ Evaluemos el modelo MA con una diferencia:
 
 ![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-70-1.png)
 
-Cointegración:
-==============
+Cointegración
+=============
+
+Esta sección fue tomada de Colonescu (2016).
+
+-   Una serie de tiempo no es estacionaria si su distribución, en
+    particular su media, varianza o covarianza en el tiempo cambian con
+    el tiempo.
+
+-   Las series temporales no estacionarias no se pueden usar en los
+    modelos de regresión porque pueden crear una regresión espuria, una
+    relación falsa debido, por ejemplo, a una tendencia común en
+    variables que de otro modo no estarían relacionadas.
+
+-   Dos o más series no estacionarias aún pueden ser parte de un modelo
+    de regresión si están cointegradas, es decir, están en una relación
+    estacionaria de algún tipo.
+
+<!-- ## Regresión Espúrea -->
+<!-- Ecuaciones de la forma $\ref{eq12}$ -->
+<!-- $$ -->
+<!-- y_t = \beta_1x_{t,1}+\beta_2x_{t,2}+\cdots+\beta_Kx_{t,K}+\epsilon_t\label{eq12} -->
+<!-- $$ -->
+<!-- para $t = 1,\ldots,T$, son la base de la predicción macroeconómica y de modelos de simulación. $y_t$ es una variable *endógena*, el vector fila $\mathbf{x'_t} = (x_{t,1},x_{t,2},\ldots,x_{t,K})$ son las variables *exógenas* y $e_t$ es un ruido blanco.  -->
+<!-- Se asume que las variables utilizadas en el análisis son estacionarias. -->
+<!-- ## El concepto de cointegración y modelo de corrección de errores -->
+<!-- ## Sistemas de variables cointegradas -->
+Estacionariedad
+---------------
+
+Hasta ahora hemos realizado procedimientos para averiguar si una serie
+es estacionaria. Recordemos, por ejemplo, el proceso *A**R*(1):
+
+*y*<sub>*t*</sub> = *ϕ**y*<sub>*t* − 1</sub> + *ϵ*<sub>*t*</sub>
+
+Este proceso es **estacionario** si |*ϕ*|&lt;1; cuando *ϕ* = 1 el
+proceso se llama **caminata aleatoria**.
+
+El siguiente código genera procesos *A**R*(1):
+
+-   con y sin constante
+-   con y sin tendencia
+-   *ϕ* menor que 1.
+
+La ecuación genérica para la simulación es:
+
+*y*<sub>*t*</sub> = *α* − *λ**t* + *ϕ**y*<sub>*t* − 1</sub> + *ϵ*<sub>*t*</sub>
+
+    N <- 500
+    a <- 1
+    l <- 0.01
+    rho <- 0.7
+
+    set.seed(246810)
+    v <- ts(rnorm(N,0,1))
+
+    par(mfrow = c(3,2))
+
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- rho*y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="rho*y[t-1]+v[t]",main= "Sin tendencia")
+    abline(h=0)
+
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- a+rho*y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="a+rho*y[t-1]+v[t]", main= "Con constante")
+    abline(h=0)
+
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- a+l*time(y)[t]+rho*y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="a+l*time(y)[t]+rho*y[t-1]+v[t]", main = "Con tendencia y constante")
+    abline(h=0)
+
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="y[t-1]+v[t]", main = "Caminata aleatoria")
+    abline(h=0)
+
+    a <- 0.1
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- a+y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="a+y[t-1]+v[t]", main = "Caminata aleatoria con constante")
+    abline(h=0)
+
+    y <- ts(rep(0,N))
+    for (t in 2:N){
+      y[t]<- a+l*time(y)[t]+y[t-1]+v[t]
+    }
+    plot(y,type='l', ylab="a+l*time(y)[t]+y[t-1]+v[t]", main = "Caminata aleatoria con constante y tendencia")
+    abline(h=0)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-71-1.png)
+
+Regresión espúrea
+-----------------
+
+La no estacionariedad puede conducir a una regresión espuria, una
+aparente relación entre variables que, en realidad, no están
+relacionadas. La siguiente secuencia de código genera dos procesos de
+paseo aleatorio independientes, *y* y *x*, hacemos la regresión
+*y*<sub>*t*</sub> = *β*<sub>*o*</sub> + *β*<sub>1</sub>*x*<sub>*t*</sub>.
+
+Veamos las series y su gráfica de dispersión:
+
+    T <- 1000
+    set.seed(1357)
+    y <- ts(rep(0,T))
+    vy <- ts(rnorm(T))
+    for (t in 2:T){
+      y[t] <- y[t-1]+vy[t]
+    }
+
+    set.seed(4365)
+    x <- ts(rep(0,T))
+    vx <- ts(rnorm(T))
+    for (t in 2:T){
+      x[t] <- x[t-1]+vx[t]
+    }
+    y <- ts(y[300:1000])
+    x <- ts(x[300:1000])
+
+    par(mfrow = c(1,2))
+    ts.plot(y,x, ylab="y & x")
+    plot(x, y, type="p", col="grey")
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-72-1.png)
+
+    spurious.ols <- lm(y~x)
+    summary(spurious.ols)
+
+    ## 
+    ## Call:
+    ## lm(formula = y ~ x)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -12.554  -5.973  -2.453   4.508  24.678 
+    ## 
+    ## Coefficients:
+    ##              Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept) -20.38711    1.61958 -12.588  < 2e-16 ***
+    ## x            -0.28188    0.04331  -6.508 1.45e-10 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 7.954 on 699 degrees of freedom
+    ## Multiple R-squared:  0.05713,    Adjusted R-squared:  0.05578 
+    ## F-statistic: 42.35 on 1 and 699 DF,  p-value: 1.454e-10
+
+El resumen muestra una fuerte correlación entre las dos variables,
+aunque se han generado de forma independiente. (Sin embargo, no es
+necesario que ninguno de los dos procesos generados aleatoriamente
+genere una regresión espuria).
+
+Estacionariedad
+---------------
+
+Ya hemos trabajado con la prueba de Dickey-Fuller para determinar si una
+serie es estacionaria. Recuerda que la *H*<sub>*o*</sub> de esta prueba
+es *no estacionariedad*. Es decir, **si rechazamos la hipótesis nula, la
+serie es estacionaria**.
+
+Un concepto que está estrechamente relacionado con la estacionalidad es
+el **orden de integración**, que es *cuántas veces necesitamos
+diferenciar una serie hasta que se vuelva estacionaria*.
+
+Una serie es *I*(0), es decir, integrada de orden 0 si ya es
+estacionaria (es estacionaria en niveles, no en diferencias); una serie
+es *I*(1) si es no estacionara en niveles, pero estacionaria en sus
+primeras diferencias.
+
+### Ejemplo
+
+Serie trimestral (1984:1 - 2009:4) de los Estados Unidos de las
+siguientes variables:
+
+-   `gdp` producto interno bruto
+-   `inf` inflacion anual
+-   `f` tasa de los fondos federales
+-   `b` tasa a tres años
+
+<!-- -->
+
+    dir <- "~/Documents/Consultorias&Cursos/DataLectures"
+    load(file = paste(dir,"/usa.rda",sep = ""))
+    usa.ts <- ts(usa, start=c(1984,1), end=c(2009,4),
+                   frequency=4)
+
+Analicemos las tasas: f y b
+
+    plot.ts(usa.ts[,c("f","b")], main = "Tasa federal y tasa a 3 meses")
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-75-1.png)
+
+Veamos la estacionariedad de las series:
+
+    adf.test(usa.ts[,"f"], k=10)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  usa.ts[, "f"]
+    ## Dickey-Fuller = -3.3726, Lag order = 10, p-value = 0.06283
+    ## alternative hypothesis: stationary
+
+    adf.test(usa.ts[,"b"], k=10)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  usa.ts[, "b"]
+    ## Dickey-Fuller = -2.9838, Lag order = 10, p-value = 0.1687
+    ## alternative hypothesis: stationary
+
+Las series no son estacionarias. Analicemos sus diferencias
+
+    adf.test(diff(usa.ts[,"f"]), k=10)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  diff(usa.ts[, "f"])
+    ## Dickey-Fuller = -3.5291, Lag order = 10, p-value = 0.04291
+    ## alternative hypothesis: stationary
+
+    adf.test(diff(usa.ts[,"b"]), k=10)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  diff(usa.ts[, "b"])
+    ## Dickey-Fuller = -3.7181, Lag order = 10, p-value = 0.02601
+    ## alternative hypothesis: stationary
+
+Las series en diferencias son estacionarias.
+
+### Prueba de Phillips-Perron
+
+<!-- La hipótesis nula determina si una serie de tiempo es integrada de orden $1$. Se realiza la prueba de DF de la hipótesis nula $\phi=1$ en $\Delta y_{t}=(\phi -1)y_{t-1}+u_{t}$. -->
+La hipótesis nula es que la serie tiene una raíz unitaria.
+
+    # Tets de Phillips Perron
+    pp.test(usa.ts[,"f"])
+
+    ## 
+    ##  Phillips-Perron Unit Root Test
+    ## 
+    ## data:  usa.ts[, "f"]
+    ## Dickey-Fuller Z(alpha) = -13.21, Truncation lag parameter = 4,
+    ## p-value = 0.3498
+    ## alternative hypothesis: stationary
+
+    pp.test(usa.ts[,"b"])
+
+    ## 
+    ##  Phillips-Perron Unit Root Test
+    ## 
+    ## data:  usa.ts[, "b"]
+    ## Dickey-Fuller Z(alpha) = -16.361, Truncation lag parameter = 4,
+    ## p-value = 0.1667
+    ## alternative hypothesis: stationary
+
+### Prueba de Cointegración: Phillips-Ouliaris
+
+Peter C. B. Phillips y Sam Ouliaris (1990) muestran que las pruebas de
+raíz unitaria basadas en residuos aplicadas a los residuos de
+cointegración estimados no tienen las distribuciones habituales de
+Dickey-Fuller bajo la **hipótesis nula de no cointegración**.
+
+Debido al fenómeno de regresión espuria bajo la hipótesis nula, la
+distribución de estas pruebas tiene distribuciones asintóticas que
+dependen de
+
+1.  el número de términos de tendencias deterministas y
+2.  el número de variables con las que se prueba la cointegración.
+
+Estas distribuciones se conocen como distribuciones de
+Phillips-Ouliaris.
+
+    bfx <- as.matrix(cbind(usa.ts[,"f"],usa.ts[,"b"]))
+    po.test(bfx)
+
+    ## 
+    ##  Phillips-Ouliaris Cointegration Test
+    ## 
+    ## data:  bfx
+    ## Phillips-Ouliaris demeaned = -19.877, Truncation lag parameter =
+    ## 1, p-value = 0.05763
+
+Las series no son cointegradas
+
+    fff <- fitted(lm(usa.ts[,"f"]~usa.ts[,"b"]))
+    pp.test(fff)
+
+    ## 
+    ##  Phillips-Perron Unit Root Test
+    ## 
+    ## data:  fff
+    ## Dickey-Fuller Z(alpha) = -16.361, Truncation lag parameter = 4,
+    ## p-value = 0.1667
+    ## alternative hypothesis: stationary
+
+    adf.test(fff, k = 10)
+
+    ## 
+    ##  Augmented Dickey-Fuller Test
+    ## 
+    ## data:  fff
+    ## Dickey-Fuller = -2.9838, Lag order = 10, p-value = 0.1687
+    ## alternative hypothesis: stationary
+
+> Una relación entre las variables *I*(1) cointegradas es una relación a
+> largo plazo, mientras que una relación entre las variables *I*(0) es a
+> corto plazo.
+
+Ejemplo 2
+---------
 
 Datos: tasas de cambio mensuales de Estados Unidos, Inglaterra y Nueva
 Zelanda desde 2004.
 
     uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/us_rates.txt"
     datos <- read.csv(url(uu),sep="",header=T)
+    usa.ts <- ts(usa, start=c(1984,1), end=c(2009,4),
+                   frequency=4)
 
     # Tasas de cambio, datos mensuales
     uk.ts <- ts(datos$UK,st=2004,fr=12)
@@ -1536,7 +1867,7 @@ Analicemos los resíduos:
     residuos = resid(reg)
     plot(resid(reg),t="l")
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-76-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-86-1.png)
 
 Presentan una estructura, debemos modelizarlos.
 
@@ -1556,10 +1887,12 @@ Presentan una estructura, debemos modelizarlos.
 
     tsdiag(arma11)
 
-![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-77-1.png)
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-87-1.png)
 
 Encontramos un modelo en los errores que si es estacionario, la relación
 a largo plazo entonces es el coeficiente de la regresión: 0.58.
 
 Referencias
 ===========
+
+Colonescu, Constantin. 2016. “Principles of Econometrics with R.”
