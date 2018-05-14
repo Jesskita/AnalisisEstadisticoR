@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "21 de marzo de 2018"
 output: 
-  md_document:
+  pdf_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -437,10 +437,10 @@ En los modelos de descomposición $Y_t = T_t + S_t + \epsilon_t$, $t = 1, 2,\ldo
 En caso de encontrar que $\hat\epsilon_t$ no es ruido blanco, el siguiente paso es modelar esta componente mediante tres posibles modelos:
 
 1. Medias Móviles de orden $q$, $MA(q)$.
-2. Autoregresivos de orden $q$, $AR(p)$.
-3. Medias Móviles Autoregresivos, $ARMA(p, q)$.
+2. Autorregresivos de orden $q$, $AR(p)$.
+3. Medias Móviles Autorregresivos, $ARMA(p, q)$.
  
-# El modelo Autoregresivo AR(p)
+# El modelo Autorregresivo AR(p)
 
 Se dice que $Y_n$, $n \in \mathbb{Z}$ sigue un proceso $AR(p)$ de media cero si
 
@@ -789,7 +789,7 @@ Un proceso $Yt \sim ARMA(p, q)$ se define mediante
 $$
 \phi_p(L)(Y_t)=\theta_q(L)\epsilon_t
 $$
-donde $\epsilon_t\sim RB(0,\sigma^2)$ y $\phi_p(z)=1-\sum_{j=1}^{p}\phi_jz^j$, $\theta_q(z)=1+\sum_{j=1}^q\theta_jz^j$ son los polinomios autoregresivo y de media móvil respectivamente.
+donde $\epsilon_t\sim RB(0,\sigma^2)$ y $\phi_p(z)=1-\sum_{j=1}^{p}\phi_jz^j$, $\theta_q(z)=1+\sum_{j=1}^q\theta_jz^j$ son los polinomios autorregresivo y de media móvil respectivamente.
 
 se asume que las raíces de las ecuaciones $\phi_p(z) = 0$ y $\theta_q(z) = 0$ están fuera del círculo unitario. Además se asume que estos polinomios no tienen raíces en común. Si se cumplen estas condiciones el proceso $Yt \sim ARMA(p, q)$ es estacionario e identificable.
 
@@ -1399,6 +1399,133 @@ tsdiag(arma11)
 
 Encontramos un modelo en los errores que si es estacionario, la relación a largo plazo entonces es el coeficiente de la regresión: $0.58$.
 
+
+# Introducción a los modelos de vectores autorregresivos: VAR
+
+Un modelo VAR simple puede ser escrito como:
+
+$$
+y_{1t} =  a_{10}+a_{11}y_{t-1}+a_{12}y_{2t-1}+\epsilon_{1t}
+$$
+$$
+y_{2t} =  a_{10}+a_{21}y_{t-1}+a_{22}y_{2t-1}+\epsilon_{2t}
+$$
+
+o, en forma matricial
+
+$$
+\begin{bmatrix}y_{1,t}\\y_{2,t}\end{bmatrix}={\begin{bmatrix}a_{1,0}\\a_{2,0}\end{bmatrix}}+{\begin{bmatrix}a_{1,1}&a_{1,2}\\a_{2,1}&a_{2,2}\end{bmatrix}}{\begin{bmatrix}y_{1,t-1}\\y_{2,t-1}\end{bmatrix}}+{\begin{bmatrix}e_{1,t}\\e_{2,t}\end{bmatrix}}
+$$
+
+donde los términos de error satisfacen
+
+$$
+E(e_{1t}) = E(e_{2t}) = 0, \forall t
+$$
+$$
+E(e_{1t}e_{1s}) = E(e_{2t}e_{2s}) = E(e_{1t}e_{2s}) =0, \forall t \neq s
+$$
+
+$$
+Var\left(\begin{matrix}e_{1,t}\\e_{2,t}\end{matrix}\right) = \left(\begin{matrix}\sigma_{1}^2\\\sigma_{12}\end{matrix}\begin{matrix}\sigma_{12}\\\sigma_{2}^2\end{matrix}\right) = \Sigma, \forall t
+$$
+
+o, de forma más compacta:
+
+$$
+y_t = A_0+ A_1y_{t}+\epsilon_t
+$$
+
+donde $y_t = \begin{bmatrix}y_{1,t}\\y_{2,t}\end{bmatrix}$, $A_1 = {\begin{bmatrix}a_{1,1}&a_{1,2}\\a_{2,1}&a_{2,2}\end{bmatrix}}$ y $\epsilon_t = \begin{bmatrix}e_{1,t}\\e_{2,t}\end{bmatrix}$
+
+Básicamnete, que *todo depende de todo*. Notemos que cada fila puede ser escrita como una ecuación separada:
+
+
+
+Mirando un poco más cerca a las ecuaciones individuales, notarás que no aparecen valores contemporáneos (en el tiempo $t$) en el lado derecho (ld) del modelo VAR.
+
+
+### Ejemplo
+
+Empecemos simulando un proceso VAR (2)
+
+```{r}
+set.seed(123) # Misma semilla para tener los mismos resultados
+
+# Generamos muestra
+t <- 200 # tamaño de la serie
+k <- 2 # Número de variables endogenas
+p <- 2 # numero de rezagos
+
+# Generamos matriz de coeficientes
+A.1 <- matrix(c(-.3, .6, -.4, .5), k) # Matriz de coeficientes del rezago 1
+A.2 <- matrix(c(-.1, -.2, .1, .05), k) # Matriz de coeficientes del rezago 2
+A <- cbind(A.1, A.2) # Forma compuesta
+
+# Genramos las series
+series <- matrix(0, k, t + 2*p) # Inicio serie con ceros
+for (i in (p + 1):(t + 2*p)){ # Genramos los errores e ~ N(0,0.5)
+  series[, i] <- A.1%*%series[, i-1] + A.2%*%series[, i-2] + rnorm(k, 0, .5)
+}
+
+series <- ts(t(series[, -(1:p)])) # Convertimos a formato ts
+names <- c("V1", "V2") # Renombrar variables
+plot.ts(series) # Graficos de la serie
+```
+
+#### Estimación
+
+La función relevante es `VAR` y su uso es directo. Solo tienes que cargar el paquete y especificar los datos (`y`), el orden (`p`) y el tipo del modelo. El tipo de opción determina si se debe incluir un término de intercepción, una tendencia o ambos en el modelo. Como los datos artificiales que hemos generado no contienen términos determinísticos, elegimos no tomarlo en cuenta en la estimación al establecer `type = "none"`.
+
+```{r,message=FALSE, warning=FALSE}
+library(vars) # Cargamos el paquete
+var.1 <- VAR(series, 2, type = "none") # Estimamos el modelo
+```
+
+
+#### Comparación
+
+Un problema central en el análisis de `VAR` es encontrar el número de rezagos que produce los mejores resultados. La comparación de modelos generalmente se basa en criterios de información como el `AIC`, `BIC` o `HQ`. Por lo general, el `AIC` es preferible a otros criterios, debido a sus características favorables de pronóstico de muestras pequeñas. El `BIC` y `HQ`, sin embargo, funcionan bien en muestras grandes y tienen la ventaja de ser un estimador consistente, es decir, converge a los valores verdaderos.
+
+
+El parámetro clave es `lag.max = 5` en el código siguiente:
+
+
+```{r}
+var.aic <- VAR(series, type = "none", lag.max = 5, ic = "AIC")
+```
+
+
+Veamos los resultados:
+
+```{r}
+summary(var.aic)
+```
+
+
+#### Impulso respuesta
+
+```{r}
+ir.1 <- irf(var.1, impulse = "Series.1", response = "Series.2", n.ahead = 20, ortho = FALSE)
+plot(ir.1)
+```
+
+La opción `orto` es importante, porque dice algo sobre las relaciones contemporáneas entre las variables. En nuestro ejemplo, ya sabemos que tales relaciones no existen, porque la matriz verdadera de varianza-covarianza, o simplemente matriz de covarianza, es diagonal con ceros en los elementos fuera de la diagonal. 
+
+Sin embargo, dado que los datos de series temporales limitadas con 200 observaciones restringen la precisión de las estimaciones de los parámetros, la matriz de covarianza tiene valores positivos en sus elementos fuera de la diagonal, lo que implica efectos contemporáneos distintos de cero de un choque. 
+Para descartar esto establezco `ortho = FALSE`. El resultado de esto es que la respuesta al impulso comienza en cero en el período 0. También puedes probar la alternativa y establecer `ortho = TRUE`, lo que da como resultado un gráfico que comienza bajo cero. No quiero entrar en más detalles aquí, pero basta decir que el problema de los llamados errores ortogonales es uno de los problemas centrales en el análisis de VAR y definitivamente deberías leer más al respecto, si tienes la intención de configurar tus propios modelos VAR.
+
+
+
+A veces es importante obtener el efecto a largo plazo. Para esto se calcula el gráfico de la función impulso-respuesta acumulada:
+
+```{r}
+ir.2 <- irf(var.1,impulse="Series.1",response="Series.2",n.ahead = 20,ortho = FALSE,
+cumulative = TRUE)
+plot(ir.2)
+```
+
+Vemos que, pese a variaciones negaivas en algunos períodos, en el largo plazo el efecto es positivo.
 
 # Referencias
 

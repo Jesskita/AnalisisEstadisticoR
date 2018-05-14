@@ -15,7 +15,7 @@
     -   [Serie estacionaria (en
         covarianza)](#serie-estacionaria-en-covarianza)
 -   [Procesos ARMA(p,q)](#procesos-armapq)
--   [El modelo Autoregresivo AR(p)](#el-modelo-autoregresivo-arp)
+-   [El modelo Autorregresivo AR(p)](#el-modelo-autorregresivo-arp)
     -   [Simulación:](#simulacion)
     -   [Prueba de Ljung-Box](#prueba-de-ljung-box)
 -   [Proceso de Medias Móviles (MA)](#proceso-de-medias-moviles-ma)
@@ -29,6 +29,9 @@
     -   [Regresión espúrea](#regresion-espurea)
     -   [Estacionariedad](#estacionariedad-1)
     -   [Ejemplo 2](#ejemplo-2-2)
+-   [Introducción a los modelos de vectores autorregresivos:
+    VAR](#introduccion-a-los-modelos-de-vectores-autorregresivos-var)
+    -   [Ejemplo](#ejemplo-7)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -534,11 +537,11 @@ siguiente paso es modelar esta componente mediante tres posibles
 modelos:
 
 1.  Medias Móviles de orden *q*, *M**A*(*q*).
-2.  Autoregresivos de orden *q*, *A**R*(*p*).
-3.  Medias Móviles Autoregresivos, *A**R**M**A*(*p*, *q*).
+2.  Autorregresivos de orden *q*, *A**R*(*p*).
+3.  Medias Móviles Autorregresivos, *A**R**M**A*(*p*, *q*).
 
-El modelo Autoregresivo AR(p)
-=============================
+El modelo Autorregresivo AR(p)
+==============================
 
 Se dice que *Y*<sub>*n*</sub>, *n* ∈ ℤ sigue un proceso *A**R*(*p*) de
 media cero si
@@ -706,14 +709,14 @@ intermedias.
 
     ar(ar3)$aic
 
-    ##           0           1           2           3           4           5 
-    ## 193.9742719 195.5474325  77.6435639   0.0000000   0.4131241   2.2828989 
-    ##           6           7           8           9          10          11 
-    ##   4.2319411   5.8786786   7.3039153   7.8954734   9.8950108  10.1035868 
-    ##          12          13          14          15          16          17 
-    ##  10.4538340  11.2710208  12.6047862  14.5992319  16.5204080  17.4258475 
-    ##          18          19          20          21          22          23 
-    ##  18.2910591  17.6926615  19.6926517  21.6644408  23.6534865  25.3029210
+    ##          0          1          2          3          4          5 
+    ## 160.714149 161.441530  75.238078   2.034397   1.526842   1.367533 
+    ##          6          7          8          9         10         11 
+    ##   1.953525   1.466039   3.429412   5.424623   6.329208   0.000000 
+    ##         12         13         14         15         16         17 
+    ##   1.258117   1.727323   3.009122   4.971836   6.873873   8.790469 
+    ##         18         19         20         21         22         23 
+    ##  10.783535  12.754019   9.050400  11.041620  12.579505  14.203012
 
 La tercera autocorrelación es la que esta fuera de las bandas, esto
 indica que el modelo es un AR(3)
@@ -984,7 +987,7 @@ Un proceso *Y**t* ∼ *A**R**M**A*(*p*, *q*) se define mediante
  donde *ϵ*<sub>*t*</sub> ∼ *R**B*(0, *σ*<sup>2</sup>) y
 $\\phi\_p(z)=1-\\sum\_{j=1}^{p}\\phi\_jz^j$,
 $\\theta\_q(z)=1+\\sum\_{j=1}^q\\theta\_jz^j$ son los polinomios
-autoregresivo y de media móvil respectivamente.
+autorregresivo y de media móvil respectivamente.
 
 se asume que las raíces de las ecuaciones *ϕ*<sub>*p*</sub>(*z*)=0 y
 *θ*<sub>*q*</sub>(*z*)=0 están fuera del círculo unitario. Además se
@@ -1891,6 +1894,203 @@ Presentan una estructura, debemos modelizarlos.
 
 Encontramos un modelo en los errores que si es estacionario, la relación
 a largo plazo entonces es el coeficiente de la regresión: 0.58.
+
+Introducción a los modelos de vectores autorregresivos: VAR
+===========================================================
+
+Un modelo VAR simple puede ser escrito como:
+
+*y*<sub>1*t*</sub> = *a*<sub>10</sub> + *a*<sub>11</sub>*y*<sub>*t* − 1</sub> + *a*<sub>12</sub>*y*<sub>2*t* − 1</sub> + *ϵ*<sub>1*t*</sub>
+*y*<sub>2*t*</sub> = *a*<sub>10</sub> + *a*<sub>21</sub>*y*<sub>*t* − 1</sub> + *a*<sub>22</sub>*y*<sub>2*t* − 1</sub> + *ϵ*<sub>2*t*</sub>
+
+o, en forma matricial
+
+$$
+\\begin{bmatrix}y\_{1,t}\\\\y\_{2,t}\\end{bmatrix}={\\begin{bmatrix}a\_{1,0}\\\\a\_{2,0}\\end{bmatrix}}+{\\begin{bmatrix}a\_{1,1}&a\_{1,2}\\\\a\_{2,1}&a\_{2,2}\\end{bmatrix}}{\\begin{bmatrix}y\_{1,t-1}\\\\y\_{2,t-1}\\end{bmatrix}}+{\\begin{bmatrix}e\_{1,t}\\\\e\_{2,t}\\end{bmatrix}}
+$$
+
+donde los términos de error satisfacen
+
+*E*(*e*<sub>1*t*</sub>)=*E*(*e*<sub>2*t*</sub>)=0, ∀*t*
+*E*(*e*<sub>1*t*</sub>*e*<sub>1*s*</sub>)=*E*(*e*<sub>2*t*</sub>*e*<sub>2*s*</sub>)=*E*(*e*<sub>1*t*</sub>*e*<sub>2*s*</sub>)=0, ∀*t* ≠ *s*
+
+$$
+Var\\left(\\begin{matrix}e\_{1,t}\\\\e\_{2,t}\\end{matrix}\\right) = \\left(\\begin{matrix}\\sigma\_{1}^2\\\\\\sigma\_{12}\\end{matrix}\\begin{matrix}\\sigma\_{12}\\\\\\sigma\_{2}^2\\end{matrix}\\right) = \\Sigma, \\forall t
+$$
+
+o, de forma más compacta:
+
+*y*<sub>*t*</sub> = *A*<sub>0</sub> + *A*<sub>1</sub>*y*<sub>*t*</sub> + *ϵ*<sub>*t*</sub>
+
+donde $y\_t = \\begin{bmatrix}y\_{1,t}\\\\y\_{2,t}\\end{bmatrix}$,
+$A\_1 = {\\begin{bmatrix}a\_{1,1}&a\_{1,2}\\\\a\_{2,1}&a\_{2,2}\\end{bmatrix}}$
+y $\\epsilon\_t = \\begin{bmatrix}e\_{1,t}\\\\e\_{2,t}\\end{bmatrix}$
+
+Básicamnete, que *todo depende de todo*. Notemos que cada fila puede ser
+escrita como una ecuación separada:
+
+Mirando un poco más cerca a las ecuaciones individuales, notarás que no
+aparecen valores contemporáneos (en el tiempo *t*) en el lado derecho
+(ld) del modelo VAR.
+
+### Ejemplo
+
+Empecemos simulando un proceso VAR (2)
+
+    set.seed(123) # Misma semilla para tener los mismos resultados
+
+    # Generamos muestra
+    t <- 200 # tamaño de la serie
+    k <- 2 # Número de variables endogenas
+    p <- 2 # numero de rezagos
+
+    # Generamos matriz de coeficientes
+    A.1 <- matrix(c(-.3, .6, -.4, .5), k) # Matriz de coeficientes del rezago 1
+    A.2 <- matrix(c(-.1, -.2, .1, .05), k) # Matriz de coeficientes del rezago 2
+    A <- cbind(A.1, A.2) # Forma compuesta
+
+    # Genramos las series
+    series <- matrix(0, k, t + 2*p) # Inicio serie con ceros
+    for (i in (p + 1):(t + 2*p)){ # Genramos los errores e ~ N(0,0.5)
+      series[, i] <- A.1%*%series[, i-1] + A.2%*%series[, i-2] + rnorm(k, 0, .5)
+    }
+
+    series <- ts(t(series[, -(1:p)])) # Convertimos a formato ts
+    names <- c("V1", "V2") # Renombrar variables
+    plot.ts(series) # Graficos de la serie
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-88-1.png)
+
+#### Estimación
+
+La función relevante es `VAR` y su uso es directo. Solo tienes que
+cargar el paquete y especificar los datos (`y`), el orden (`p`) y el
+tipo del modelo. El tipo de opción determina si se debe incluir un
+término de intercepción, una tendencia o ambos en el modelo. Como los
+datos artificiales que hemos generado no contienen términos
+determinísticos, elegimos no tomarlo en cuenta en la estimación al
+establecer `type = "none"`.
+
+    library(vars) # Cargamos el paquete
+    var.1 <- VAR(series, 2, type = "none") # Estimamos el modelo
+
+#### Comparación
+
+Un problema central en el análisis de `VAR` es encontrar el número de
+rezagos que produce los mejores resultados. La comparación de modelos
+generalmente se basa en criterios de información como el `AIC`, `BIC` o
+`HQ`. Por lo general, el `AIC` es preferible a otros criterios, debido a
+sus características favorables de pronóstico de muestras pequeñas. El
+`BIC` y `HQ`, sin embargo, funcionan bien en muestras grandes y tienen
+la ventaja de ser un estimador consistente, es decir, converge a los
+valores verdaderos.
+
+El parámetro clave es `lag.max = 5` en el código siguiente:
+
+    var.aic <- VAR(series, type = "none", lag.max = 5, ic = "AIC")
+
+Veamos los resultados:
+
+    summary(var.aic)
+
+    ## 
+    ## VAR Estimation Results:
+    ## ========================= 
+    ## Endogenous variables: Series.1, Series.2 
+    ## Deterministic variables: none 
+    ## Sample size: 200 
+    ## Log Likelihood: -266.065 
+    ## Roots of the characteristic polynomial:
+    ## 0.6611 0.6611 0.4473 0.03778
+    ## Call:
+    ## VAR(y = series, type = "none", lag.max = 5, ic = "AIC")
+    ## 
+    ## 
+    ## Estimation results for equation Series.1: 
+    ## ========================================= 
+    ## Series.1 = Series.1.l1 + Series.2.l1 + Series.1.l2 + Series.2.l2 
+    ## 
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## Series.1.l1 -0.19750    0.06894  -2.865  0.00463 ** 
+    ## Series.2.l1 -0.32015    0.06601  -4.850 2.51e-06 ***
+    ## Series.1.l2 -0.23210    0.07586  -3.060  0.00252 ** 
+    ## Series.2.l2  0.04687    0.06478   0.724  0.47018    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## 
+    ## Residual standard error: 0.4638 on 196 degrees of freedom
+    ## Multiple R-Squared: 0.2791,  Adjusted R-squared: 0.2644 
+    ## F-statistic: 18.97 on 4 and 196 DF,  p-value: 3.351e-13 
+    ## 
+    ## 
+    ## Estimation results for equation Series.2: 
+    ## ========================================= 
+    ## Series.2 = Series.1.l1 + Series.2.l1 + Series.1.l2 + Series.2.l2 
+    ## 
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## Series.1.l1  0.67381    0.07314   9.213  < 2e-16 ***
+    ## Series.2.l1  0.34136    0.07004   4.874 2.25e-06 ***
+    ## Series.1.l2 -0.18430    0.08048  -2.290   0.0231 *  
+    ## Series.2.l2  0.06903    0.06873   1.004   0.3164    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## 
+    ## Residual standard error: 0.4921 on 196 degrees of freedom
+    ## Multiple R-Squared: 0.3574,  Adjusted R-squared: 0.3443 
+    ## F-statistic: 27.26 on 4 and 196 DF,  p-value: < 2.2e-16 
+    ## 
+    ## 
+    ## 
+    ## Covariance matrix of residuals:
+    ##          Series.1 Series.2
+    ## Series.1  0.21417 -0.03116
+    ## Series.2 -0.03116  0.24154
+    ## 
+    ## Correlation matrix of residuals:
+    ##          Series.1 Series.2
+    ## Series.1    1.000   -0.137
+    ## Series.2   -0.137    1.000
+
+#### Impulso respuesta
+
+    ir.1 <- irf(var.1, impulse = "Series.1", response = "Series.2", n.ahead = 20, ortho = FALSE)
+    plot(ir.1)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-92-1.png)
+
+La opción `orto` es importante, porque dice algo sobre las relaciones
+contemporáneas entre las variables. En nuestro ejemplo, ya sabemos que
+tales relaciones no existen, porque la matriz verdadera de
+varianza-covarianza, o simplemente matriz de covarianza, es diagonal con
+ceros en los elementos fuera de la diagonal.
+
+Sin embargo, dado que los datos de series temporales limitadas con 200
+observaciones restringen la precisión de las estimaciones de los
+parámetros, la matriz de covarianza tiene valores positivos en sus
+elementos fuera de la diagonal, lo que implica efectos contemporáneos
+distintos de cero de un choque. Para descartar esto establezco
+`ortho = FALSE`. El resultado de esto es que la respuesta al impulso
+comienza en cero en el período 0. También puedes probar la alternativa y
+establecer `ortho = TRUE`, lo que da como resultado un gráfico que
+comienza bajo cero. No quiero entrar en más detalles aquí, pero basta
+decir que el problema de los llamados errores ortogonales es uno de los
+problemas centrales en el análisis de VAR y definitivamente deberías
+leer más al respecto, si tienes la intención de configurar tus propios
+modelos VAR.
+
+A veces es importante obtener el efecto a largo plazo. Para esto se
+calcula el gráfico de la función impulso-respuesta acumulada:
+
+    ir.2 <- irf(var.1,impulse="Series.1",response="Series.2",n.ahead = 20,ortho = FALSE,
+    cumulative = TRUE)
+    plot(ir.2)
+
+![](%5BP3_-1%5D_SeriesTiempo_files/figure-markdown_strict/unnamed-chunk-93-1.png)
+
+Vemos que, pese a variaciones negaivas en algunos períodos, en el largo
+plazo el efecto es positivo.
 
 Referencias
 ===========
