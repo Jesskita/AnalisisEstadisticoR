@@ -6,7 +6,7 @@ author:
   affiliation: "[RUsersEC](http://rusersgroup.com/)"
 date: "18 de abril de 2018"
 output: 
-  html_document:
+  pdf_document:
     toc: true
     toc_depth: 2
 bibliography: bibliography.bib
@@ -267,6 +267,14 @@ summary(ajuste2)
 'bptest es igual a hettest en STATA'
 bptest(ajuste1)
 ```
+
+Para estimar errores robustos (como `robust` en stata):
+
+```{r}
+coeftest(ajuste1, vcovHC(ajuste1,"HC0"))
+```
+
+
 
 ## Autocorrelación
 

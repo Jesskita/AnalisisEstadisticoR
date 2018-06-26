@@ -44,7 +44,7 @@ $$
 
 **Pruebas**
 
-#### ¿Qué medidas pueden tomarse para aliviar el problema de multicolinealidad?\\
+#### ¿Qué medidas pueden tomarse para aliviar el problema de multicolinealidad?
 
 -   No hacer nada
 -   Eliminar variables
@@ -427,6 +427,26 @@ El códgio en R sería:
     ## data:  ajuste1
     ## BP = 13.189, df = 8, p-value = 0.1055
 
+Para estimar errores robustos (como `robust` en stata):
+
+    coeftest(ajuste1, vcovHC(ajuste1,"HC0"))
+
+    ## 
+    ## t test of coefficients:
+    ## 
+    ##                Estimate  Std. Error t value  Pr(>|t|)    
+    ## (Intercept)  0.32137805  0.10852844  2.9612 0.0032049 ** 
+    ## casados      0.21267564  0.05665095  3.7541 0.0001937 ***
+    ## casadas     -0.19826765  0.05826506 -3.4029 0.0007186 ***
+    ## solteras    -0.11035021  0.05662552 -1.9488 0.0518632 .  
+    ## educ         0.07891029  0.00735096 10.7347 < 2.2e-16 ***
+    ## exper        0.02680057  0.00509497  5.2602 2.111e-07 ***
+    ## expersq     -0.00053525  0.00010543 -5.0770 5.360e-07 ***
+    ## tenure       0.02908752  0.00688128  4.2270 2.800e-05 ***
+    ## tenursq     -0.00053314  0.00024159 -2.2068 0.0277671 *  
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
 Autocorrelación
 ---------------
 
@@ -481,7 +501,7 @@ modelo:
     #Indice de compensacion real (salario real)
     plot(X,Y)
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-12-1.png)
 
     ajuste.indice<-lm(Y~X)
     summary(ajuste.indice)
@@ -510,12 +530,12 @@ Revisemos si hay autocorelación:
     residuos<- resid(ajuste.indice)
     plot(residuos,t="l",xlab="Tiempo")
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-13-1.png)
 
     par(mfrow = c(2,2))
     plot(ajuste.indice)
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-12-2.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-13-2.png)
 
     par(mfrow = c(1,1))
 
@@ -581,7 +601,7 @@ inicial
     par(mfrow = c(2,2))
     plot(ajuste2)  
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
     par(mfrow = c(1,1))
 
@@ -590,7 +610,7 @@ inicial
     points(residuos2)
     abline(h=0,col="blue")
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-14-2.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-15-2.png)
 
 Cómo debe ser el gráfico
 
@@ -599,7 +619,7 @@ Cómo debe ser el gráfico
     points(aleatorios)
     abline(h=0,col="blue")
 
-![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](%5BP2-3%5D_RLM_Supuestos_files/figure-markdown_strict/unnamed-chunk-16-1.png)
 
 ¿Se parece?
 
