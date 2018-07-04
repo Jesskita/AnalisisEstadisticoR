@@ -1097,7 +1097,7 @@ tsdiag(mode1)
 
 Esta sección fue tomada de @colonescu2016principles. 
 
--   Una serie de tiempo no es estacionaria si su distribución, en particular su media, varianza o covarianza en el tiempo cambian con el tiempo. 
+-   Una serie de tiempo no es estacionaria si su distribución, en particular su media, varianza o covarianza cambian con el tiempo. 
 
 -   Las series temporales no estacionarias no se pueden usar en los modelos de regresión porque pueden crear una regresión espuria, una relación falsa debido, por ejemplo, a una tendencia común en variables que de otro modo no estarían relacionadas. 
 
@@ -1525,7 +1525,7 @@ cumulative = TRUE)
 plot(ir.2)
 ```
 
-Vemos que, pese a variaciones negaivas en algunos períodos, en el largo plazo el efecto es positivo.
+Vemos que, pese a variaciones negativas en algunos períodos, en el largo plazo el efecto es positivo.
 
 # Referencias
 
