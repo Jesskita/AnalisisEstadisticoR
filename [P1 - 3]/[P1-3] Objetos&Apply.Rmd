@@ -8,13 +8,13 @@ output:
   md_document:
     toc: yes
     toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: 3
   html_document:
     df_print: paged
     toc: yes
     toc_depth: '3'
-  pdf_document:
-    toc: yes
-    toc_depth: 3
 subtitle: Objetos, Apply y aggregate
 bibliography: bibliography.bib
 ---
@@ -355,6 +355,9 @@ if(r==4){
 }
 ```
 
+# Funciones
+
+Las funciones son declaradas con `function(x,y,...)` seguido de llaves `{}`. Los valores dentro de la función son los parámetros o valores de entrada. Dentro de las llaves se ubican las operaciones a realizar con dichos parámetros.
 
 **Combinando lo aprendido**
 
@@ -412,6 +415,13 @@ VAN <- function(I0,n,K,V)
   sum(y) - I0
   }
 ```
+
+
+
+
+
+
+
 
 
 # La Familia Apply
@@ -512,6 +522,34 @@ tapply(x, f, mean)
 tapply(x, f, range)
 ```
 
+
+### Ejercicio
+
+Al evaluar la relación estadística de dos variables, hay muchas alternativas a la medida de correlación estándar (correlación producto-momento de Pearson). Algunos pueden haber oído hablar de la correlación de rangos de Spearman, por ejemplo. Estas medidas alternativas tienen varias motivaciones, como la solidez de valores atípicos, que son elementos de datos extremos y posiblemente erróneos.
+
+Aquí, propongamos una nueva medida de este tipo (en realidad se relaciona con uno de amplio uso, *$\tau$ de Kendall*), pero para ilustrar algunas de las técnicas de programación R introducidas hasta el momento, especialmente `ifelse ()`.
+
+Ayuda: Considere los vectores `x` e `y`, que son series temporales, por ejemplo, para las mediciones de las acciones de dos empresas recogidas una vez por hora. Definiremos nuestra medida de asociación entre ellos como la *fracción del tiempo `x` y `y` que aumentan o disminuyen juntos*, es decir, la proporción de `i` para la cual `y[i + 1] -y [i]` tiene el mismo signo que `x[i + 1] -x [i]`.
+
+```{r,echo=FALSE}
+# findud() convierte el vector v en 1s o 0s que representa si un elemento se incrementa o no, en relaciona a la posicion anterior; la salida tiene uno menos en su longtiud
+findud <- function(v) {
+vud <- v[-1] - v[-length(v)]
+return(ifelse(vud > 0,1,0))
+}
+
+udcorr <- function(x,y) {
+ud <- lapply(list(x,y),findud)
+return(mean(ud[[1]] == ud[[2]]))
+}
+```
+
+
+```{r}
+x <- c(5,12,13,3,6,0,1,15,16,8,88)
+y <- c(4,2,3,23,6,10,11,12,6,3,2)
+udcorr(x,y)
+```
 
 # Aggregate y By
 

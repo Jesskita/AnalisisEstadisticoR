@@ -11,13 +11,15 @@
     -   [FOR](#for)
     -   [While](#while)
     -   [If - Else](#if---else)
-        -   [Oasis: Algo de cálculo](#oasis-algo-de-calculo)
-        -   [VAN](#van)
+-   [Funciones](#funciones)
+    -   [Oasis: Algo de cálculo](#oasis-algo-de-calculo)
+    -   [VAN](#van)
 -   [La Familia Apply](#la-familia-apply)
     -   [lapply](#lapply)
     -   [sapply](#sapply)
     -   [apply](#apply)
     -   [tapply](#tapply)
+        -   [Ejercicio](#ejercicio)
 -   [Aggregate y By](#aggregate-y-by)
     -   [By](#by)
     -   [Aggregate](#aggregate)
@@ -487,6 +489,14 @@ If - Else
       y <- 4
     }
 
+Funciones
+=========
+
+Las funciones son declaradas con `function(x,y,...)` seguido de llaves
+`{}`. Los valores dentro de la función son los parámetros o valores de
+entrada. Dentro de las llaves se ubican las operaciones a realizar con
+dichos parámetros.
+
 **Combinando lo aprendido**
 
 -   Realicemos una función que cuenta el número de elementos impares en
@@ -575,7 +585,7 @@ lapply
     ## [1] 3
     ## 
     ## $b
-    ## [1] 0.216877
+    ## [1] 0.1036668
 
     x <- list(a = 1:4, b = rnorm(10), 
     c = rnorm(20, 1), d = rnorm(100, 5))
@@ -585,28 +595,28 @@ lapply
     ## [1] 2.5
     ## 
     ## $b
-    ## [1] 0.04456287
+    ## [1] 0.01170515
     ## 
     ## $c
-    ## [1] 0.9856312
+    ## [1] 1.158547
     ## 
     ## $d
-    ## [1] 5.002475
+    ## [1] 5.074743
 
     x <- 1:4
     lapply(x, runif)
 
     ## [[1]]
-    ## [1] 0.1418222
+    ## [1] 0.5424215
     ## 
     ## [[2]]
-    ## [1] 0.3761994 0.6663500
+    ## [1] 0.7061515 0.6289035
     ## 
     ## [[3]]
-    ## [1] 0.8647830 0.1491277 0.1132800
+    ## [1] 0.2126211 0.4728819 0.6153962
     ## 
     ## [[4]]
-    ## [1] 0.4474659 0.1889285 0.1531723 0.2090623
+    ## [1] 0.01294977 0.82542887 0.06251819 0.17994112
 
 sapply
 ------
@@ -629,18 +639,18 @@ sapply
     ## [1] 2.5
     ## 
     ## $b
-    ## [1] 0.626803
+    ## [1] -0.1012816
     ## 
     ## $c
-    ## [1] 1.000639
+    ## [1] 1.106519
     ## 
     ## $d
-    ## [1] 5.049756
+    ## [1] 4.869479
 
     sapply(x, mean)
 
-    ##        a        b        c        d 
-    ## 2.500000 0.626803 1.000639 5.049756
+    ##          a          b          c          d 
+    ##  2.5000000 -0.1012816  1.1065186  4.8694794
 
     mean(x)
 
@@ -664,15 +674,15 @@ apply
     x <- matrix(rnorm(200), 20, 10)
     apply(x, 2, mean)
 
-    ##  [1] -0.340565903  0.131627295  0.181625790 -0.225925985 -0.162814988
-    ##  [6] -0.028220067 -0.534005115  0.004421005  0.149176655  0.144651490
+    ##  [1] -0.03287329  0.25130233 -0.11444505  0.02843504 -0.13591201
+    ##  [6]  0.11449986  0.04083881 -0.36202407 -0.05670987 -0.03203557
 
     apply(x, 1, sum)
 
-    ##  [1]  2.24150877 -4.26515007 -1.12853453  0.12773478  5.89039792
-    ##  [6] -0.06446591 -1.40277859 -5.12291152 -4.26226581 -8.03969080
-    ## [11] -0.37590841  2.10545115 -3.23623397 -3.53179678  1.19703068
-    ## [16]  1.54977617 -0.04288324  3.60127638  2.24070640 -1.08185911
+    ##  [1] -1.5280661 -1.2097397 -5.7300001 -2.8786035 -1.3685879  9.5015141
+    ##  [7] -2.4183382 -4.1743886  1.0066074  3.5804879  4.0577008  2.2879738
+    ## [13]  0.2150905 -3.4123630  1.6775966  1.9728069 -1.4731446 -2.9304204
+    ## [19] -5.6687923  2.5141899
 
 -   Para sumas y medias de matrices tenemos algunos :
 
@@ -704,7 +714,7 @@ tapply
     tapply(x, f, mean)
 
     ##          1          2          3 
-    ## -0.3514325  0.4318805  0.6662807
+    ## 0.01734637 0.43810064 1.25342106
 
 -   Para encontrar rangos por grupo:
 
@@ -713,13 +723,40 @@ tapply
     tapply(x, f, range)
 
     ## $`1`
-    ## [1] -2.434569  1.666539
+    ## [1] -1.725586  2.649358
     ## 
     ## $`2`
-    ## [1] 0.05311517 0.93770696
+    ## [1] 0.03868276 0.79229829
     ## 
     ## $`3`
-    ## [1] -1.382413  2.752564
+    ## [1] 0.4873724 2.1143489
+
+### Ejercicio
+
+Al evaluar la relación estadística de dos variables, hay muchas
+alternativas a la medida de correlación estándar (correlación
+producto-momento de Pearson). Algunos pueden haber oído hablar de la
+correlación de rangos de Spearman, por ejemplo. Estas medidas
+alternativas tienen varias motivaciones, como la solidez de valores
+atípicos, que son elementos de datos extremos y posiblemente erróneos.
+
+Aquí, propongamos una nueva medida de este tipo (en realidad se
+relaciona con uno de amplio uso, **τ* de Kendall*), pero para ilustrar
+algunas de las técnicas de programación R introducidas hasta el momento,
+especialmente `ifelse ()`.
+
+Ayuda: Considere los vectores `x` e `y`, que son series temporales, por
+ejemplo, para las mediciones de las acciones de dos empresas recogidas
+una vez por hora. Definiremos nuestra medida de asociación entre ellos
+como la *fracción del tiempo `x` y `y` que aumentan o disminuyen
+juntos*, es decir, la proporción de `i` para la cual `y[i + 1] -y [i]`
+tiene el mismo signo que `x[i + 1] -x [i]`.
+
+    x <- c(5,12,13,3,6,0,1,15,16,8,88)
+    y <- c(4,2,3,23,6,10,11,12,6,3,2)
+    udcorr(x,y)
+
+    ## [1] 0.4
 
 Aggregate y By
 ==============
@@ -736,58 +773,58 @@ By
     by(InsectSprays,InsectSprays$spray,summary)
 
     ## InsectSprays$spray: A
-    ##      count       spray        x          
-    ##  Min.   : 7.00   A:12   Min.   :-1.8307  
-    ##  1st Qu.:11.50   B: 0   1st Qu.:-0.7747  
-    ##  Median :14.00   C: 0   Median :-0.3619  
-    ##  Mean   :14.50   D: 0   Mean   :-0.2446  
-    ##  3rd Qu.:17.75   E: 0   3rd Qu.: 0.3732  
-    ##  Max.   :23.00   F: 0   Max.   : 1.8145  
+    ##      count       spray        x           
+    ##  Min.   : 7.00   A:12   Min.   :-1.47311  
+    ##  1st Qu.:11.50   B: 0   1st Qu.:-0.42303  
+    ##  Median :14.00   C: 0   Median : 0.20753  
+    ##  Mean   :14.50   D: 0   Mean   : 0.03747  
+    ##  3rd Qu.:17.75   E: 0   3rd Qu.: 0.65958  
+    ##  Max.   :23.00   F: 0   Max.   : 1.16995  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: B
-    ##      count       spray        x           
-    ##  Min.   : 7.00   A: 0   Min.   :-1.71969  
-    ##  1st Qu.:12.50   B:12   1st Qu.:-0.88653  
-    ##  Median :16.50   C: 0   Median :-0.09798  
-    ##  Mean   :15.33   D: 0   Mean   :-0.13006  
-    ##  3rd Qu.:17.50   E: 0   3rd Qu.: 0.69869  
-    ##  Max.   :21.00   F: 0   Max.   : 1.19002  
+    ##      count       spray        x          
+    ##  Min.   : 7.00   A: 0   Min.   :-1.4925  
+    ##  1st Qu.:12.50   B:12   1st Qu.:-0.8017  
+    ##  Median :16.50   C: 0   Median :-0.4574  
+    ##  Mean   :15.33   D: 0   Mean   :-0.1410  
+    ##  3rd Qu.:17.50   E: 0   3rd Qu.: 0.8493  
+    ##  Max.   :21.00   F: 0   Max.   : 1.1400  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: C
-    ##      count       spray        x            
-    ##  Min.   :0.000   A: 0   Min.   :-1.367229  
-    ##  1st Qu.:1.000   B: 0   1st Qu.:-0.832277  
-    ##  Median :1.500   C:12   Median :-0.459139  
-    ##  Mean   :2.083   D: 0   Mean   :-0.385083  
-    ##  3rd Qu.:3.000   E: 0   3rd Qu.: 0.006506  
-    ##  Max.   :7.000   F: 0   Max.   : 0.480547  
+    ##      count       spray        x          
+    ##  Min.   :0.000   A: 0   Min.   :-2.4216  
+    ##  1st Qu.:1.000   B: 0   1st Qu.:-0.6679  
+    ##  Median :1.500   C:12   Median : 0.1808  
+    ##  Mean   :2.083   D: 0   Mean   : 0.1136  
+    ##  3rd Qu.:3.000   E: 0   3rd Qu.: 0.9172  
+    ##  Max.   :7.000   F: 0   Max.   : 2.7003  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: D
     ##      count        spray        x          
-    ##  Min.   : 2.000   A: 0   Min.   :-2.6601  
-    ##  1st Qu.: 3.750   B: 0   1st Qu.:-0.3947  
-    ##  Median : 5.000   C: 0   Median : 0.3054  
-    ##  Mean   : 4.917   D:12   Mean   : 0.1601  
-    ##  3rd Qu.: 5.000   E: 0   3rd Qu.: 0.7833  
-    ##  Max.   :12.000   F: 0   Max.   : 2.4392  
+    ##  Min.   : 2.000   A: 0   Min.   :-2.0907  
+    ##  1st Qu.: 3.750   B: 0   1st Qu.:-0.3795  
+    ##  Median : 5.000   C: 0   Median :-0.1792  
+    ##  Mean   : 4.917   D:12   Mean   : 0.1569  
+    ##  3rd Qu.: 5.000   E: 0   3rd Qu.: 0.5825  
+    ##  Max.   :12.000   F: 0   Max.   : 3.1879  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: E
-    ##      count      spray        x           
-    ##  Min.   :1.00   A: 0   Min.   :-1.45674  
-    ##  1st Qu.:2.75   B: 0   1st Qu.:-0.71854  
-    ##  Median :3.00   C: 0   Median :-0.12423  
-    ##  Mean   :3.50   D: 0   Mean   : 0.07824  
-    ##  3rd Qu.:5.00   E:12   3rd Qu.: 0.44134  
-    ##  Max.   :6.00   F: 0   Max.   : 2.85670  
+    ##      count      spray        x          
+    ##  Min.   :1.00   A: 0   Min.   :-0.9015  
+    ##  1st Qu.:2.75   B: 0   1st Qu.:-0.5427  
+    ##  Median :3.00   C: 0   Median : 0.4464  
+    ##  Mean   :3.50   D: 0   Mean   : 0.4102  
+    ##  3rd Qu.:5.00   E:12   3rd Qu.: 1.0716  
+    ##  Max.   :6.00   F: 0   Max.   : 2.3189  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: F
     ##      count       spray        x          
-    ##  Min.   : 9.00   A: 0   Min.   :-0.9682  
-    ##  1st Qu.:12.50   B: 0   1st Qu.:-0.8131  
-    ##  Median :15.00   C: 0   Median :-0.6019  
-    ##  Mean   :16.67   D: 0   Mean   :-0.3090  
-    ##  3rd Qu.:22.50   E: 0   3rd Qu.: 0.1269  
-    ##  Max.   :26.00   F:12   Max.   : 1.1588
+    ##  Min.   : 9.00   A: 0   Min.   :-3.3216  
+    ##  1st Qu.:12.50   B: 0   1st Qu.:-0.9185  
+    ##  Median :15.00   C: 0   Median :-0.1921  
+    ##  Mean   :16.67   D: 0   Mean   :-0.4913  
+    ##  3rd Qu.:22.50   E: 0   3rd Qu.: 0.1916  
+    ##  Max.   :26.00   F:12   Max.   : 0.3576
 
 Aggregate
 ---------
@@ -795,10 +832,10 @@ Aggregate
     aggregate(InsectSprays[,-2],
     list(InsectSprays$spray),median)
 
-    ##   Group.1 count           x
-    ## 1       A  14.0 -0.36189284
-    ## 2       B  16.5 -0.09798283
-    ## 3       C   1.5 -0.45913853
-    ## 4       D   5.0  0.30544686
-    ## 5       E   3.0 -0.12422525
-    ## 6       F  15.0 -0.60186752
+    ##   Group.1 count          x
+    ## 1       A  14.0  0.2075261
+    ## 2       B  16.5 -0.4574206
+    ## 3       C   1.5  0.1808310
+    ## 4       D   5.0 -0.1792082
+    ## 5       E   3.0  0.4464450
+    ## 6       F  15.0 -0.1920908
