@@ -1,14 +1,22 @@
 ---
-title: 'Introducción al R'
-subtitle: 'Introducción'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+title: "Introducción al R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
 date: "19 de marzo de 2018"
-output: 
+output:
+  md_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '1'
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '1'
   pdf_document:
-      toc: true
-      toc_depth: 1
+    toc: yes
+    toc_depth: 1
+subtitle: Introducción
 bibliography: bibliography.bib
 ---
 
@@ -252,7 +260,7 @@ getwd()
 Excel: En este caso se debe abrir la hoja de datos de Excel e ir a la opción *guardar como*. En esta opción se elige *valores delimitados por comas*.
 
 ```{r}
-datos.excel=read.csv("Mundo.csv", sep=";", header=TRUE)
+datos.excel <- read.csv("Mundo.csv", sep=";", header=TRUE)
 str(datos.excel) #Describe las variables del dataframe
 help(read.csv)
 head(datos.excel) #Muestra los 6 primeros valores
@@ -270,7 +278,7 @@ library(foreign)
 
 
 ```{r,eval=FALSE,message=FALSE,warning=FALSE}
-datos.stata=read.dta("per12_2010.dta",convert.factors=TRUE)
+datos.stata <- read.dta("per12_2010.dta",convert.factors=TRUE)
 help(read.dta)
 head(datos.stata)
 ```
@@ -279,6 +287,6 @@ head(datos.stata)
 ### SPSS
 
 ```{r,eval=FALSE,message=FALSE,warning=FALSE}
-datos.spss=read.spss("per12_2010.sav",use.value.labels=TRUE, max.value.labels=TRUE, to.data.frame=TRUE)
+datos.spss <- read.spss("per12_2010.sav",use.value.labels=TRUE, max.value.labels=TRUE, to.data.frame=TRUE)
 head(datos.spss) 
 ```

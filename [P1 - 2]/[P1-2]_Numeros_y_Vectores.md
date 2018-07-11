@@ -386,8 +386,8 @@ Algunos atributos
 
 ¿Qué pasa si se suma/multiplica vectores de diferente longitud?
 
-    x = c(1,2,3)
-    y = c(3,4)
+    x <- c(1,2,3)
+    y <- c(3,4)
     x+y
 
     ## Warning in x + y: longer object length is not a multiple of shorter object

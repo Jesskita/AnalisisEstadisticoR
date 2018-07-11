@@ -9,6 +9,12 @@ output:
   md_document:
     toc: true
     toc_depth: 3
+  html_document:
+    toc: true
+    toc_depth: 3
+  pdf_document:
+    toc: true
+    toc_depth: 3
 bibliography: bibliography.bib
 ---
 
@@ -124,7 +130,7 @@ boxplot(log(PNB_PC)~REGION, col=rainbow(5))
 - Agreguemos etiquetas:
 
 ```{r}
-fregion=factor(REGION,labels=c("Africa","America","Asia","Europa","Oceania"))
+fregion <- factor(REGION,labels=c("Africa","America","Asia","Europa","Oceania"))
 boxplot(log(PNB_PC)~fregion, col=rainbow(5))
 ```
 

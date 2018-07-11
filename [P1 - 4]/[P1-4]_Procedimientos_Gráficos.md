@@ -186,7 +186,7 @@ para una mejor lectura de la variable.
 
 <!-- -->
 
-    fregion=factor(REGION,labels=c("Africa","America","Asia","Europa","Oceania"))
+    fregion <- factor(REGION,labels=c("Africa","America","Asia","Europa","Oceania"))
     boxplot(log(PNB_PC)~fregion, col=rainbow(5))
 
 ![](%5BP1-4%5D_Procedimientos_Gráficos_files/figure-markdown_strict/unnamed-chunk-10-1.png)

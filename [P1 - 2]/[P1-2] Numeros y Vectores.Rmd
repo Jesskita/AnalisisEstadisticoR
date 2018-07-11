@@ -1,14 +1,22 @@
 ---
-title: 'Introducción al R'
-subtitle: 'Números y Vectores'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+title: "Introducción al R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
 date: "19 de marzo de 2018"
-output: 
+output:
+  md_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   pdf_document:
-    toc: true
+    toc: yes
     toc_depth: 2
+subtitle: Números y Vectores
 bibliography: bibliography.bib
 ---
 
@@ -355,8 +363,8 @@ typeof(6L)
 
 
 ```{r}
-x = c(1,2,3)
-y = c(3,4)
+x <- c(1,2,3)
+y <- c(3,4)
 x+y
 x*y
 ```

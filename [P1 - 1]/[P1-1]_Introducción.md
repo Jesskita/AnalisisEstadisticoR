@@ -333,7 +333,7 @@ Excel: En este caso se debe abrir la hoja de datos de Excel e ir a la
 opción *guardar como*. En esta opción se elige *valores delimitados por
 comas*.
 
-    datos.excel=read.csv("Mundo.csv", sep=";", header=TRUE)
+    datos.excel <- read.csv("Mundo.csv", sep=";", header=TRUE)
     str(datos.excel) #Describe las variables del dataframe
 
     ## 'data.frame':    146 obs. of  13 variables:
@@ -354,20 +354,9 @@ comas*.
     help(read.csv)
     head(datos.excel) #Muestra los 6 primeros valores
 
-    ##                NOMBRE   PNB REGION Pob_Urbana poblacion natalidad exp_vida
-    ## 1 ANGOLA                 NA      1       28.3      10.0      47.2     44.0
-    ## 2 ARGELIA             60728      1       44.7      25.4      40.2     62.5
-    ## 3 BENIN                1315      1       42.0       4.7      50.5     46.0
-    ## 4 BOTSWANA             1202      1       23.6       1.3      47.3     56.5
-    ## 5 BURKINA FASO         1589      1        9.0       9.0      47.2     47.2
-    ## 6 BURUNDI              1205      1        7.3       5.5      45.7     48.5
-    ##   tasaM_inf PNB_PC tasa_ferti tasa_crec tasa_mort calorias
-    ## 1       137     NA        6.4      2.70        20       NA
-    ## 2        74   2629        6.1      3.12         9      113
-    ## 3       110    305        7.0      3.15        19       93
-    ## 4        67   1059        6.3      3.51        12       93
-    ## 5       138    191        6.5      2.67        19       83
-    ## 6       112    241        6.3      2.88        17       95
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["NOMBRE"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["PNB"],"name":[2],"type":["int"],"align":["right"]},{"label":["REGION"],"name":[3],"type":["int"],"align":["right"]},{"label":["Pob_Urbana"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["poblacion"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["natalidad"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["exp_vida"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["tasaM_inf"],"name":[8],"type":["int"],"align":["right"]},{"label":["PNB_PC"],"name":[9],"type":["int"],"align":["right"]},{"label":["tasa_ferti"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["tasa_crec"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["tasa_mort"],"name":[12],"type":["int"],"align":["right"]},{"label":["calorias"],"name":[13],"type":["int"],"align":["right"]}],"data":[{"1":"ANGOLA","2":"NA","3":"1","4":"28.3","5":"10.0","6":"47.2","7":"44.0","8":"137","9":"NA","10":"6.4","11":"2.70","12":"20","13":"NA","_rn_":"1"},{"1":"ARGELIA","2":"60728","3":"1","4":"44.7","5":"25.4","6":"40.2","7":"62.5","8":"74","9":"2629","10":"6.1","11":"3.12","12":"9","13":"113","_rn_":"2"},{"1":"BENIN","2":"1315","3":"1","4":"42.0","5":"4.7","6":"50.5","7":"46.0","8":"110","9":"305","10":"7.0","11":"3.15","12":"19","13":"93","_rn_":"3"},{"1":"BOTSWANA","2":"1202","3":"1","4":"23.6","5":"1.3","6":"47.3","7":"56.5","8":"67","9":"1059","10":"6.3","11":"3.51","12":"12","13":"93","_rn_":"4"},{"1":"BURKINA FASO","2":"1589","3":"1","4":"9.0","5":"9.0","6":"47.2","7":"47.2","8":"138","9":"191","10":"6.5","11":"2.67","12":"19","13":"83","_rn_":"5"},{"1":"BURUNDI","2":"1205","3":"1","4":"7.3","5":"5.5","6":"45.7","7":"48.5","8":"112","9":"241","10":"6.3","11":"2.88","12":"17","13":"95","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 
 ### Stata
 
@@ -376,11 +365,11 @@ Se requiere el paquete *foreign*
     # install.packages("foreign")
     library(foreign)
 
-    datos.stata=read.dta("per12_2010.dta",convert.factors=TRUE)
+    datos.stata <- read.dta("per12_2010.dta",convert.factors=TRUE)
     help(read.dta)
     head(datos.stata)
 
 ### SPSS
 
-    datos.spss=read.spss("per12_2010.sav",use.value.labels=TRUE, max.value.labels=TRUE, to.data.frame=TRUE)
+    datos.spss <- read.spss("per12_2010.sav",use.value.labels=TRUE, max.value.labels=TRUE, to.data.frame=TRUE)
     head(datos.spss)

@@ -1,14 +1,21 @@
 ---
-title: 'Introducción al R'
-subtitle: 'Objetos, Apply y aggregate'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+title: "Introducción al R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
 date: "19 de marzo de 2018"
-output: 
-  pdf_document:
-    toc: true
+output:
+  md_document:
+    toc: yes
     toc_depth: 3
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+subtitle: Objetos, Apply y aggregate
 bibliography: bibliography.bib
 ---
 
@@ -50,10 +57,10 @@ table(sex_factor)
 Es *vector generalizado*. Cada lista está formada por componentes (que pueden ser otras listas), y cada componente puede ser de un tipo distinto. Son unos "contenedores generales”.
 
 ```{r}
-n = c(2, 3, 5) 
-s = c("aa", "bb", "cc", "dd", "ee") 
-b = c(TRUE, FALSE, TRUE, FALSE, FALSE) 
-x = list(n, s, b, 3)
+n <- c(2, 3, 5) 
+s <- c("aa", "bb", "cc", "dd", "ee") 
+b <- c(TRUE, FALSE, TRUE, FALSE, FALSE) 
+x <- list(n, s, b, 3)
 ```
 
 A las listas a veces se les llama *vectores recursivos*, porque pueden contener otras listas.
@@ -208,7 +215,7 @@ cbind(m1,m2)
 - El operador para el producto de dos matrices es `%*%`. Por ejemplo, considerando las dos matrices m1 y m2: 
 
 ```{r,results='hide'}
-ma=rbind(m1, m2) %*% cbind(m1, m2) 
+ma <- rbind(m1, m2) %*% cbind(m1, m2) 
 ```
 
 - La transpuesta de una matriz se realiza con la función `t`; esta función también funciona con data frames. 
@@ -267,7 +274,7 @@ y <- x^2
 - Con bucles:
 
 ```{r}
-z=0
+z <- 0
 for (i in 1:50000) z[i] <- x[i]^2 
 ```
 
@@ -339,7 +346,7 @@ i
 - Empecemos con un ejemplo simple:
 
 ```{r}
-r=5
+r <- 5
 if(r==4){
   x <-1
 }else{

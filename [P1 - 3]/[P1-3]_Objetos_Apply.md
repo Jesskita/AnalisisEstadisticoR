@@ -74,10 +74,10 @@ Es *vector generalizado*. Cada lista está formada por componentes (que
 pueden ser otras listas), y cada componente puede ser de un tipo
 distinto. Son unos "contenedores generales”.
 
-    n = c(2, 3, 5) 
-    s = c("aa", "bb", "cc", "dd", "ee") 
-    b = c(TRUE, FALSE, TRUE, FALSE, FALSE) 
-    x = list(n, s, b, 3)
+    n <- c(2, 3, 5) 
+    s <- c("aa", "bb", "cc", "dd", "ee") 
+    b <- c(TRUE, FALSE, TRUE, FALSE, FALSE) 
+    x <- list(n, s, b, 3)
 
 A las listas a veces se les llama *vectores recursivos*, porque pueden
 contener otras listas.
@@ -332,7 +332,7 @@ Desde luego, podemos crear un data frame directamente, por ejemplo
 
 <!-- -->
 
-    ma=rbind(m1, m2) %*% cbind(m1, m2) 
+    ma <- rbind(m1, m2) %*% cbind(m1, m2) 
 
 -   La transpuesta de una matriz se realiza con la función `t`; esta
     función también funciona con data frames.
@@ -355,14 +355,6 @@ Desde luego, podemos crear un data frame directamente, por ejemplo
 
 Otro uso de la función `solve()` es la solución de sistemas de
 ecuaciones, por ejemplo:
-
-$$
-\\begin{eqnarray}
-3x + 2y + z & = & 1 \\\\
-5x + 3y + 4z & = & 2 \\\\
-x + y -z & = & 1
-\\end{eqnarray}
-$$
 
 Cuya solución en `R` sería:
 
@@ -403,7 +395,7 @@ Bucles
 
 <!-- -->
 
-    z=0
+    z <- 0
     for (i in 1:50000) z[i] <- x[i]^2 
 
 FOR
@@ -487,7 +479,7 @@ If - Else
 
 <!-- -->
 
-    r=5
+    r <- 5
     if(r==4){
       x <-1
     }else{
@@ -583,7 +575,7 @@ lapply
     ## [1] 3
     ## 
     ## $b
-    ## [1] 0.0264061
+    ## [1] 0.216877
 
     x <- list(a = 1:4, b = rnorm(10), 
     c = rnorm(20, 1), d = rnorm(100, 5))
@@ -593,28 +585,28 @@ lapply
     ## [1] 2.5
     ## 
     ## $b
-    ## [1] 0.1725631
+    ## [1] 0.04456287
     ## 
     ## $c
-    ## [1] 0.8230073
+    ## [1] 0.9856312
     ## 
     ## $d
-    ## [1] 4.862065
+    ## [1] 5.002475
 
     x <- 1:4
     lapply(x, runif)
 
     ## [[1]]
-    ## [1] 0.3843159
+    ## [1] 0.1418222
     ## 
     ## [[2]]
-    ## [1] 0.2033737 0.0259053
+    ## [1] 0.3761994 0.6663500
     ## 
     ## [[3]]
-    ## [1] 0.15840701 0.06124935 0.29282368
+    ## [1] 0.8647830 0.1491277 0.1132800
     ## 
     ## [[4]]
-    ## [1] 0.9975102 0.8380641 0.4774508 0.7992111
+    ## [1] 0.4474659 0.1889285 0.1531723 0.2090623
 
 sapply
 ------
@@ -637,18 +629,18 @@ sapply
     ## [1] 2.5
     ## 
     ## $b
-    ## [1] 0.03378258
+    ## [1] 0.626803
     ## 
     ## $c
-    ## [1] 0.8367706
+    ## [1] 1.000639
     ## 
     ## $d
-    ## [1] 4.961338
+    ## [1] 5.049756
 
     sapply(x, mean)
 
-    ##          a          b          c          d 
-    ## 2.50000000 0.03378258 0.83677056 4.96133797
+    ##        a        b        c        d 
+    ## 2.500000 0.626803 1.000639 5.049756
 
     mean(x)
 
@@ -672,15 +664,15 @@ apply
     x <- matrix(rnorm(200), 20, 10)
     apply(x, 2, mean)
 
-    ##  [1]  0.10809143  0.07707672  0.08802427 -0.11327371 -0.10371889
-    ##  [6] -0.08553906  0.08811626  0.32774436 -0.13240621 -0.07126382
+    ##  [1] -0.340565903  0.131627295  0.181625790 -0.225925985 -0.162814988
+    ##  [6] -0.028220067 -0.534005115  0.004421005  0.149176655  0.144651490
 
     apply(x, 1, sum)
 
-    ##  [1] -0.1302894  1.4780489  1.9731588  0.2846633 -9.6385427  2.7468087
-    ##  [7]  7.3199165  0.1371131  1.8961687  1.1932070  2.9384321 -3.2854800
-    ## [13]  1.2261066 -1.0786123  1.4911185  0.6589886  2.7509972  1.6649310
-    ## [19] -1.1943110 -8.7753967
+    ##  [1]  2.24150877 -4.26515007 -1.12853453  0.12773478  5.89039792
+    ##  [6] -0.06446591 -1.40277859 -5.12291152 -4.26226581 -8.03969080
+    ## [11] -0.37590841  2.10545115 -3.23623397 -3.53179678  1.19703068
+    ## [16]  1.54977617 -0.04288324  3.60127638  2.24070640 -1.08185911
 
 -   Para sumas y medias de matrices tenemos algunos :
 
@@ -711,8 +703,8 @@ tapply
 
     tapply(x, f, mean)
 
-    ##         1         2         3 
-    ## 0.3240321 0.4659992 0.8207216
+    ##          1          2          3 
+    ## -0.3514325  0.4318805  0.6662807
 
 -   Para encontrar rangos por grupo:
 
@@ -721,13 +713,13 @@ tapply
     tapply(x, f, range)
 
     ## $`1`
-    ## [1] -1.454084  1.833629
+    ## [1] -2.434569  1.666539
     ## 
     ## $`2`
-    ## [1] 0.04091485 0.76104505
+    ## [1] 0.05311517 0.93770696
     ## 
     ## $`3`
-    ## [1] -1.084187  2.262947
+    ## [1] -1.382413  2.752564
 
 Aggregate y By
 ==============
@@ -744,58 +736,58 @@ By
     by(InsectSprays,InsectSprays$spray,summary)
 
     ## InsectSprays$spray: A
-    ##      count       spray        x           
-    ##  Min.   : 7.00   A:12   Min.   :-1.95251  
-    ##  1st Qu.:11.50   B: 0   1st Qu.:-0.87870  
-    ##  Median :14.00   C: 0   Median :-0.08103  
-    ##  Mean   :14.50   D: 0   Mean   :-0.26476  
-    ##  3rd Qu.:17.75   E: 0   3rd Qu.: 0.38132  
-    ##  Max.   :23.00   F: 0   Max.   : 1.45845  
+    ##      count       spray        x          
+    ##  Min.   : 7.00   A:12   Min.   :-1.8307  
+    ##  1st Qu.:11.50   B: 0   1st Qu.:-0.7747  
+    ##  Median :14.00   C: 0   Median :-0.3619  
+    ##  Mean   :14.50   D: 0   Mean   :-0.2446  
+    ##  3rd Qu.:17.75   E: 0   3rd Qu.: 0.3732  
+    ##  Max.   :23.00   F: 0   Max.   : 1.8145  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: B
-    ##      count       spray        x          
-    ##  Min.   : 7.00   A: 0   Min.   :-1.5538  
-    ##  1st Qu.:12.50   B:12   1st Qu.:-0.6344  
-    ##  Median :16.50   C: 0   Median :-0.3137  
-    ##  Mean   :15.33   D: 0   Mean   :-0.2659  
-    ##  3rd Qu.:17.50   E: 0   3rd Qu.: 0.1254  
-    ##  Max.   :21.00   F: 0   Max.   : 0.7925  
+    ##      count       spray        x           
+    ##  Min.   : 7.00   A: 0   Min.   :-1.71969  
+    ##  1st Qu.:12.50   B:12   1st Qu.:-0.88653  
+    ##  Median :16.50   C: 0   Median :-0.09798  
+    ##  Mean   :15.33   D: 0   Mean   :-0.13006  
+    ##  3rd Qu.:17.50   E: 0   3rd Qu.: 0.69869  
+    ##  Max.   :21.00   F: 0   Max.   : 1.19002  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: C
-    ##      count       spray        x          
-    ##  Min.   :0.000   A: 0   Min.   :-1.7387  
-    ##  1st Qu.:1.000   B: 0   1st Qu.:-0.4213  
-    ##  Median :1.500   C:12   Median : 0.1925  
-    ##  Mean   :2.083   D: 0   Mean   : 0.2555  
-    ##  3rd Qu.:3.000   E: 0   3rd Qu.: 0.9906  
-    ##  Max.   :7.000   F: 0   Max.   : 1.9895  
+    ##      count       spray        x            
+    ##  Min.   :0.000   A: 0   Min.   :-1.367229  
+    ##  1st Qu.:1.000   B: 0   1st Qu.:-0.832277  
+    ##  Median :1.500   C:12   Median :-0.459139  
+    ##  Mean   :2.083   D: 0   Mean   :-0.385083  
+    ##  3rd Qu.:3.000   E: 0   3rd Qu.: 0.006506  
+    ##  Max.   :7.000   F: 0   Max.   : 0.480547  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: D
-    ##      count        spray        x           
-    ##  Min.   : 2.000   A: 0   Min.   :-1.73489  
-    ##  1st Qu.: 3.750   B: 0   1st Qu.:-0.50905  
-    ##  Median : 5.000   C: 0   Median :-0.09253  
-    ##  Mean   : 4.917   D:12   Mean   :-0.12983  
-    ##  3rd Qu.: 5.000   E: 0   3rd Qu.: 0.33560  
-    ##  Max.   :12.000   F: 0   Max.   : 1.03556  
+    ##      count        spray        x          
+    ##  Min.   : 2.000   A: 0   Min.   :-2.6601  
+    ##  1st Qu.: 3.750   B: 0   1st Qu.:-0.3947  
+    ##  Median : 5.000   C: 0   Median : 0.3054  
+    ##  Mean   : 4.917   D:12   Mean   : 0.1601  
+    ##  3rd Qu.: 5.000   E: 0   3rd Qu.: 0.7833  
+    ##  Max.   :12.000   F: 0   Max.   : 2.4392  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: E
-    ##      count      spray        x          
-    ##  Min.   :1.00   A: 0   Min.   :-2.2513  
-    ##  1st Qu.:2.75   B: 0   1st Qu.:-0.7806  
-    ##  Median :3.00   C: 0   Median :-0.1059  
-    ##  Mean   :3.50   D: 0   Mean   :-0.1711  
-    ##  3rd Qu.:5.00   E:12   3rd Qu.: 0.3822  
-    ##  Max.   :6.00   F: 0   Max.   : 1.4324  
+    ##      count      spray        x           
+    ##  Min.   :1.00   A: 0   Min.   :-1.45674  
+    ##  1st Qu.:2.75   B: 0   1st Qu.:-0.71854  
+    ##  Median :3.00   C: 0   Median :-0.12423  
+    ##  Mean   :3.50   D: 0   Mean   : 0.07824  
+    ##  3rd Qu.:5.00   E:12   3rd Qu.: 0.44134  
+    ##  Max.   :6.00   F: 0   Max.   : 2.85670  
     ## -------------------------------------------------------- 
     ## InsectSprays$spray: F
     ##      count       spray        x          
-    ##  Min.   : 9.00   A: 0   Min.   :-1.3517  
-    ##  1st Qu.:12.50   B: 0   1st Qu.:-0.6895  
-    ##  Median :15.00   C: 0   Median : 0.1674  
-    ##  Mean   :16.67   D: 0   Mean   : 0.1536  
-    ##  3rd Qu.:22.50   E: 0   3rd Qu.: 0.6735  
-    ##  Max.   :26.00   F:12   Max.   : 2.4889
+    ##  Min.   : 9.00   A: 0   Min.   :-0.9682  
+    ##  1st Qu.:12.50   B: 0   1st Qu.:-0.8131  
+    ##  Median :15.00   C: 0   Median :-0.6019  
+    ##  Mean   :16.67   D: 0   Mean   :-0.3090  
+    ##  3rd Qu.:22.50   E: 0   3rd Qu.: 0.1269  
+    ##  Max.   :26.00   F:12   Max.   : 1.1588
 
 Aggregate
 ---------
@@ -804,9 +796,9 @@ Aggregate
     list(InsectSprays$spray),median)
 
     ##   Group.1 count           x
-    ## 1       A  14.0 -0.08103163
-    ## 2       B  16.5 -0.31367848
-    ## 3       C   1.5  0.19251313
-    ## 4       D   5.0 -0.09253051
-    ## 5       E   3.0 -0.10590169
-    ## 6       F  15.0  0.16737811
+    ## 1       A  14.0 -0.36189284
+    ## 2       B  16.5 -0.09798283
+    ## 3       C   1.5 -0.45913853
+    ## 4       D   5.0  0.30544686
+    ## 5       E   3.0 -0.12422525
+    ## 6       F  15.0 -0.60186752
