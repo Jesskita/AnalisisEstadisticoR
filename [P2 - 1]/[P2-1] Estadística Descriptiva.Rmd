@@ -1,14 +1,20 @@
 ---
-title: 'Análisis Estadístico con R'
-subtitle: 'Estadística Descriptiva'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
-date: "28 de marzo de 2018"
-output: 
-  html_document:
-    toc: true
+title: "Análisis Estadístico con R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
+date: "22 de julio de 2018"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  md_document:
+    toc: yes
     toc_depth: 2
+  html_document:
+    toc: yes
+    toc_depth: 2
+subtitle: Estadística Descriptiva
 bibliography: bibliography.bib
 ---
 
@@ -17,7 +23,7 @@ La revisión metodológica aquí vertida se basa en [@Wang_2012].
 -->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
 knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documents/Consultorias&Cursos/DataLectures")) 
 ```
 
@@ -306,8 +312,8 @@ Las funciones `margin.table` y `prop.table` también funcionan sobre tablas múl
 Una forma gráfica de expresar estos resultados marginales sería:
 
 ```{r}
-barplot(prop.table(t(caff.marital),2),beside=T)
-legend("topright",colnames(caff.marital),col=c("white","grey80","grey50","black"))
+barplot(prop.table(t(caff.marital),2),beside=T,col = 1:4)
+legend("topright",legend = colnames(caff.marital),fill = 1:4)
 ```
 
 

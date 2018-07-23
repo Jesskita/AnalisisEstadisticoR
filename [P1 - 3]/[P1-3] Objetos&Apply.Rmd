@@ -5,14 +5,14 @@ author:
   name: VMO
 date: "19 de marzo de 2018"
 output:
+  md_document:
+    toc: yes
+    toc_depth: 3
   html_document:
     df_print: paged
     toc: yes
     toc_depth: '3'
   pdf_document:
-    toc: yes
-    toc_depth: 3
-  md_document:
     toc: yes
     toc_depth: 3
 subtitle: Objetos, Apply y aggregate

@@ -72,19 +72,19 @@ Resúmen estadístico
     x <- rnorm(50)
     mean(x)
 
-    ## [1] -0.03807992
+    ## [1] -0.05211424
 
     sd(x)
 
-    ## [1] 0.9502236
+    ## [1] 0.8521213
 
     var(x)
 
-    ## [1] 0.902925
+    ## [1] 0.7261107
 
     median(x)
 
-    ## [1] -0.0810994
+    ## [1] -0.1006402
 
 Recuerda que estamos usando la generación de números aleatorios, de modo
 que nuestros resultados no van a coincidir.
@@ -96,7 +96,7 @@ que nuestros resultados no van a coincidir.
     quantile(x)
 
     ##         0%        25%        50%        75%       100% 
-    ## -2.0075091 -0.6792376 -0.0810994  0.6183571  1.9315538
+    ## -1.8593318 -0.5346432 -0.1006402  0.3716087  2.1535681
 
 Nota que por defecto obtienes el mínimo, máximo y tres *cuartiles* (esto
 es, los *cuantiles* 0.25, 0.50 y 0.75), se llaman así porque se divide
@@ -118,10 +118,10 @@ alterniativa *robusta* a la desviación estándar.
 
     quantile(x,pvec)
 
-    ##         0%        10%        20%        30%        40%        50% 
-    ## -2.0075091 -1.1322445 -0.9019447 -0.5794439 -0.3575649 -0.0810994 
-    ##        60%        70%        80%        90%       100% 
-    ##  0.1994234  0.4608486  0.7398540  1.2765420  1.9315538
+    ##          0%         10%         20%         30%         40%         50% 
+    ## -1.85933175 -1.16523069 -0.67612641 -0.46491473 -0.25926253 -0.10064016 
+    ##         60%         70%         80%         90%        100% 
+    ##  0.04443811  0.28430765  0.57144689  1.03769040  2.15356811
 
 Veamos un ejemplo cuando hay datos perdidos.
 
@@ -342,11 +342,6 @@ Veamos los tados de `juul` y generamos tablas:
 
     data(juul)
     attach(juul)
-
-    ## The following objects are masked from juul (pos = 3):
-    ## 
-    ##     age, igf1, menarche, sex, tanner, testvol
-
     table(sex)
 
     ## sex
@@ -464,8 +459,8 @@ tablas múltiples.
 
 Una forma gráfica de expresar estos resultados marginales sería:
 
-    barplot(prop.table(t(caff.marital),2),beside=T)
-    legend("topright",colnames(caff.marital),col=c("white","grey80","grey50","black"))
+    barplot(prop.table(t(caff.marital),2),beside=T,col = 1:4)
+    legend("topright",legend = colnames(caff.marital),fill = 1:4)
 
 ![](%5BP2-1%5D_Estadística_Descriptiva_files/figure-markdown_strict/unnamed-chunk-31-1.png)
 
@@ -663,9 +658,6 @@ obtienen reemplazando los datos con estadísticos de orden.
 
     wilcox.test(daily.intake, mu=7725)
 
-    ## Warning in wilcox.test.default(daily.intake, mu = 7725): cannot compute
-    ## exact p-value with ties
-
     ## 
     ##  Wilcoxon signed rank test with continuity correction
     ## 
@@ -761,9 +753,6 @@ aplicar el test cuando los datos son dependientes.
 
     wilcox.test(expend~stature)
 
-    ## Warning in wilcox.test.default(x = c(7.53, 7.48, 8.08, 8.09, 10.15, 8.4, :
-    ## cannot compute exact p-value with ties
-
     ## 
     ##  Wilcoxon rank sum test with continuity correction
     ## 
@@ -813,9 +802,6 @@ que NO debes hacer es:
 ### Test de Wilcoxon para muestras pareadas
 
     wilcox.test(pre, post, paired=T)
-
-    ## Warning in wilcox.test.default(pre, post, paired = T): cannot compute exact
-    ## p-value with ties
 
     ## 
     ##  Wilcoxon signed rank test with continuity correction
@@ -891,9 +877,6 @@ variables.
 
     cor.test(blood.glucose,short.velocity,method="spearman")
 
-    ## Warning in cor.test.default(blood.glucose, short.velocity, method =
-    ## "spearman"): Cannot compute exact p-value with ties
-
     ## 
     ##  Spearman's rank correlation rho
     ## 
@@ -917,7 +900,7 @@ Veamos un ejemplo donde *y* = *e**x**p*(*x*):
 
     cor(x,y,method="pearson")
 
-    ## [1] 0.923178
+    ## [1] 0.771177
 
     cor(x,y,method="spearman")
 
@@ -1027,26 +1010,6 @@ más usada es n1, es decir: (observación-media)/desviación estándar
 
     # install.packages("clusterSim")
     library(clusterSim)
-
-    ## Loading required package: cluster
-
-    ## Loading required package: MASS
-
-    ## 
-    ## Attaching package: 'MASS'
-
-    ## The following object is masked from 'juul':
-    ## 
-    ##     menarche
-    ## 
-    ## The following object is masked from 'juul':
-    ## 
-    ##     menarche
-
-    ## 
-    ## This is package 'modeest' written by P. PONCET.
-    ## For a complete list of functions, use 'library(help = "modeest")' or 'help.start()'.
-
     normfood <- data.Normalization (FOODEXP,type="n1")
     normtot <- data.Normalization (TOTALEXP,type="n1")
 
