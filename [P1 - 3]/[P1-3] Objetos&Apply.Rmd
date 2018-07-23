@@ -5,16 +5,16 @@ author:
   name: VMO
 date: "19 de marzo de 2018"
 output:
-  md_document:
-    toc: yes
-    toc_depth: 3
-  pdf_document:
-    toc: yes
-    toc_depth: 3
   html_document:
     df_print: paged
     toc: yes
     toc_depth: '3'
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+  md_document:
+    toc: yes
+    toc_depth: 3
 subtitle: Objetos, Apply y aggregate
 bibliography: bibliography.bib
 ---
@@ -23,7 +23,7 @@ bibliography: bibliography.bib
 La revisión metodológica aquí vertida se basa en [@Wang_2012].
 -->
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
 knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documents/Consultorias&Cursos/DataLectures")) 
 ```
 
@@ -551,9 +551,156 @@ y <- c(4,2,3,23,6,10,11,12,6,3,2)
 udcorr(x,y)
 ```
 
-# Aggregate y By
 
-## By
+# Administración de datos
+
+## Ordenar datos
+
+Para ordenar un marco de datos en R, use la función `order()`. Por defecto, la clasificación es **ascendente**. Anteponga la variable de clasificación con un signo menos para indicar el orden **descendente**. Veamos unos ejemplos:
+
+
+-   Leemos los datos `mtcars`, vemos su estructura y realizamos un `attach`
+```{r}
+data(mtcars)
+str(mtcars)
+attach(mtcars)
+```
+
+
+
+-   Si deseamos re ordenar nuestra tabla de datos según `mpg`, realizamos:
+
+
+```{r}
+# ordeno por mpg
+newdata <- mtcars[order(mpg),] 
+#Comparamos los resultados:
+head(mtcars)
+head(newdata)
+```
+
+-   Si se desea ordenar los datos en función de más de una variable:
+
+```{r}
+# sort by mpg and cyl
+newdata <- mtcars[order(mpg, cyl),]
+# comparamos resultados:
+head(mtcars[,c("mpg","cyl")])
+head(newdata[,c("mpg","cyl")])
+```
+
+-   Si deseamos ordenar de forma ascendente por una variable y descendente en otra:
+
+```{r}
+newdata <- mtcars[order(mpg, -cyl),] 
+```
+
+-    También podemos realizar lo anterior usando el argumento `descending`:
+
+
+```{r}
+newdata1 <- mtcars[order(mpg,cyl, decreasing = c(FALSE,TRUE)),] 
+# comparamos resultados:
+tail(newdata[,c("mpg","cyl")])
+tail(newdata1[,c("mpg","cyl")])
+```
+
+## Unir datos
+
+Para unir dos tablas de datos (datasets) horizontalmente, use la función `merge`. En la mayoría de los casos, se une dos tablas de datos por una o más variables clave comunes (es decir, una unión interna).
+
+### Ejemplo 1
+
+
+![](Figuras/m1.png)
+
+```{r}
+country <- rep(c("A","B","C"),each=4)
+year <- rep(2000:2003,3)
+y <- c(1343,-1900,-11,2646,-5935,-712,-1933,3073,-1292,-3416,356,1225)
+y_bin <- c(1,0,0,1,0,0,0,1,0,0,0,1)
+x1 <- c(.28,.32,.36,.25,-0.08,0.11,0.35,0.73,1.31,1.18,1.26,1.42)
+x2 <- c(-1.11,-0.95,-0.79,-0.89,1.43,1.65,1.59,1.69,-1.29,-1.34,-1.26,-1.31)
+x3 <- c(.28,.49,.7,-.09,.02,.26,-.23,.26,.2,.28,.37,-.38)
+x4 <- c(10,7,7,1,0,5,9,1,4,6,6,7)
+x5 <- c(1,1,9,2,5,8,4,5,5,9,5,3)
+x6 <- c(9,9,4,3,6,5,5,1,4,6,3,3)
+
+mydata1 <- data.frame(country,year,y,y_bin,x1,x2,x3)
+mydata2 <- data.frame(country,year,x4,x5,x6)
+```
+
+
+```{r,echo=FALSE}
+mydata <- merge(mydata1,mydata2,by = c("country","year"))
+```
+
+
+### Ejemplo 2 (una tabla no tiene un país)
+
+![](Figuras/m2.png)
+
+```{r,echo=FALSE}
+mydata3 <- mydata2[1:8,]
+mydata <- merge(mydata1,mydata3,by = c("country","year"))
+```
+
+Solo se unen los casos comunes en ambas tablas. Si queremos unir todos los datos de ambas tablas
+
+```{r}
+(mydata <- merge(mydata1, mydata3, by=c("country","year"), all=TRUE) )
+```
+
+### Ejemplo 3 (muchos a uno)
+
+![](Figuras/m3.png)
+
+```{r,echo = FALSE}
+mydata4 <- data.frame(country = c("A","B","C"),x7 = c(100,200,300))
+mydata <- merge(mydata1, mydata4, by=c("country"))
+```
+
+### Ejemplo 4 (ids comunes con nombres diferentes)
+
+![](Figuras/m4.png)
+
+
+En este caso usamos las opciones `by.x` y `by.y`. R usará los nombres de la primera en el resultado.
+
+```{r,echo = FALSE}
+mydata5 <- data.frame(nations = country,time = year,x4,x5,x6)
+mydata <- merge(mydata1, mydata5, by.x=c("country","year"), by.y=c("nations","time"))
+```
+
+
+### Ejemplo 5 (variables diferentes, mismo nombre)
+
+![](Figuras/m5.png)
+
+
+Cuando existen variables con el mismo nombre, R asignará un sufijo `.x` o `.y` para identificar la data de la que provienen.
+
+```{r,echo = FALSE}
+mydata6 <- data.frame(nations = country,time = year,x2,x3,x4)
+(mydata <- merge(mydata1, mydata6, by.x=c("country","year"), by.y=c("nations","time")))
+```
+
+
+## Append
+
+![](Figuras/m6.png)
+
+
+```{r,echo = FALSE}
+mydata7 <- mydata1[1:6,]
+mydata8 <- mydata1[7:12,]
+(mydata <- rbind(mydata7, mydata8))
+```
+
+
+## Aggregate y By
+
+### By
 
 - Para ejecutar esta función, usaremos la base de datos *InsectSprays*
 
@@ -564,9 +711,83 @@ by(InsectSprays,InsectSprays$spray,summary)
 ```
 
 
-## Aggregate
+### Aggregate
+
+Es relativamente fácil colapsar datos en R usando una o más variables *BY* y una función definida.
 
 ```{r}
-aggregate(InsectSprays[,-2],
-list(InsectSprays$spray),median)
+# agregamos los datos de mtcars por cyl and vs, 
+# regresa las medias de las variables numéricas
+aggdata <-aggregate(mtcars, by=list(cyl,vs), 
+  FUN=mean, na.rm=TRUE,data = mtcars)
+print(aggdata)
 ```
+
+
+Al usar la función `aggregate()`, las variables by deben estar en una lista (incluso si solo hay una). La función puede ser incorporada o proporcionada por el usuario.
+
+
+## Reshape
+
+Use la función `t()` para transponer una matriz o una tabla de datos. En el caso de `data.frames`, los nombres de fila se convierten en nombres de variables (columna).
+
+```{r}
+# ejemplo usando mtcars
+mtcars
+t(mtcars)
+```
+
+
+
+### El paquete `reshape`
+
+Básicamente, `funde` (*melt*) los datos para que cada fila sea una combinación única de variable de identificación. Luego `proyecta` (*cast*) los datos fundidos en la forma que desee. Aquí hay un ejemplo muy simple.
+
+```{r}
+id <- c(1,1,2,2)
+time <- c(2001,2002,2001,2002)
+x1 <- c(5,3,6,2)
+x2 <- c(6,5,1,4)
+(mydata <- data.frame(id,time,x1,x2))
+```
+
+
+<!-- wide.format <- reshape(mydata, -->
+<!--                        # time variable -->
+<!--                        timevar="time", -->
+<!--                        # variables not to change -->
+<!--                        idvar="id",  -->
+<!--                        # direction of reshape -->
+<!--                        direction = "wide" -->
+<!--                        ) -->
+<!-- long.format <- reshape(wide.format,  -->
+<!--                  # variable names for level one -->
+<!--                  varying=c("x1.2001", "x1.2002", "x2.2001", "x2.2002"), -->
+<!--                  # new var name for long data -->
+<!--                  v.names="income", -->
+<!--                  # name for year in long data -->
+<!--                  timevar="time",  -->
+<!--                  # possible time values -->
+<!--                  times=c(2001,2002,2001,2002),  -->
+<!--                  # direction to reshape -->
+<!--                  direction="long" -->
+<!--                        ) -->
+
+Ejemplo:
+
+```{r}
+library(reshape)
+(mdata <- melt(mydata, id=c("id","time")))
+```
+
+
+Ahora hacemos un `cast` de los datos:
+
+```{r}
+(subjmeans <- cast(mdata, id~variable, mean))
+(timemeans <- cast(mdata, time~variable, mean))
+```
+
+
+
+
