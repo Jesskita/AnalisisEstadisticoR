@@ -61,17 +61,10 @@ Ahora:
     ##  [9,]      240             161
     ## [10,]      260             173
 
-    par(mfrow=c(1,2))
-    plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gráfico en escalera
-    points(X,Y)
-
-    #Primero poner los puntos y luego la línea para tener 
-    plot(X,Y,col="blue",main="Linea poblacional \ny puntos muestral")
-    lines(ingresos,consumoEsperado,col="blue") #Función de regresión poblacional (línea)
+    plot(X,Y,col="blue")
+    lines(ingresos,consumoEsperado,col="blue")
 
 ![](%5BP2-2%5D_Regresión_Lineal_files/figure-markdown_strict/unnamed-chunk-3-1.png)
-
-    par(mfrow=c(1,1))
 
 -   ¿Qué hemos hecho?
 
@@ -129,12 +122,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         21.9536           0.5656
+    ##         15.5878           0.6033
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      21.9535637       0.5656048
+    ##      15.5878307       0.6033069
 
     abline(coef(ajuste.1))
 

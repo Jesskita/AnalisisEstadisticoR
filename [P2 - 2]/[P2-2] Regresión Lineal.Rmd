@@ -1,14 +1,22 @@
 ---
-title: 'Análisis Estadístico con R'
-subtitle: 'Regresión'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
-date: "02 de abril de 2018"
-output: 
+title: "Análisis Estadístico con R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
+date: "24 de julio de 2018"
+output:
+  md_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   pdf_document:
-    toc: true
+    toc: yes
     toc_depth: 2
+subtitle: Regresión
 bibliography: bibliography.bib
 ---
 <script type="text/x-mathjax-config">
@@ -56,14 +64,8 @@ cbind(ingresos,consumoEsperado)
 
 
 ```{r}
-par(mfrow=c(1,2))
-plot(ingresos,consumoEsperado, type="l",main="Linea muestral \ny puntos poblacional") # la "s" en type, arroja un gráfico en escalera
-points(X,Y)
-
-#Primero poner los puntos y luego la línea para tener 
-plot(X,Y,col="blue",main="Linea poblacional \ny puntos muestral")
-lines(ingresos,consumoEsperado,col="blue") #Función de regresión poblacional (línea)
-par(mfrow=c(1,1))
+plot(X,Y,col="blue")
+lines(ingresos,consumoEsperado,col="blue")
 ```
 
 
@@ -461,8 +463,8 @@ summary(lm(lsalary~ceoten))
 ```
 
 - Hay una probabilidad de equivocarnos del 12.84% si rechazamos la hipótesis nula
-- No hay evidencia de la entiguedad tenga relación con el salario
-- Los CEO con 0 a?os de antiguedad entran ganando `exp(6.505)=668.4757` miles de USD `exp(6.505)`
+- No hay evidencia de la antiguedad tenga relación con el salario
+- Los CEO con 0 años de antiguedad entran ganando `exp(6.505)=668.4757` miles de USD `exp(6.505)`
 
 
 ### Regresión a través del origen
