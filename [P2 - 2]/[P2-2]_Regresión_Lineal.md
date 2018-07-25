@@ -122,12 +122,12 @@ obtener una muestra de la población:
     ## 
     ## Coefficients:
     ##     (Intercept)  ingreso.muestra  
-    ##         15.5878           0.6033
+    ##         15.4869           0.6123
 
     coef(ajuste.1)
 
     ##     (Intercept) ingreso.muestra 
-    ##      15.5878307       0.6033069
+    ##      15.4869110       0.6123037
 
     abline(coef(ajuste.1))
 
@@ -191,10 +191,6 @@ Abrimos la `tabla3.2`, vamos a obtener:
 
     consumo <- read.csv(url(uu),sep=";",dec=".",header=TRUE)
     attach(consumo)
-
-    ## The following objects are masked from familia:
-    ## 
-    ##     X, Y
 
     media_x <- mean(X, na.rm=T)
     media_y <- mean(Y, na.rm=T)
@@ -461,11 +457,6 @@ agregamos los nombres:
 Veamos los datos gráficamente y corramos la regresión:
 
     attach(datos)
-
-    ## The following object is masked from package:datasets:
-    ## 
-    ##     sleep
-
     #totwrk minutos trabajados por semana
     #sleep minutos dormidos por semana
     plot(totwrk,sleep)
@@ -643,8 +634,8 @@ Regresar la antigüedad del CEO en el logaritmo del salario.
 
 -   Hay una probabilidad de equivocarnos del 12.84% si rechazamos la
     hipótesis nula
--   No hay evidencia de la entiguedad tenga relación con el salario
--   Los CEO con 0 a?os de antiguedad entran ganando
+-   No hay evidencia de la antiguedad tenga relación con el salario
+-   Los CEO con 0 años de antiguedad entran ganando
     `exp(6.505)=668.4757` miles de USD `exp(6.505)`
 
 ### Regresión a través del origen
@@ -1005,9 +996,9 @@ $cov(\\hat{\\beta}\_2,\\hat{\\beta}\_3)$ en `R` es `vcov(fit.model)` y
 
 Otra forma de hacer la prueba es mediante el estadístico *F*:
 
-$$
-F = \\frac{Q\_2/gl}{Q\_4/gl}
-$$
+<!-- $$ -->
+<!-- F = \frac{Q_2/gl}{Q_4/gl} -->
+<!-- $$ -->
 $$
 F = \\frac{(SCE\_{R}-SCE\_{NR})/m}{SCR\_{NR}/(n-k)}
 $$
@@ -1050,7 +1041,7 @@ R^2 = \\frac{SCE}{SCT}
 $$
 
 $$
-R^2 = \\frac{SCE/(k-1)}{SCT/(n-k)}
+F = \\frac{SCE/(k-1)}{SCT/(n-k)}
 $$
 
 donde *k* es el número de variables (incluido el intercepto) y sigue una
@@ -1321,7 +1312,7 @@ Notemos que se trata de las mismas funciones que en $\\eqref{chow1}$ y
 $\\eqref{chow2}$, con
 
 -   *λ*<sub>1</sub> = *α*<sub>1</sub>
--   *λ*<sub>2</sub> = *β*<sub>2</sub>
+-   *λ*<sub>2</sub> = *β*<sub>1</sub>
 -   *γ*<sub>1</sub> = (*α*<sub>1</sub> + *α*<sub>2</sub>)
 -   *γ*<sub>2</sub> = (*β*<sub>1</sub> + *β*<sub>2</sub>)
 

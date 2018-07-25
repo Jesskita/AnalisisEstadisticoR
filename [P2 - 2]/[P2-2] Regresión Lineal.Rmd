@@ -9,13 +9,13 @@ output:
     df_print: paged
     toc: yes
     toc_depth: '2'
+  pdf_document:
+    toc: yes
+    toc_depth: 2
   html_document:
     df_print: paged
     toc: yes
     toc_depth: '2'
-  pdf_document:
-    toc: yes
-    toc_depth: 2
 subtitle: Regresión
 bibliography: bibliography.bib
 ---
@@ -28,7 +28,7 @@ La revisión metodológica aquí vertida se basa en [@Wang_2012].
 -->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
 knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documents/Consultorias&Cursos/DataLectures")) 
 ```
 
@@ -642,9 +642,9 @@ donde la información nececesaria para obtener $cov(\hat{\beta}_2,\hat{\beta}_3)
 
 Otra forma de hacer la prueba es mediante el estadístico $F$:
 
-$$
-F = \frac{Q_2/gl}{Q_4/gl}
-$$
+<!-- $$ -->
+<!-- F = \frac{Q_2/gl}{Q_4/gl} -->
+<!-- $$ -->
 $$
 F = \frac{(SCE_{R}-SCE_{NR})/m}{SCR_{NR}/(n-k)}
 $$
@@ -685,7 +685,7 @@ R^2 = \frac{SCE}{SCT}
 $$
 
 $$
-R^2 = \frac{SCE/(k-1)}{SCT/(n-k)}
+F = \frac{SCE/(k-1)}{SCT/(n-k)}
 $$
 
 donde $k$ es el número de variables (incluido el intercepto) y sigue una distribución $F$ con $k-1$ y $n-k$ grados de libertad.
@@ -853,7 +853,7 @@ $$
 Notemos que se trata de las mismas funciones que en $\eqref{chow1}$ y $\eqref{chow2}$, con
 
 - $\lambda_1=\alpha_1$
-- $\lambda_2=\beta_2$
+- $\lambda_2=\beta_1$
 - $\gamma_1=(\alpha_1+\alpha_2)$
 - $\gamma_2=(\beta_1+\beta_2)$
 
