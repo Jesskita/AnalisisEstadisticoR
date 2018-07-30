@@ -8,8 +8,6 @@
     -   [Ejemplo 3](#ejemplo-3)
     -   [Test de Wald](#test-de-wald)
     -   [Conclusiones:](#conclusiones)
--   [Tobit](#tobit)
-    -   [Ejemplo](#ejemplo)
 -   [Referencias](#referencias)
 
 <!--
@@ -765,130 +763,43 @@ datos, se obtienen de la siguiente manera:
 -   En general se prefiere usar modelos logit por su facilidad de
     implementación matemática e interpretación más rápida
 
-Tobit
-=====
-
-Una extensión del modelo probit es el modelo tobit, desarrollado por
-James Tobin, economista laureado con el Nobel.
-
--   Se lo conoce también como *modelos de datos censurados*
--   Se persigue el mismo objetivo que la regresión lineal, pero tomando
-    en cuenta toda la muestra.
-
-![](RL_8.png)
-
-#### Ejemplo
-
-Las variables del modelo son:
-
--   *Y*: Num de relaciones extramaritales durante el año anterior
--   *Z*1: 0 para mujer y 1 hombre; *Z*2: edad
--   *Z*3: Número de años de matrimonio
--   *Z*4: 0 si no tienen hijos, 1 si tienen
--   *Z*5: religiosidad en escala ascendente
--   *Z*6: escolaridad; *Z*7:ocupación; *Z*8: autoevaluación del
-    matrimonio (1 muy infeliz 5 muy feliz)
-
-Abramos y exploremos los datos:
-
-    rm(list=ls())
-    a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt"
-    rex <- read.csv(file=a, sep="", dec=".")
-    attach(rex)
-    head(rex)
-
-    ##   ID X1 X2 Z1 Z2    Z3 Z4 Z5 Z6   X3 Z7 Z8 Y X4 X5
-    ## 1  4  0  1  1 37 10.00  0  3 18 40.0  7  4 0  0  1
-    ## 2  5  0  1  0 27  4.00  0  4 14 20.0  6  4 0  0  1
-    ## 3 11  0  1  0 32 15.00  1  1 12 12.5  1  4 0  0  1
-    ## 4 16  0  1  1 57 15.00  1  5 18 12.5  6  5 0  0  1
-    ## 5 23  0  1  1 22  0.75  0  2 17  7.5  6  3 0  0  1
-    ## 6 29  0  1  0 32  1.50  0  2 17  7.5  5  5 0  0  1
-
-    # 7 es una codificacion [4,10]
-    table(Y)
-
-    ## Y
-    ##   0   1   2   3   7  12 
-    ## 451  34  17  19  42  38
-
-    plot(Y~Z6) # Z6 es escolaridad
-
-![](%5BP2-4%5D_Modelos_de_probabilidad_files/figure-markdown_strict/unnamed-chunk-24-1.png)
-
-Ajustemos el modelo:
-
-    library(AER)
-    aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8,
-                   left=0,right=Inf,dist = "gaussian")
-    summary(aj.rex)
-
-    ## 
-    ## Call:
-    ## tobit(formula = Y ~ Z1 + Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8, left = 0, 
-    ##     right = Inf, dist = "gaussian")
-    ## 
-    ## Observations:
-    ##          Total  Left-censored     Uncensored Right-censored 
-    ##            601            451            150              0 
-    ## 
-    ## Coefficients:
-    ##             Estimate Std. Error z value Pr(>|z|)    
-    ## (Intercept)  7.60849    3.90599   1.948 0.051426 .  
-    ## Z1           0.94579    1.06287   0.890 0.373548    
-    ## Z2          -0.19270    0.08097  -2.380 0.017316 *  
-    ## Z3           0.53319    0.14661   3.637 0.000276 ***
-    ## Z4           1.01918    1.27957   0.797 0.425741    
-    ## Z5          -1.69900    0.40548  -4.190 2.79e-05 ***
-    ## Z6           0.02536    0.22767   0.111 0.911304    
-    ## Z7           0.21298    0.32116   0.663 0.507220    
-    ## Z8          -2.27328    0.41541  -5.472 4.44e-08 ***
-    ## Log(scale)   2.11123    0.06715  31.439  < 2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Scale: 8.258 
-    ## 
-    ## Gaussian distribution
-    ## Number of Newton-Raphson Iterations: 4 
-    ## Log-likelihood: -704.7 on 10 Df
-    ## Wald-statistic: 68.13 on 8 Df, p-value: 1.1547e-11
-
-Dejemos únicamente las variables significativas:
-
-    aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian")
-    summary(aj.rex2)
-
-    ## 
-    ## Call:
-    ## tobit(formula = Y ~ Z2 + Z3 + Z5 + Z8, left = 0, right = Inf, 
-    ##     dist = "gaussian")
-    ## 
-    ## Observations:
-    ##          Total  Left-censored     Uncensored Right-censored 
-    ##            601            451            150              0 
-    ## 
-    ## Coefficients:
-    ##             Estimate Std. Error z value Pr(>|z|)    
-    ## (Intercept)  9.08289    2.65881   3.416 0.000635 ***
-    ## Z2          -0.16034    0.07772  -2.063 0.039095 *  
-    ## Z3           0.53890    0.13417   4.016 5.91e-05 ***
-    ## Z5          -1.72337    0.40471  -4.258 2.06e-05 ***
-    ## Z8          -2.26735    0.40813  -5.556 2.77e-08 ***
-    ## Log(scale)   2.11310    0.06712  31.482  < 2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Scale: 8.274 
-    ## 
-    ## Gaussian distribution
-    ## Number of Newton-Raphson Iterations: 4 
-    ## Log-likelihood: -706.4 on 6 Df
-    ## Wald-statistic:  66.4 on 4 Df, p-value: 1.3044e-13
-
-Interpretación: El coeficiente negativo de *Z*8 (felicidad marital)
-significa que mientras más feliz se es, menor es la incidencia de las
-relaciones extramaritales.
-
+<!-- # Tobit -->
+<!-- Una extensión del modelo probit es el modelo tobit, desarrollado por James Tobin, economista -->
+<!-- laureado con el Nobel. -->
+<!-- -    Se lo conoce también como *modelos de datos censurados* -->
+<!-- -    Se persigue el mismo objetivo que la regresión lineal, pero tomando en cuenta toda la muestra. -->
+<!-- ![](RL_8.png) -->
+<!-- #### Ejemplo -->
+<!-- Las variables del modelo son: -->
+<!-- -  $Y$: Num de relaciones extramaritales durante el año anterior  -->
+<!-- -  $Z1$: 0 para mujer y 1 hombre; $Z2$: edad -->
+<!-- -  $Z3$: Número de años de matrimonio  -->
+<!-- -  $Z4$: 0 si no tienen hijos, 1 si tienen  -->
+<!-- -  $Z5$: religiosidad en escala ascendente  -->
+<!-- -  $Z6$: escolaridad; $Z7$:ocupación; $Z8$: autoevaluación del matrimonio (1 muy infeliz 5 muy feliz) -->
+<!-- Abramos y exploremos los datos: -->
+<!-- ```{r} -->
+<!-- rm(list=ls()) -->
+<!-- a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt" -->
+<!-- rex <- read.csv(file=a, sep="", dec=".") -->
+<!-- attach(rex) -->
+<!-- head(rex) -->
+<!-- # 7 es una codificacion [4,10] -->
+<!-- table(Y) -->
+<!-- plot(Y~Z6) # Z6 es escolaridad -->
+<!-- ``` -->
+<!-- Ajustemos el modelo: -->
+<!-- ```{r} -->
+<!-- library(AER) -->
+<!-- aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8, -->
+<!--                left=0,right=Inf,dist = "gaussian") -->
+<!-- summary(aj.rex) -->
+<!-- ``` -->
+<!-- Dejemos únicamente las variables significativas: -->
+<!-- ```{r} -->
+<!-- aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian") -->
+<!-- summary(aj.rex2) -->
+<!-- ``` -->
+<!-- Interpretación: El coeficiente negativo de $Z8$ (felicidad marital) significa que mientras más feliz se es, menor es la incidencia de las relaciones extramaritales. -->
 Referencias
 ===========

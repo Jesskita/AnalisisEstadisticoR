@@ -1,14 +1,20 @@
 ---
-title: 'Análisis Estadístico con R'
-subtitle: 'Modelos de probabilidad'
-author: 
-- name: VMO
-  affiliation: "[RUsersEC](http://rusersgroup.com/)"
+title: "Análisis Estadístico con R"
+author:
+- affiliation: '[RUsersEC](http://rusersgroup.com/)'
+  name: VMO
 date: "24 de abril de 2018"
-output: 
-  html_document:
-    toc: true
+output:
+  md_document:
+    toc: yes
     toc_depth: 2
+  html_document:
+    toc: yes
+    toc_depth: 2
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+subtitle: Modelos de probabilidad
 bibliography: bibliography.bib
 ---
 
@@ -471,65 +477,65 @@ predict(aj.adm, nuevos.datos, type="response",se.fit=T)
 -   La diferencia principal es que la distribución logística tiene las colas un poco más anchas
 -   En general se prefiere usar modelos logit  por su facilidad de implementación matemática e interpretación más rápida
 
-# Tobit
+<!-- # Tobit -->
 
-Una extensión del modelo probit es el modelo tobit, desarrollado por James Tobin, economista
-laureado con el Nobel.
-
-
--    Se lo conoce también como *modelos de datos censurados*
--    Se persigue el mismo objetivo que la regresión lineal, pero tomando en cuenta toda la muestra.
-
-![](RL_8.png)
+<!-- Una extensión del modelo probit es el modelo tobit, desarrollado por James Tobin, economista -->
+<!-- laureado con el Nobel. -->
 
 
-#### Ejemplo
+<!-- -    Se lo conoce también como *modelos de datos censurados* -->
+<!-- -    Se persigue el mismo objetivo que la regresión lineal, pero tomando en cuenta toda la muestra. -->
 
-Las variables del modelo son:
-
--  $Y$: Num de relaciones extramaritales durante el año anterior 
--  $Z1$: 0 para mujer y 1 hombre; $Z2$: edad
--  $Z3$: Número de años de matrimonio 
--  $Z4$: 0 si no tienen hijos, 1 si tienen 
--  $Z5$: religiosidad en escala ascendente 
--  $Z6$: escolaridad; $Z7$:ocupación; $Z8$: autoevaluación del matrimonio (1 muy infeliz 5 muy feliz)
+<!-- ![](RL_8.png) -->
 
 
-Abramos y exploremos los datos:
+<!-- #### Ejemplo -->
 
-```{r}
-rm(list=ls())
-a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt"
-rex <- read.csv(file=a, sep="", dec=".")
-attach(rex)
-head(rex)
-# 7 es una codificacion [4,10]
-table(Y)
-plot(Y~Z6) # Z6 es escolaridad
-```
+<!-- Las variables del modelo son: -->
+
+<!-- -  $Y$: Num de relaciones extramaritales durante el año anterior  -->
+<!-- -  $Z1$: 0 para mujer y 1 hombre; $Z2$: edad -->
+<!-- -  $Z3$: Número de años de matrimonio  -->
+<!-- -  $Z4$: 0 si no tienen hijos, 1 si tienen  -->
+<!-- -  $Z5$: religiosidad en escala ascendente  -->
+<!-- -  $Z6$: escolaridad; $Z7$:ocupación; $Z8$: autoevaluación del matrimonio (1 muy infeliz 5 muy feliz) -->
 
 
-Ajustemos el modelo:
+<!-- Abramos y exploremos los datos: -->
+
+<!-- ```{r} -->
+<!-- rm(list=ls()) -->
+<!-- a <- "http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-1.txt" -->
+<!-- rex <- read.csv(file=a, sep="", dec=".") -->
+<!-- attach(rex) -->
+<!-- head(rex) -->
+<!-- # 7 es una codificacion [4,10] -->
+<!-- table(Y) -->
+<!-- plot(Y~Z6) # Z6 es escolaridad -->
+<!-- ``` -->
 
 
-```{r}
-library(AER)
-aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8,
-               left=0,right=Inf,dist = "gaussian")
-summary(aj.rex)
-```
-
-Dejemos únicamente las variables significativas:
+<!-- Ajustemos el modelo: -->
 
 
+<!-- ```{r} -->
+<!-- library(AER) -->
+<!-- aj.rex = tobit(Y ~ Z1+Z2+Z3+Z4+Z5+Z6+Z7+Z8, -->
+<!--                left=0,right=Inf,dist = "gaussian") -->
+<!-- summary(aj.rex) -->
+<!-- ``` -->
 
-```{r}
-aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian")
-summary(aj.rex2)
-```
+<!-- Dejemos únicamente las variables significativas: -->
 
 
 
-Interpretación: El coeficiente negativo de $Z8$ (felicidad marital) significa que mientras más feliz se es, menor es la incidencia de las relaciones extramaritales.
+<!-- ```{r} -->
+<!-- aj.rex2 = tobit(Y ~ Z2+Z3+Z5+Z8,left=0,right=Inf,dist = "gaussian") -->
+<!-- summary(aj.rex2) -->
+<!-- ``` -->
+
+
+
+<!-- Interpretación: El coeficiente negativo de $Z8$ (felicidad marital) significa que mientras más feliz se es, menor es la incidencia de las relaciones extramaritales. -->
 
 # Referencias
