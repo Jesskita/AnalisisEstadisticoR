@@ -31,7 +31,7 @@
         qué?](#riesgos-no-proporcionales...-y-ahora-que)
     -   [¿Por qué el modelo PH de Cox es tan popular? (pros del
         modelo)](#por-que-el-modelo-ph-de-cox-es-tan-popular-pros-del-modelo)
--   [Ejercicios](#ejercicios)
+-   [Ejercicio](#ejercicio)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -1248,7 +1248,7 @@ Note que *e*<sup>*β*<sub>*a**g**e*</sub></sup> es la razón de riesgo
 para el incremento de una unidad en el predictor.
 
 > Interpretación de la razón de riesgo - HR=1: no hay efecto - HR&gt;1:
-> incremento en el riesgo - HR&gt;1: reducción en el riesgo
+> incremento en el riesgo - HR&lt;1: reducción en el riesgo
 
 En `R`, podemos ver la razón de riesgos para las covariables incluidas
 en el modelo:
@@ -1489,9 +1489,10 @@ $$
 
 Esta expresión indica que si usamos un modelo de Cox (bien utilizado) y
 graficamos las curvas de supervivencia log-log estimadas para individuos
-en el mismo gráfico, las dos gráficas serían aproximadamente paralelas.
-La distancia entre las dos curvas es la expresión lineal que implica las
-diferencias en los valores de predicción, que no implica tiempo.
+en el mismo gráfico, **las dos gráficas serían aproximadamente
+paralelas**. La distancia entre las dos curvas es la expresión lineal
+que implica las diferencias en los valores de predicción, que no implica
+tiempo.
 
 Tenga en cuenta que hay un **problema importante** asociado con este
 enfoque, es decir, **cómo decidir** *¿qué tan paralelo es el paralelo?*.
@@ -1594,7 +1595,7 @@ modelo de Cox:
 -   **Efecto no lineal.** Las covariables continuas con efecto no lineal
     pueden conducir a efectos no proporcionales.
 
-### Un ejemplo... Modelos de riesgo proporcinal estratificado
+### Un ejemplo... Modelos de riesgo proporcional estratificado
 
 Algunas veces se viola el supuesto de riesgo proporcional para alguna
 covariable. En tales casos, es posible estratificar tomando en cuenta
@@ -1692,89 +1693,40 @@ cualquier caso, puedes graficarlo ...
 <!-- ## Estimación del modelo conjunto -->
 <!-- ## El paquete `JM` -->
 <!-- # Superviviencia condicional con `condSURV` -->
-Ejercicios
-==========
+Ejercicio
+=========
 
-    # https://www.analyticsvidhya.com/blog/2014/04/solving-survival-model/
-    Customer_id <- c(213,701,762,719,7,259,174,306,245,16,57,668,653,803)
-    Last_Response_tag <- c(0,0,1,0,0,1,0,0,0,1,0,1,1,0)
-    Platinum_flag <- c(1,1,1,0,0,0,1,0,0,1,0,1,0,1)
-    Months <- c(8,3,3,7,8,0,8,5,4,2,9,1,1,5)
-    Purchase_2k <- c(0,1,1,0,0,1,0,0,0,0,0,1,1,1)
+<!-- d -->
+<!-- ```{r} -->
+<!-- # https://www.analyticsvidhya.com/blog/2014/04/solving-survival-model/ -->
+<!-- Customer_id <- c(213,701,762,719,7,259,174,306,245,16,57,668,653,803) -->
+<!-- Last_Response_tag <- c(0,0,1,0,0,1,0,0,0,1,0,1,1,0) -->
+<!-- Platinum_flag <- c(1,1,1,0,0,0,1,0,0,1,0,1,0,1) -->
+<!-- Months <- c(8,3,3,7,8,0,8,5,4,2,9,1,1,5) -->
+<!-- Purchase_2k <- c(0,1,1,0,0,1,0,0,0,0,0,1,1,1) -->
+<!-- # Preparación de datos: -->
+<!-- Cust <- Customer_id -->
+<!-- l_resp <- Last_Response_tag -->
+<!-- Plat <- Platinum_flag -->
+<!-- span <- Months -->
+<!-- Resp <- Purchase_2k -->
+<!-- X <- cbind(l_resp,Plat) -->
+<!-- # Solución no paramétrica -->
+<!-- kmsurv <- survfit(Surv(span,Resp) ~ 1) -->
+<!-- summary(kmsurv) -->
+<!-- plot(kmsurv,xlab = "span",ylab="Survival Proabability") -->
+<!-- group1 <- l_resp -->
+<!-- group2<- Plat -->
+<!-- kmsurv1 <- survfit(Surv(span,Resp) ~ group1) -->
+<!-- summary(kmsurv1) -->
+<!-- plot(kmsurv1,xlab = "span",ylab="Survival Proabbility") -->
+<!-- # Solucion semiparamétrica: -->
+<!-- coxph <- coxph(Surv(span,Resp)~X,method = "breslow") -->
+<!-- summary(coxph) -->
+<!-- ``` -->
+Realice un análisis de supervivencia con los datos `Base_consultaCC.csv`
 
-
-    # Preparación de datos:
-    Cust <- Customer_id
-    l_resp <- Last_Response_tag
-    Plat <- Platinum_flag
-    span <- Months
-    Resp <- Purchase_2k
-    X <- cbind(l_resp,Plat)
-
-    # Solución no paramétrica
-
-    kmsurv <- survfit(Surv(span,Resp) ~ 1)
-    summary(kmsurv)
-
-    ## Call: survfit(formula = Surv(span, Resp) ~ 1)
-    ## 
-    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     0     14       1    0.929  0.0688        0.803        1.000
-    ##     1     13       2    0.786  0.1097        0.598        1.000
-    ##     3     10       2    0.629  0.1326        0.416        0.950
-    ##     5      7       1    0.539  0.1408        0.323        0.899
-
-    plot(kmsurv,xlab = "span",ylab="Survival Proabability")
-
-![](Supervivencia_files/figure-markdown_strict/unnamed-chunk-28-1.png)
-
-    group1 <- l_resp
-    group2<- Plat
-
-    kmsurv1 <- survfit(Surv(span,Resp) ~ group1)
-    summary(kmsurv1)
-
-    ## Call: survfit(formula = Surv(span, Resp) ~ group1)
-    ## 
-    ##                 group1=0 
-    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     3      9       1    0.889   0.105        0.706            1
-    ##     5      7       1    0.762   0.148        0.521            1
-    ## 
-    ##                 group1=1 
-    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     0      5       1      0.8   0.179        0.516            1
-    ##     1      4       2      0.4   0.219        0.137            1
-    ##     3      1       1      0.0     NaN           NA           NA
-
-    plot(kmsurv1,xlab = "span",ylab="Survival Proabbility")
-
-![](Supervivencia_files/figure-markdown_strict/unnamed-chunk-28-2.png)
-
-    # Solucion semiparamétrica:
-    coxph <- coxph(Surv(span,Resp)~X,method = "breslow")
-    summary(coxph)
-
-    ## Call:
-    ## coxph(formula = Surv(span, Resp) ~ X, method = "breslow")
-    ## 
-    ##   n= 14, number of events= 6 
-    ## 
-    ##             coef exp(coef) se(coef)      z Pr(>|z|)  
-    ## Xl_resp  2.89092  18.00992  1.24707  2.318   0.0204 *
-    ## XPlat   -0.06322   0.93874  0.96728 -0.065   0.9479  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ##         exp(coef) exp(-coef) lower .95 upper .95
-    ## Xl_resp   18.0099    0.05552     1.563    207.50
-    ## XPlat      0.9387    1.06526     0.141      6.25
-    ## 
-    ## Concordance= 0.772  (se = 0.132 )
-    ## Rsquare= 0.432   (max possible= 0.871 )
-    ## Likelihood ratio test= 7.92  on 2 df,   p=0.01902
-    ## Wald test            = 6.01  on 2 df,   p=0.04949
-    ## Score (logrank) test = 9.57  on 2 df,   p=0.008339
+`Surv(TiempoEvento, Censura) ~B6_RangoAtraso_SectorReal_1+IndicadorMaloEvidente+PETROLEO_WTI_5_T_1`
 
 Referencias
 ===========
