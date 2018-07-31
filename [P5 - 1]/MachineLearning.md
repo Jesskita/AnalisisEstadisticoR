@@ -3,6 +3,9 @@
 -   [Aprendizaje supervizado](#aprendizaje-supervizado)
     -   [Regresión](#regresion)
     -   [Análisis discriminante](#analisis-discriminante)
+    -   [Árboles de decisión](#arboles-de-decision)
+    -   [Vecinos más cercanos](#vecinos-mas-cercanos)
+    -   [Redes neuronales](#redes-neuronales)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -158,8 +161,26 @@ como regresión polinómica o curvilínea.
 
 ### Paso 1: recopilación de datos
 
-    load("insurance.RData")
+Nota: para leer archivos `.RData` desde github:
 
+-   Click en los datos a importar.
+-   Click derecho en en `View Raw` y luego `Copiar dirección de enlace`
+-   Guardar en `uu` y leer los datos con `source_data` del paquete
+    `repmis`
+
+<!-- -->
+
+    uu <- "https://github.com/vmoprojs/DataLectures/blob/master/insurance.RData?raw=true"
+    library(repmis)
+    source_data(uu)
+
+    ## [1] "insurance"
+
+<https://github.com/vmoprojs/DataLectures/blob/master/insurance.RData?raw=true>
+
+<!-- ```{r} -->
+<!-- load("insurance.RData") -->
+<!-- ``` -->
 El archivo `insurance.csv` incluye 1338 beneficiarios actualmente
 inscritos en el plan de seguro, con características que indican las
 características del paciente, así como los gastos médicos totales
@@ -694,9 +715,9 @@ discriminante".
     ## Number of permutations: 999
     ## 
     ## Response: Distances
-    ##            Df  Sum Sq Mean Sq      F N.Perm Pr(>F)    
-    ## Groups      2  190082   95041 8.3286    999  0.001 ***
-    ## Residuals 175 1997003   11411                         
+    ##            Df  Sum Sq Mean Sq      F N.Perm Pr(>F)   
+    ## Groups      2  190082   95041 8.3286    999  0.002 **
+    ## Residuals 175 1997003   11411                        
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -914,7 +935,7 @@ Realizamos un gráfico de los datos:
     ## 
     ## Response: Distances
     ##           Df Sum Sq Mean Sq      F N.Perm Pr(>F)
-    ## Groups     2   6224  3112.0 2.4009    999  0.105
+    ## Groups     2   6224  3112.0 2.4009    999   0.11
     ## Residuals 82 106285  1296.2
 
 Conclusión: no rechazo la hipótesis nula de homogeneidad intra-grupo.
@@ -1131,12 +1152,1359 @@ Transformemos los datos en un data.frame
     cred1 <- data.frame(cred1)
 
 -   Realiza las pruebas de los supuestos y comenta los resultados
--   Estima y compara lds con qda
+-   Estima y compara lda con qda
 -   Estima la matriz de confusión
 -   ¿Usarías este modelo para una aplicación real?
-    <!-- ## Árboles de decisión -->
 
-<!-- ## Vecinos más cercanos -->
+Árboles de decisión
+-------------------
+
+Para ilustrar el proceso de construcción del árbol, consideremos un
+ejemplo simple. Imagine que está trabajando para un estudio de cine de
+Hollywood, y su escritorio está repleto de guiones. En lugar de leer
+cada uno de principio a fin, usted decide desarrollar un algoritmo de
+árbol de decisión para predecir si una película potencial podría
+clasificarse en una de tres categorías:
+
+-   impacto mainstream,
+-   amado por la crítica (critic's choice) o
+-   fracaso de taquilla (box office bust).
+
+Después de revisar los datos de 30 guiones de películas diferentes,
+surge un patrón. Parece haber una relación entre el **presupuesto** de
+rodaje propuesto por la película, el **número de celebridades** de la
+*A* para los papeles protagónicos y las categorías de éxito.
+
+<img src="Figures/im1.png" alt="Presupuesto vs Num de celebridades" style="width:60.0%" />
+
+Para construir un árbol de decisión simple usando esta información,
+podemos aplicar una estrategia de *dividir y vencer*.
+
+<img src="Figures/im2.png" alt="Splits" style="width:80.0%" />
+
+Resultado:
+
+<img src="Figures/im3.png" alt="Splits" style="width:60.0%" style="height:60.0%" />
+
+> Es posible que hayas notado que las líneas diagonales podrían haber
+> dividido los datos aún más limpiamente. Esta es una limitación de del
+> árbol de decisiones, que **utiliza divisiones paralelas a los ejes**.
+> El hecho de que cada división considere **una característica a la
+> vez** evita que el árbol de decisiones forme **decisiones más
+> complejas**, como "si el número de celebridades es mayor que el
+> presupuesto estimado, entonces será un éxito crítico".
+
+Entonces, ¿qué es un árbol de decisión?
+
+-   El modelo en sí mismo comprende una serie de decisiones lógicas,
+    similares a un diagrama de flujo, con nodos de decisión que indican
+    una decisión sobre un atributo. Estos se dividen en ramas que
+    indican las elecciones de la decisión. El árbol termina con *nodos
+    de hoja* o *leaf nodes* (también conocidos como nodos terminales)
+    que denotan el resultado de seguir una combinación de decisiones.
+
+<table>
+<colgroup>
+<col width="46%" />
+<col width="53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fortalezas</th>
+<th>Debilidades</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Un clasificador multiuso que funciona bien en la mayoría de los problemas</td>
+<td>Los modelos de árbol de decisión a menudo están sesgados hacia divisiones en características que tienen una gran cantidad de niveles</td>
+</tr>
+<tr class="even">
+<td>El proceso de aprendizaje altamente automático puede manejar características numéricas o nominales, datos faltantes</td>
+<td>Es fácil sobreajustar o ajustar el modelo</td>
+</tr>
+<tr class="odd">
+<td>Utiliza solo las características más importantes</td>
+<td>Puede tener problemas para modelar algunas relaciones debido a la dependencia de divisiones paralelas al eje</td>
+</tr>
+<tr class="even">
+<td>Se puede usar en datos con relativamente pocos ejemplos de entrenamiento o un número muy grande</td>
+<td>Pequeños cambios en los datos de entrenamiento pueden generar grandes cambios en la lógica de decisión</td>
+</tr>
+<tr class="odd">
+<td>Resultados en un modelo que puede interpretarse sin un fondo matemático (para árboles relativamente pequeños)</td>
+<td>Los árboles grandes pueden ser difíciles de interpretar y las decisiones que toman pueden parecer contradictorias</td>
+</tr>
+<tr class="even">
+<td>Más eficiente que otros modelos complejos</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Elegir la *mejor* partición
+
+**Entropía**
+
+> La entropía de una muestra de datos indica qué tan mezclados están los
+> valores de clase; el valor mínimo de 0 indica que la muestra es
+> completamente homogénea, mientras que 1 indica la cantidad máxima de
+> desorden.
+
+$$
+Entropy(S) = \\sum\_{i=1}^{c}-p\_ilog\_2(p\_i)
+$$
+
+En la fórmula de entropía, para un segmento dado de datos (*S*), el
+término *c* se refiere al número de diferentes **niveles de clase**, y
+*p*<sub>*i*</sub> se refiere a la proporción de valores que caen en el
+nivel de clase *i*. Por ejemplo, supongamos que tenemos una partición de
+datos con dos clases: rojo (60 por ciento) y blanco (40 por ciento).
+Podemos calcular la entropía como:
+
+    -0.60 * log2(0.60) - 0.40 * log2(0.40)
+
+    ## [1] 0.9709506
+
+Podemos examinar la entropía para todos los posibles arreglos de dos
+clases. Si sabemos que la proporción de ejemplos en una clase es *x*,
+entonces la proporción en la otra clase es 1 − *x*. Usando la función
+`curve()`, podemos trazar la entropía para todos los valores posibles de
+*x*:
+
+    curve(-x * log2(x) - (1 - x) * log2(1 - x),col="red", xlab = "x", ylab = "Entropía", lwd=4)
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-37-1.png)
+
+Como se ilustra por el pico en entropía en *x* = 0.50, una división
+50 − 50 da como resultado la **entropía máxima**. A medida que una clase
+domina cada vez más a la otra, la entropía se reduce a cero.
+
+Dada esta medida de pureza (como la entropía), el algoritmo aún debe
+**decidir qué característica dividir**. Para esto, el algoritmo usa la
+entropía para calcular el cambio en la homogeneidad resultante de una
+división en cada característica posible. El cálculo se conoce como
+**ganancia de información**. La ganancia de información para una
+característica *F* se calcula como la diferencia entre la entropía en el
+segmento antes de la división (*S*<sub>1</sub>) y las particiones
+resultantes de la división (*S*<sub>2</sub>)
+
+*I**n**f**o**G**a**i**n*(*F*)=*E**n**t**r**o**p**y*(*S*<sub>1</sub>)−*E**n**t**r**o**p**y*(*S*<sub>2</sub>)
+
+Cuanto mayor sea la ganancia de información, mejor será una función para
+crear grupos homogéneos después de una división en esa función.
+
+> Aunque es utilizado por C5.0, la **ganancia de información no es el
+> único** criterio de división que se puede usar para construir árboles
+> de decisión. Otros criterios comúnmente utilizados son el **índice de
+> Gini**, la estadística **Chi-cuadrado** y la **relación de ganancia**.
+> Para profundizar en estos criterios revisa: Mingers (1989)
+
+### Ejemplo: Identificando el riesgo de un préstamo
+
+#### Paso 1: recopilación de datos
+
+Los datos representan los préstamos obtenidos de una agencia de crédito
+en Alemania.
+
+    uu <- "https://github.com/vmoprojs/DataLectures/blob/master/credit.RData?raw=true"
+    library(repmis)
+    source_data(uu)
+
+    ## [1] "credit"
+
+    str(credit)
+
+    ## 'data.frame':    1000 obs. of  17 variables:
+    ##  $ checking_balance    : Factor w/ 4 levels "< 0 DM","> 200 DM",..: 1 3 4 1 1 4 4 3 4 3 ...
+    ##  $ months_loan_duration: int  6 48 12 42 24 36 24 36 12 30 ...
+    ##  $ credit_history      : Factor w/ 5 levels "critical","good",..: 1 2 1 2 4 2 2 2 2 1 ...
+    ##  $ purpose             : Factor w/ 6 levels "business","car",..: 5 5 4 5 2 4 5 2 5 2 ...
+    ##  $ amount              : int  1169 5951 2096 7882 4870 9055 2835 6948 3059 5234 ...
+    ##  $ savings_balance     : Factor w/ 5 levels "< 100 DM","> 1000 DM",..: 5 1 1 1 1 5 4 1 2 1 ...
+    ##  $ employment_duration : Factor w/ 5 levels "< 1 year","> 7 years",..: 2 3 4 4 3 3 2 3 4 5 ...
+    ##  $ percent_of_income   : int  4 2 2 2 3 2 3 2 2 4 ...
+    ##  $ years_at_residence  : int  4 2 3 4 4 4 4 2 4 2 ...
+    ##  $ age                 : int  67 22 49 45 53 35 53 35 61 28 ...
+    ##  $ other_credit        : Factor w/ 3 levels "bank","none",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ housing             : Factor w/ 3 levels "other","own",..: 2 2 2 1 1 1 2 3 2 2 ...
+    ##  $ existing_loans_count: int  2 1 1 1 2 1 1 1 1 2 ...
+    ##  $ job                 : Factor w/ 4 levels "management","skilled",..: 2 2 4 2 2 4 2 1 4 1 ...
+    ##  $ dependents          : int  1 1 2 2 2 2 1 1 1 1 ...
+    ##  $ phone               : Factor w/ 2 levels "no","yes": 2 1 1 1 1 2 1 2 1 1 ...
+    ##  $ default             : Factor w/ 2 levels "no","yes": 1 2 1 1 2 1 1 1 1 2 ...
+
+El conjunto de datos crediticios incluye 1000 ejemplos de préstamos, más
+una combinación de características numéricas y nominales que indican las
+características del préstamo y del solicitante del préstamo.
+
+Una variable indica si el préstamo **entró en default**. Veamos si
+podemos determinar un patrón que prediga este resultado.
+
+#### Paso 2: Explorar y preparar los datos
+
+Veamos algunos de los resultados de `table()` para un par de
+características de préstamos que **parecen predecir un incumplimiento**.
+Las características `checking_balance` y `savings_balance` indican el
+saldo de la cuenta de cheques y de ahorros del solicitante, y se
+registran como variables categóricas:
+
+    table(credit$checking_balance)
+
+    ## 
+    ##     < 0 DM   > 200 DM 1 - 200 DM    unknown 
+    ##        274         63        269        394
+
+    table(credit$savings_balance)
+
+    ## 
+    ##      < 100 DM     > 1000 DM  100 - 500 DM 500 - 1000 DM       unknown 
+    ##           603            48           103            63           183
+
+Dado que los datos del préstamo se obtuvieron de Alemania, la moneda se
+registra en *Deutsche Marks (DM)*. Parece una suposición válida que los
+saldos de cuentas corrientes y de **ahorro más grandes** deberían estar
+relacionados con una **menor posibilidad de impago** del préstamo.
+
+Algunas de las funciones del préstamo son numéricas, como su plazo
+(`months_loan_duration`) y el monto de crédito solicitado (`amount`).
+
+    summary(credit$months_loan_duration)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##     4.0    12.0    18.0    20.9    24.0    72.0
+
+    summary(credit$amount)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##     250    1366    2320    3271    3972   18424
+
+Los montos de los préstamos oscilaron entre 250 DM y 18420 DM a plazos
+de 4 a 72 meses, con una duración media de 18 meses y un monto de 2320
+DM.
+
+La variable `default` indica si el solicitante del préstamo no pudo
+cumplir con los términos de pago acordados y entró en incumplimiento. Un
+total del 30 por ciento de los préstamos entraron en mora:
+
+    table(credit$default)
+
+    ## 
+    ##  no yes 
+    ## 700 300
+
+Una alta tasa de incumplimiento no es deseable para un banco porque
+significa que es poco probable que el banco recupere completamente su
+inversión. Si tenemos éxito, nuestro **modelo identificará a los
+solicitantes que es probable que presenten un incumplimiento**, tal que
+este número se pueda reducir.
+
+**Creamos el conjunto de entrenamiento y de prueba**
+
+1.  ordenar al azar su data de crédito antes de dividir.
+
+<!-- -->
+
+    set.seed(12345)
+    credit_rand <- credit[order(runif(1000)), ]
+
+Confirmemos que los datos no han cambiado
+
+    summary(credit$amount)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##     250    1366    2320    3271    3972   18424
+
+    summary(credit_rand$amount)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##     250    1366    2320    3271    3972   18424
+
+1.  Ahora, podemos dividir los datos en entrenamiento (90 por ciento o
+    900 registros) y datos de prueba (10 por ciento o 100 registros)
+
+<!-- -->
+
+    credit_train <- credit_rand[1:900, ]
+    credit_test <- credit_rand[901:1000, ]
+
+Si todo salió bien, deberíamos tener alrededor del 30 por ciento de los
+préstamos impagos en cada uno de los conjuntos de datos.
+
+    prop.table(table(credit_train$default))
+
+    ## 
+    ##        no       yes 
+    ## 0.7022222 0.2977778
+
+    prop.table(table(credit_test$default))
+
+    ## 
+    ##   no  yes 
+    ## 0.68 0.32
+
+#### Paso 3: entrenar un modelo en los datos
+
+La columna 17 en `credit_train` es la variable `default`, por lo que
+debemos excluirla del marco de datos de entrenamiento como una variable
+independiente, pero suministrarla como dependiente para la
+clasificación:
+
+    library(C50)
+    credit_model <- C5.0(credit_train[-17], credit_train$default)
+    credit_model
+
+    ## 
+    ## Call:
+    ## C5.0.default(x = credit_train[-17], y = credit_train$default)
+    ## 
+    ## Classification Tree
+    ## Number of samples: 900 
+    ## Number of predictors: 16 
+    ## 
+    ## Tree size: 67 
+    ## 
+    ## Non-standard options: attempt to group attributes
+
+`Tree size` indica que el árbol tiene 67 decisiones de profundidad. Para
+mirar las decisiones, usamos `summary`
+
+    summary(credit_model)
+
+    ## 
+    ## Call:
+    ## C5.0.default(x = credit_train[-17], y = credit_train$default)
+    ## 
+    ## 
+    ## C5.0 [Release 2.07 GPL Edition]      Tue Jul 31 05:42:02 2018
+    ## -------------------------------
+    ## 
+    ## Class specified by attribute `outcome'
+    ## 
+    ## Read 900 cases (17 attributes) from undefined.data
+    ## 
+    ## Decision tree:
+    ## 
+    ## checking_balance = unknown: no (358/44)
+    ## checking_balance in {< 0 DM,> 200 DM,1 - 200 DM}:
+    ## :...credit_history in {perfect,very good}:
+    ##     :...dependents > 1: yes (10/1)
+    ##     :   dependents <= 1:
+    ##     :   :...savings_balance = < 100 DM: yes (39/11)
+    ##     :       savings_balance in {> 1000 DM,500 - 1000 DM,unknown}: no (8/1)
+    ##     :       savings_balance = 100 - 500 DM:
+    ##     :       :...checking_balance = < 0 DM: no (1)
+    ##     :           checking_balance in {> 200 DM,1 - 200 DM}: yes (5/1)
+    ##     credit_history in {critical,good,poor}:
+    ##     :...months_loan_duration <= 11: no (87/14)
+    ##         months_loan_duration > 11:
+    ##         :...savings_balance = > 1000 DM: no (13)
+    ##             savings_balance in {< 100 DM,100 - 500 DM,500 - 1000 DM,unknown}:
+    ##             :...checking_balance = > 200 DM:
+    ##                 :...dependents > 1: yes (3)
+    ##                 :   dependents <= 1:
+    ##                 :   :...credit_history in {good,poor}: no (23/3)
+    ##                 :       credit_history = critical:
+    ##                 :       :...amount <= 2337: yes (3)
+    ##                 :           amount > 2337: no (6)
+    ##                 checking_balance = 1 - 200 DM:
+    ##                 :...savings_balance = unknown: no (34/6)
+    ##                 :   savings_balance in {< 100 DM,100 - 500 DM,500 - 1000 DM}:
+    ##                 :   :...months_loan_duration > 45: yes (11/1)
+    ##                 :       months_loan_duration <= 45:
+    ##                 :       :...other_credit = store:
+    ##                 :           :...age <= 35: yes (4)
+    ##                 :           :   age > 35: no (2)
+    ##                 :           other_credit = bank:
+    ##                 :           :...years_at_residence <= 1: no (3)
+    ##                 :           :   years_at_residence > 1:
+    ##                 :           :   :...existing_loans_count <= 1: yes (5)
+    ##                 :           :       existing_loans_count > 1:
+    ##                 :           :       :...percent_of_income <= 2: no (4/1)
+    ##                 :           :           percent_of_income > 2: yes (3)
+    ##                 :           other_credit = none:
+    ##                 :           :...job = unemployed: no (1)
+    ##                 :               job = management:
+    ##                 :               :...amount <= 7511: no (10/3)
+    ##                 :               :   amount > 7511: yes (7)
+    ##                 :               job = unskilled: [S1]
+    ##                 :               job = skilled:
+    ##                 :               :...dependents <= 1: no (55/15)
+    ##                 :                   dependents > 1:
+    ##                 :                   :...age <= 34: no (3)
+    ##                 :                       age > 34: yes (4)
+    ##                 checking_balance = < 0 DM:
+    ##                 :...job = management: no (26/6)
+    ##                     job = unemployed: yes (4/1)
+    ##                     job = unskilled:
+    ##                     :...employment_duration in {4 - 7 years,
+    ##                     :   :                       unemployed}: no (4)
+    ##                     :   employment_duration = < 1 year:
+    ##                     :   :...other_credit = bank: no (1)
+    ##                     :   :   other_credit in {none,store}: yes (11/2)
+    ##                     :   employment_duration = > 7 years:
+    ##                     :   :...other_credit in {bank,none}: no (5/1)
+    ##                     :   :   other_credit = store: yes (2)
+    ##                     :   employment_duration = 1 - 4 years:
+    ##                     :   :...age <= 39: no (14/3)
+    ##                     :       age > 39:
+    ##                     :       :...credit_history in {critical,good}: yes (3)
+    ##                     :           credit_history = poor: no (1)
+    ##                     job = skilled:
+    ##                     :...credit_history = poor:
+    ##                         :...savings_balance in {< 100 DM,100 - 500 DM,
+    ##                         :   :                   500 - 1000 DM}: yes (8)
+    ##                         :   savings_balance = unknown: no (1)
+    ##                         credit_history = critical:
+    ##                         :...other_credit = store: no (0)
+    ##                         :   other_credit = bank: yes (4)
+    ##                         :   other_credit = none:
+    ##                         :   :...savings_balance in {100 - 500 DM,
+    ##                         :       :                   unknown}: no (1)
+    ##                         :       savings_balance = 500 - 1000 DM: yes (1)
+    ##                         :       savings_balance = < 100 DM:
+    ##                         :       :...months_loan_duration <= 13:
+    ##                         :           :...percent_of_income <= 3: yes (3)
+    ##                         :           :   percent_of_income > 3: no (3/1)
+    ##                         :           months_loan_duration > 13:
+    ##                         :           :...amount <= 5293: no (10/1)
+    ##                         :               amount > 5293: yes (2)
+    ##                         credit_history = good:
+    ##                         :...existing_loans_count > 1: yes (5)
+    ##                             existing_loans_count <= 1:
+    ##                             :...other_credit = store: no (2)
+    ##                                 other_credit = bank:
+    ##                                 :...percent_of_income <= 2: yes (2)
+    ##                                 :   percent_of_income > 2: no (6/1)
+    ##                                 other_credit = none: [S2]
+    ## 
+    ## SubTree [S1]
+    ## 
+    ## employment_duration in {< 1 year,1 - 4 years}: yes (11/3)
+    ## employment_duration in {> 7 years,4 - 7 years,unemployed}: no (8)
+    ## 
+    ## SubTree [S2]
+    ## 
+    ## savings_balance = 100 - 500 DM: yes (3)
+    ## savings_balance = 500 - 1000 DM: no (1)
+    ## savings_balance = unknown:
+    ## :...phone = no: yes (9/1)
+    ## :   phone = yes: no (3/1)
+    ## savings_balance = < 100 DM:
+    ## :...percent_of_income <= 1: no (4)
+    ##     percent_of_income > 1:
+    ##     :...phone = yes: yes (10/1)
+    ##         phone = no:
+    ##         :...purpose in {business,car0,education,renovations}: yes (3)
+    ##             purpose = car:
+    ##             :...percent_of_income <= 3: no (2)
+    ##             :   percent_of_income > 3: yes (6/1)
+    ##             purpose = furniture/appliances:
+    ##             :...years_at_residence <= 1: no (4)
+    ##                 years_at_residence > 1:
+    ##                 :...housing = other: no (1)
+    ##                     housing = rent: yes (2)
+    ##                     housing = own:
+    ##                     :...amount <= 1778: no (3)
+    ##                         amount > 1778:
+    ##                         :...years_at_residence <= 3: yes (6)
+    ##                             years_at_residence > 3: no (3/1)
+    ## 
+    ## 
+    ## Evaluation on training data (900 cases):
+    ## 
+    ##      Decision Tree   
+    ##    ----------------  
+    ##    Size      Errors  
+    ## 
+    ##      66  125(13.9%)   <<
+    ## 
+    ## 
+    ##     (a)   (b)    <-classified as
+    ##    ----  ----
+    ##     609    23    (a): class no
+    ##     102   166    (b): class yes
+    ## 
+    ## 
+    ##  Attribute usage:
+    ## 
+    ##  100.00% checking_balance
+    ##   60.22% credit_history
+    ##   53.22% months_loan_duration
+    ##   49.44% savings_balance
+    ##   30.89% job
+    ##   25.89% other_credit
+    ##   17.78% dependents
+    ##    9.67% existing_loans_count
+    ##    7.22% percent_of_income
+    ##    6.67% employment_duration
+    ##    5.78% phone
+    ##    5.56% amount
+    ##    3.78% years_at_residence
+    ##    3.44% age
+    ##    3.33% purpose
+    ##    1.67% housing
+    ## 
+    ## 
+    ## Time: 0.0 secs
+
+Las primeras líneas del `summary` se leerían así:
+
+1.  Si se desconoce el saldo de la cuenta, clasifique como **no probable
+    el incumplimiento**.
+2.  De lo contrario, si el saldo de la cuenta es menor que cero DM,
+    entre uno y 200 DM, o más de 200 DM y ...
+3.  El historial de crédito es muy bueno o perfecto, y ...
+4.  Hay más de un dependiente, luego clasifíquelo como **probable de
+    incumplimiento**.
+
+Los números entre paréntesis indican el **número de individuos que
+cumplen los criterios para esa decisión y el número incorrectamente
+clasificado por la decisión**. Por ejemplo, en la primera línea,
+(358/44) indica que de los 358 individuos que llegaron a la decisión, 44
+se clasificaron incorrectamente como *no*, es decir, que no es probable
+que entren en incumplimiento. En otras palabras, 44 solicitantes
+incumplieron a pesar de que la predicción del modelo dijo lo contrario.
+
+Después de la salida del árbol, el resumen (`credit_model`) muestra una
+matriz de confusión, que es una tabulación cruzada que indica los
+registros incorrectamente clasificados del modelo en los datos de
+capacitación.
+
+> Los árboles de decisión son conocidos por tener una tendencia a
+> sobreajustar el modelo a los datos de entrenamiento. Por esta razón,
+> la tasa de error informada en los datos de entrenamiento puede ser
+> demasiado optimista, y es especialmente **importante** evaluar los
+> árboles de decisión en un conjunto de datos de prueba.
+
+#### Paso 4: evaluar el rendimiento del modelo
+
+    credit_pred <- predict(credit_model, credit_test)
+
+Revisemos el ajuste
+
+    library(gmodels)
+    CrossTable(credit_test$default, credit_pred,
+    prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+    dnn = c('actual default', 'predicted default'))
+
+    ## 
+    ##  
+    ##    Cell Contents
+    ## |-------------------------|
+    ## |                       N |
+    ## |         N / Table Total |
+    ## |-------------------------|
+    ## 
+    ##  
+    ## Total Observations in Table:  100 
+    ## 
+    ##  
+    ##                | predicted default 
+    ## actual default |        no |       yes | Row Total | 
+    ## ---------------|-----------|-----------|-----------|
+    ##             no |        57 |        11 |        68 | 
+    ##                |     0.570 |     0.110 |           | 
+    ## ---------------|-----------|-----------|-----------|
+    ##            yes |        16 |        16 |        32 | 
+    ##                |     0.160 |     0.160 |           | 
+    ## ---------------|-----------|-----------|-----------|
+    ##   Column Total |        73 |        27 |       100 | 
+    ## ---------------|-----------|-----------|-----------|
+    ## 
+    ## 
+
+De los 100 registros de solicitud de préstamo de prueba, nuestro modelo
+predijo correctamente que 57 no incumplieron y 16 incumplieron, lo que
+arrojó una precisión del 73% y una tasa de error del 27%. Esto es algo
+peor que su rendimiento en los datos de entrenamiento, pero no es
+inesperado, dado que el rendimiento de un modelo es a menudo peor en
+datos no vistos.
+
+También ten en cuenta que el modelo solo predijo correctamente el 50 por
+ciento de los 32 valores predeterminados de préstamo en los datos de
+prueba (16/32). Desafortunadamente, este tipo de error es un error
+potencialmente muy costoso. Veamos si podemos mejorar el resultado con
+un poco más de esfuerzo.
+
+#### Paso 5: mejorando el ajuste (boosting)
+
+El boosting se basa en la noción de que al combinar un número de
+aprendices de rendimiento débil, puede crear un equipo que sea mucho más
+fuerte que cualquiera de los alumnos solo.
+
+Cada uno de los modelos tiene un conjunto único de fortalezas y
+debilidades, y puede ser mejor o peor en ciertos problemas. Usar una
+combinación de varios *learners* con fortalezas y debilidades
+complementarias puede por lo tanto mejorar dramáticamente la precisión
+de un clasificador.
+
+Simplemente necesitamos agregar un parámetro adicional `trials` que
+indique el **número de árboles de decisión separados** para usar en el
+equipo *boost*. El parámetro `trials` establece un límite superior; el
+algoritmo **dejará de agregar árboles si reconoce que las pruebas
+adicionales no parecen mejorar la precisión**. Comenzaremos con 10
+`trials`, un número que se ha convertido en el **estándar** de facto, ya
+que las investigaciones sugieren que esto reduce las tasas de error en
+los datos de prueba en aproximadamente un **25 por ciento**.
+
+    credit_boost10 <- C5.0(credit_train[-17], credit_train$default,
+    trials = 10)
+    credit_boost10
+
+    ## 
+    ## Call:
+    ## C5.0.default(x = credit_train[-17], y = credit_train$default, trials = 10)
+    ## 
+    ## Classification Tree
+    ## Number of samples: 900 
+    ## Number of predictors: 16 
+    ## 
+    ## Number of boosting iterations: 10 
+    ## Average tree size: 56 
+    ## 
+    ## Non-standard options: attempt to group attributes
+
+    # summary(credit_boost10)
+
+<img src="Figures/im4.png" alt="Matriz de confusión Boost" style="width:50.0%" />
+
+El clasificador cometió 31 errores en 900 ejemplos de entrenamiento con
+una tasa de error del 3.4 por ciento. ¡Esto representa una gran mejora
+con respecto a la tasa de error de entrenamiento del 13.9 por ciento que
+notamos antes de agregar *boost*! Sin embargo, queda por ver si vemos
+una mejora similar en los datos de prueba. Vamos a ver:
+
+    credit_boost_pred10 <- predict(credit_boost10, credit_test)
+    CrossTable(credit_test$default, credit_boost_pred10,
+    prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+    dnn = c('actual default', 'predicted default'))
+
+    ## 
+    ##  
+    ##    Cell Contents
+    ## |-------------------------|
+    ## |                       N |
+    ## |         N / Table Total |
+    ## |-------------------------|
+    ## 
+    ##  
+    ## Total Observations in Table:  100 
+    ## 
+    ##  
+    ##                | predicted default 
+    ## actual default |        no |       yes | Row Total | 
+    ## ---------------|-----------|-----------|-----------|
+    ##             no |        60 |         8 |        68 | 
+    ##                |     0.600 |     0.080 |           | 
+    ## ---------------|-----------|-----------|-----------|
+    ##            yes |        15 |        17 |        32 | 
+    ##                |     0.150 |     0.170 |           | 
+    ## ---------------|-----------|-----------|-----------|
+    ##   Column Total |        75 |        25 |       100 | 
+    ## ---------------|-----------|-----------|-----------|
+    ## 
+    ## 
+
+Aquí, redujimos la tasa de error total del 27 por ciento antes del
+*boost* al 23 por ciento en el modelo *boost* No parece una gran
+ganancia, pero está razonablemente cerca de la reducción del 25 por
+ciento que esperábamos.
+
+Por otro lado, el modelo todavía no está funcionando bien para predecir
+los valores predeterminados, obteniendo 15/32 = 47% de errores. La falta
+de una mejora aún mayor puede ser una función de nuestro conjunto de
+datos de capacitación relativamente pequeño, o puede ser un problema muy
+difícil de resolver.
+
+Vecinos más cercanos
+--------------------
+
+> Dios los cría y ellos se juntan
+
+-   Las cosas que son parecidas probablemente tengan propiedades
+    similares. Podemos usar este principio para clasificar los datos
+    colocándolos en la categoría con los vecinos más similares o "más
+    cercanos".
+
+-   Los clasificadores de vecinos más cercanos se definen por su
+    característica de clasificar los ejemplos **no etiquetados
+    asignándoles la clase de los ejemplos etiquetados más similares**.
+
+-   En general, los clasificadores de vecinos más cercanos son adecuados
+    para tareas de **clasificación** donde las relaciones entre las
+    características y las clases objetivo son numerosas, complicadas o
+    de otra manera extremadamente difíciles de entender, sin embargo,
+    los elementos del tipo de clase similar tienden a ser bastante
+    homogéneos.
+
+-   si no hay una distinción clara entre los grupos, el algoritmo en
+    general no es muy adecuado para identificar el límite.
+
+<table style="width:100%;">
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fortalezas</th>
+<th>Debilidades</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Simple y efectivo</td>
+<td>No produce un modelo, lo que limita la capacidad de encontrar nuevos conocimientos en las relaciones entre las funciones</td>
+</tr>
+<tr class="even">
+<td>No hace suposiciones sobre la distribución de datos subyacente</td>
+<td>Fase de clasificación lenta</td>
+</tr>
+<tr class="odd">
+<td>Fase de entrenamiento rápido</td>
+<td>Requiere una gran cantidad de memoria</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Las características nominales y los datos faltantes requieren procesamiento adicional</td>
+</tr>
+</tbody>
+</table>
+
+**Preparar los datos para usar kNN**
+
+Las características se transforman típicamente a un rango estándar antes
+de aplicar el algoritmo kNN. La razón de este paso es que la fórmula de
+distancia depende de cómo se miden las características.
+
+-   El método tradicional de reescalar funciones para kNN es la
+    **normalización min-max**. Este proceso transforma una
+    característica tal que todos sus valores caen en un rango entre 0
+    y 1.
+
+$$
+X\_{new} = \\frac{X-min(X)}{max(X)-min(X)}
+$$
+
+Los valores de las características normalizadas se pueden interpretar
+como indicando qué tan lejos, del 0 por ciento al 100 por ciento, el
+valor original cayó a lo largo del rango entre el mínimo original y el
+máximo.
+
+-   Otra transformación común se llama **estandarización z-score**. La
+    siguiente fórmula resta el valor medio de la característica *X* y se
+    divide por la desviación estándar de *X*:
+
+$$
+X\_{new} = \\frac{X-\\mu}{\\sigma}=\\frac{X-Mean(X)}{StdDev(X)}
+$$
+
+Los puntajes z caen en un rango ilimitado de números negativos y
+positivos. A diferencia de los valores normalizados, no tienen un mínimo
+ni un máximo predefinidos.
+
+-   Datos nominales: Una solución típica utiliza **codificación
+    binaria**, donde un valor de 1 indica una categoría y 0 indica la
+    otra. Por ejemplo, la codificación dummy para una variable de género
+    podría construirse como
+
+$$
+male =
+  \\begin{cases}
+    1      & \\quad \\text{if } x \\text{ is male}\\\\
+    0  & \\quad \\text{otherwise }
+  \\end{cases}
+$$
+
+Un aspecto conveniente de la codificación dummy es que la distancia
+entre las características de código dummy es siempre uno o cero, y por
+lo tanto, los valores caen en la misma escala que los datos numéricos
+normalizados. No es necesaria una transformación adicional.
+[Aquí](http://stat.ethz.ch/education/semesters/ss2012/ams/slides/v4.2.pdf)
+les dejo un link con más información sobre este tema.
+
+### Paso 1: recopilación de datos
+
+Utilizaremos el conjunto de datos "Breast Cancer Wisconsin Diagnostic"
+del Repositorio de Aprendizaje Automático UCI.
+
+Los datos de cáncer de mama incluyen 569 muestras de biopsias de cáncer,
+cada una con 32 características. Una característica es un número de
+identificación, otra es el diagnóstico de cáncer y 30 son mediciones de
+laboratorio con valores numéricos. El diagnóstico se codifica como `M`
+para indicar maligno o `B` para indicar benigno.
+
+Las 30 mediciones numéricas comprenden la media, el error estándar y el
+peor valor (es decir, el más grande) para 10 características diferentes
+de los núcleos celulares digitalizados. Éstas incluyen:
+
+> Radio, Textura, Perímetro, Área, Suavizamiento, Compacidad,
+> Concavidad, Puntos de concavidad, Simetría, Dimensión fractal
+
+Según sus nombres, todas las características parecen estar relacionadas
+con la **forma y el tamaño** de los núcleos celulares. A menos que seas
+un oncólogo, es poco probable que sepas cómo se relaciona cada uno con
+las masas benignas o malignas. Estos patrones se revelarán a medida que
+continuemos en el proceso de machine learning.
+
+### Paso 2: Explorar y preparar los datos
+
+Exploremos los datos y veamos si podemos arrojar algo de luz sobre las
+relaciones. Al mismo tiempo, prepararemos los datos para usarlos con el
+método de aprendizaje kNN.
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/wisc_bc_data.csv"
+    wbcd <- read.csv(url(uu))
+    head(str(wbcd))
+
+    ## 'data.frame':    569 obs. of  34 variables:
+    ##  $ X.1                    : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ X                      : int  1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ id                     : int  842302 842517 84300903 84348301 84358402 843786 844359 84458202 844981 84501001 ...
+    ##  $ diagnosis              : Factor w/ 2 levels "B","M": 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ radius_mean            : num  18 20.6 19.7 11.4 20.3 ...
+    ##  $ texture_mean           : num  10.4 17.8 21.2 20.4 14.3 ...
+    ##  $ perimeter_mean         : num  122.8 132.9 130 77.6 135.1 ...
+    ##  $ area_mean              : num  1001 1326 1203 386 1297 ...
+    ##  $ smoothness_mean        : num  0.1184 0.0847 0.1096 0.1425 0.1003 ...
+    ##  $ compactness_mean       : num  0.2776 0.0786 0.1599 0.2839 0.1328 ...
+    ##  $ concavity_mean         : num  0.3001 0.0869 0.1974 0.2414 0.198 ...
+    ##  $ concave.points_mean    : num  0.1471 0.0702 0.1279 0.1052 0.1043 ...
+    ##  $ symmetry_mean          : num  0.242 0.181 0.207 0.26 0.181 ...
+    ##  $ fractal_dimension_mean : num  0.0787 0.0567 0.06 0.0974 0.0588 ...
+    ##  $ radius_se              : num  1.095 0.543 0.746 0.496 0.757 ...
+    ##  $ texture_se             : num  0.905 0.734 0.787 1.156 0.781 ...
+    ##  $ perimeter_se           : num  8.59 3.4 4.58 3.44 5.44 ...
+    ##  $ area_se                : num  153.4 74.1 94 27.2 94.4 ...
+    ##  $ smoothness_se          : num  0.0064 0.00522 0.00615 0.00911 0.01149 ...
+    ##  $ compactness_se         : num  0.049 0.0131 0.0401 0.0746 0.0246 ...
+    ##  $ concavity_se           : num  0.0537 0.0186 0.0383 0.0566 0.0569 ...
+    ##  $ concave.points_se      : num  0.0159 0.0134 0.0206 0.0187 0.0188 ...
+    ##  $ symmetry_se            : num  0.03 0.0139 0.0225 0.0596 0.0176 ...
+    ##  $ fractal_dimension_se   : num  0.00619 0.00353 0.00457 0.00921 0.00511 ...
+    ##  $ radius_worst           : num  25.4 25 23.6 14.9 22.5 ...
+    ##  $ texture_worst          : num  17.3 23.4 25.5 26.5 16.7 ...
+    ##  $ perimeter_worst        : num  184.6 158.8 152.5 98.9 152.2 ...
+    ##  $ area_worst             : num  2019 1956 1709 568 1575 ...
+    ##  $ smoothness_worst       : num  0.162 0.124 0.144 0.21 0.137 ...
+    ##  $ compactness_worst      : num  0.666 0.187 0.424 0.866 0.205 ...
+    ##  $ concavity_worst        : num  0.712 0.242 0.45 0.687 0.4 ...
+    ##  $ concave.points_worst   : num  0.265 0.186 0.243 0.258 0.163 ...
+    ##  $ symmetry_worst         : num  0.46 0.275 0.361 0.664 0.236 ...
+    ##  $ fractal_dimension_worst: num  0.1189 0.089 0.0876 0.173 0.0768 ...
+
+    ## NULL
+
+La primera variable es una variable entera llamada `id`. Como este es
+simplemente un identificador único (ID) para cada paciente en los datos,
+no proporciona información útil y tendremos que excluirlo del modelo.
+(También exluimos X por razones similares)
+
+    wbcd <- wbcd[-c(1,2,3)]
+
+La siguiente variable, el diagnóstico, es de particular interés, ya que
+es el resultado que esperamos predecir. Esta característica indica si el
+ejemplo es de una masa benigna o maligna
+
+    table(wbcd$diagnosis)
+
+    ## 
+    ##   B   M 
+    ## 357 212
+
+Muchos clasificadores de aprendizaje de máquina R requieren que la
+característica objetivo esté codificada como un factor, por lo que
+necesitaremos recodificar la variable de diagnóstico
+
+    levels(wbcd$diagnosis) <- c("Benign", "Malignant")
+
+    round(prop.table(table(wbcd$diagnosis)) * 100, digits = 1)
+
+    ## 
+    ##    Benign Malignant 
+    ##      62.7      37.3
+
+Las 30 características restantes son todas numéricas, y como se
+esperaba, constan de tres medidas diferentes de diez características. A
+modo ilustrativo, solo analizaremos más detenidamente tres de las
+características:
+
+    summary(wbcd[c("radius_mean", "area_mean", "smoothness_mean")])
+
+    ##   radius_mean       area_mean      smoothness_mean  
+    ##  Min.   : 6.981   Min.   : 143.5   Min.   :0.05263  
+    ##  1st Qu.:11.700   1st Qu.: 420.3   1st Qu.:0.08637  
+    ##  Median :13.370   Median : 551.1   Median :0.09587  
+    ##  Mean   :14.127   Mean   : 654.9   Mean   :0.09636  
+    ##  3rd Qu.:15.780   3rd Qu.: 782.7   3rd Qu.:0.10530  
+    ##  Max.   :28.110   Max.   :2501.0   Max.   :0.16340
+
+¿Notan algún problema con este resultado?
+
+**Transformación: normalizando los datos numéricos**
+
+    normalize <- function(x) {
+    return ((x - min(x)) / (max(x) - min(x)))
+    }
+
+    wbcd_n <- as.data.frame(lapply(wbcd[2:31], normalize))
+
+Confirmemos que la normalizción fue correcta:
+
+    summary(wbcd_n$area_mean)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  0.0000  0.1174  0.1729  0.2169  0.2711  1.0000
+
+**Creamos el conjunto de entrenamiento y de prueba**
+
+    wbcd_train <- wbcd_n[1:469, ]
+    wbcd_test <- wbcd_n[470:569, ]
+
+Nota que no hemos escogido aletatoriamente, ¿por qué?
+
+Cuando construimos nuestros datos de entrenamiento y prueba, excluimos
+la variable objetivo, el diagnóstico. Para entrenar el modelo de kNN,
+necesitaremos almacenar estas etiquetas de clase en vectores de
+factores, divididos en los conjuntos de datos de entrenamiento y prueba:
+
+    wbcd_train_labels <- wbcd[1:469, 1]
+    wbcd_test_labels <- wbcd[470:569, 1]
+
+### Paso 3: entrenar un modelo en los datos
+
+Equipados con nuestro vector de datos y etiquetas de entrenamiento,
+ahora estamos listos para clasificar nuestros registros desconocidos.
+Para el algoritmo kNN, la fase de entrenamiento en realidad no implica
+la construcción de modelos: el proceso de entrenamiento de un kNN
+simplemente implica almacenar los datos de entrada en un formato
+estructurado.
+
+Usaremos una implementación kNN del paquete `class` (Venables and Ripley
+(2002)) que provee algoritmos de clasificación.
+
+    # install.packages("class")
+    library(class)
+
+La función `knn()` en el paquete de `class` proporciona una
+implementación estándar y clásica del algoritmo kNN.
+
+Para cada instancia en los datos de prueba, la función identificará los
+*k* vecinos más cercanos, utilizando la distancia euclidiana, donde *k*
+es un número especificado por el usuario. La instancia de prueba se
+clasifica tomando un "voto" (esto es, si 3 de 5 vecinos pertenecen a una
+determinada clase, entonces la mayoría gana) entre los k-Vecinos más
+cercanos, específicamente, esto implica asignar la clase de la mayoría
+de los k vecinos. Un voto empatado se rompe al azar.
+
+Como nuestra información de entrenamiento incluye 469 instancias,
+podríamos intentar con *k* = 21, un número impar aproximadamente igual a
+la raíz cuadrada de 469. Usar un número impar reducirá la posibilidad de
+terminar con un voto empatado.
+
+    wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+    cl = wbcd_train_labels, k=21)
+
+La función `knn()` devuelve un vector de factores de etiquetas
+pronosticadas para cada uno de los ejemplos en el conjunto de datos de
+prueba, que hemos asignado a `wbcd_test_pred`.
+
+### Paso 4: evaluar el rendimiento del modelo
+
+    CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
+    prop.chisq=FALSE)
+
+    ## 
+    ##  
+    ##    Cell Contents
+    ## |-------------------------|
+    ## |                       N |
+    ## |           N / Row Total |
+    ## |           N / Col Total |
+    ## |         N / Table Total |
+    ## |-------------------------|
+    ## 
+    ##  
+    ## Total Observations in Table:  100 
+    ## 
+    ##  
+    ##                  | wbcd_test_pred 
+    ## wbcd_test_labels |    Benign | Malignant | Row Total | 
+    ## -----------------|-----------|-----------|-----------|
+    ##           Benign |        77 |         0 |        77 | 
+    ##                  |     1.000 |     0.000 |     0.770 | 
+    ##                  |     0.975 |     0.000 |           | 
+    ##                  |     0.770 |     0.000 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ##        Malignant |         2 |        21 |        23 | 
+    ##                  |     0.087 |     0.913 |     0.230 | 
+    ##                  |     0.025 |     1.000 |           | 
+    ##                  |     0.020 |     0.210 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ##     Column Total |        79 |        21 |       100 | 
+    ##                  |     0.790 |     0.210 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ## 
+    ## 
+
+Un total de 2 por ciento, es decir, 2 de cada 100 masas fueron
+clasificadas incorrectamente por el enfoque de kNN.
+
+Si bien el 98 por ciento de precisión parece impresionante para algunas
+líneas de código R, podemos probar otra iteración del modelo para ver si
+podemos mejorar el rendimiento y reducir el número de valores que se han
+clasificado incorrectamente.
+
+### Paso 5: mejorando el ajuste
+
+Intentaremos dos variaciones simples en nuestro clasificador anterior.
+
+-   Primero, emplearemos un método alternativo para reescalar nuestras
+    características numéricas.
+-   Segundo, probaremos varios valores diferentes para k.
+
+**z-score**
+
+    wbcd_z <- as.data.frame(scale(wbcd[-1]))
+
+Como lo habíamos hecho antes, tenemos que dividir los datos en conjuntos
+de entrenamiento y prueba, luego clasificar las instancias de prueba
+usando la función `knn()`. Luego, compararemos las etiquetas predichas
+con las etiquetas reales usando `CrossTable()`:
+
+    wbcd_train <- wbcd_z[1:469, ]
+    wbcd_test <- wbcd_z[470:569, ]
+    wbcd_train_labels <- wbcd[1:469, 1]
+    wbcd_test_labels <- wbcd[470:569, 1]
+    wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+    cl = wbcd_train_labels, k=21)
+    CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
+    prop.chisq=FALSE)
+
+    ## 
+    ##  
+    ##    Cell Contents
+    ## |-------------------------|
+    ## |                       N |
+    ## |           N / Row Total |
+    ## |           N / Col Total |
+    ## |         N / Table Total |
+    ## |-------------------------|
+    ## 
+    ##  
+    ## Total Observations in Table:  100 
+    ## 
+    ##  
+    ##                  | wbcd_test_pred 
+    ## wbcd_test_labels |    Benign | Malignant | Row Total | 
+    ## -----------------|-----------|-----------|-----------|
+    ##           Benign |        77 |         0 |        77 | 
+    ##                  |     1.000 |     0.000 |     0.770 | 
+    ##                  |     0.975 |     0.000 |           | 
+    ##                  |     0.770 |     0.000 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ##        Malignant |         2 |        21 |        23 | 
+    ##                  |     0.087 |     0.913 |     0.230 | 
+    ##                  |     0.025 |     1.000 |           | 
+    ##                  |     0.020 |     0.210 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ##     Column Total |        79 |        21 |       100 | 
+    ##                  |     0.790 |     0.210 |           | 
+    ## -----------------|-----------|-----------|-----------|
+    ## 
+    ## 
+
+Desafortunadamente, los resultados de nuestra nueva transformación
+muestran una ligera disminución en la precisión.
+
+**k alternativos**
+
+En este caso usaríamos un `loop`.
+
+A pesar de que el kNN es un algoritmo simple, es capaz de abordar tareas
+extremadamente complejas, como la identificación de masas cancerígenas.
+En unas pocas líneas simples de código R, pudimos identificar
+correctamente si una masa era maligna o benigna el 98 por ciento del
+tiempo.
+
+Redes neuronales
+----------------
+
+-   A este tipo de algorimos se les suele llamar de "caja negra". La
+    caja negra se debe a que los modelos subyacentes se basan en
+    sistemas matemáticos complejos y los resultados son difíciles de
+    interpretar.
+
+-   Aunque puede no ser factible interpretar los modelos de caja negra,
+    es peligroso aplicar los métodos a ciegas.
+
+### Entendiendo una red neuronal
+
+-   Una Red Neural Artificial (ANN) modela la relación entre un conjunto
+    de señales de entrada y una señal de salida.
+
+-   ANN usa una red de neuronas o **nodos** artificiales para resolver
+    problemas de aprendizaje.
+
+En términos generales, las RNA (ANN) son aprendices versátiles que se
+pueden aplicar a casi cualquier tarea de aprendizaje: clasificación,
+predicción numérica e incluso reconocimiento de patrones no
+supervisados.
+
+Las RNA se aplican mejor a problemas donde los **datos de entrada y los
+datos de salida son bien entendidos** o al menos bastante simples, sin
+embargo, el proceso que relaciona la entrada con la salida es
+extremadamente complejo. Como método de caja negra, funcionan bien para
+este tipo de problemas de caja negra.
+
+El diagrama de red dirigida define una relación entre las señales de
+entrada recibidas por los nodos (variables *x*) y la señal de salida
+(variable *y*).
+
+<img src="Figures/im5.png" alt="Neurona" style="width:50.0%" />
+
+La señal de cada nodo se pondera (valores *w*) según su importancia;
+ignore por ahora cómo se determinan estos pesos. Las señales de entrada
+son sumadas por el cuerpo de la célula y la señal se transmite de
+acuerdo con una función de activación indicada por *f*.
+
+Una neurona artificial típica con *n* nodos de entrada puede
+representarse mediante la siguiente fórmula. Los pesos *w* permiten que
+cada una de las *n* entradas, (*x*), contribuya una cantidad mayor o
+menor a la suma de las señales de entrada. El total neto es utilizado
+por la función de activación *f*(*x*), y la señal resultante, *y*(*x*),
+es la salida.
+
+$$
+y(x) = f\\left(\\sum\_i^nw\_ix\_i\\right)
+$$
+
+Aunque existen numerosas variantes de redes neuronales, cada una se
+puede definir en términos de las siguientes características:
+
+-   Una **función de activación**, que transforma la señal de entrada
+    neta de una neurona en una sola señal de salida para ser transmitida
+    en la red
+
+![Funciones de actvación](Figures/im6.png){width=60% height = 80%}
+
+-   Una **topología de red** (o arquitectura), que describe el número de
+    neuronas en el modelo, así como el número de capas y la forma en que
+    están conectadas.
+
+![Topología de la red](Figures/im7.png){width=60% height = 80%}
+
+-   El **algoritmo de entrenamiento** que especifica cómo se establecen
+    los pesos de conexión para activar las neuronas en proporción a la
+    señal de entrada.
+
+<table>
+<colgroup>
+<col width="37%" />
+<col width="62%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fortalezas</th>
+<th>Debilidades</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Se puede adaptar a problemas de clasificación o predicción numérica</td>
+<td>Reputación de ser computacionalmente intensivo y lento de entrenar, particularmente si la topología de red es compleja</td>
+</tr>
+<tr class="even">
+<td>Entre los enfoques de modelado más precisos</td>
+<td>Datos de entrenamiento fáciles de sobreestimar o no subestmiar</td>
+</tr>
+<tr class="odd">
+<td>Hace pocas suposiciones sobre las relaciones subyacentes de los datos</td>
+<td>Resultados en un modelo complejo de caja negra que es difícil, si no imposible, de interpretar</td>
+</tr>
+</tbody>
+</table>
+
+### Paso 1: recopilación de datos
+
+El conjunto de datos concretos contiene 1030 muestras de hormigón, con
+ocho características que describen los componentes utilizados en la
+mezcla. Se cree que estas características están relacionadas con la
+resistencia a la compresión final e incluyen la cantidad (en kilogramos
+por metro cúbico) de cemento, escoria, cenizas, agua,
+superplastificante, agregado grueso y agregado fino utilizado en el
+producto, además de el tiempo de envejecimiento (medido en días).
+
+    uu <- "https://raw.githubusercontent.com/vmoprojs/DataLectures/master/concrete.csv"
+    concrete <- read.csv(url(uu))
+    # set.seed(12345)
+    # concrete <- concrete[order(runif(nrow(concrete))), ]
+    concrete <- concrete[-1]
+
+### Paso 2: Explorar y preparar los datos
+
+    str(concrete)
+
+    ## 'data.frame':    1030 obs. of  9 variables:
+    ##  $ cement      : num  141 169 250 266 155 ...
+    ##  $ slag        : num  212 42.2 0 114 183.4 ...
+    ##  $ ash         : num  0 124.3 95.7 0 0 ...
+    ##  $ water       : num  204 158 187 228 193 ...
+    ##  $ superplastic: num  0 10.8 5.5 0 9.1 0 0 6.4 0 9 ...
+    ##  $ coarseagg   : num  972 1081 957 932 1047 ...
+    ##  $ fineagg     : num  748 796 861 670 697 ...
+    ##  $ age         : int  28 14 28 28 28 90 7 56 28 28 ...
+    ##  $ strength    : num  29.9 23.5 29.2 45.9 18.3 ...
+
+Las nueve variables en los datos corresponden a las ocho características
+y un resultado, aunque se ha evidenciado un problema. **Las redes
+neuronales funcionan mejor cuando los datos de entrada se escalan a un
+rango estrecho alrededor de cero, y aquí vemos valores que van desde
+cero hasta más de mil**.
+
+Normalmente, la solución a este problema es reescalar los datos con una
+función de normalización o estandarización.
+
+-   Si los datos siguen una curva en forma de campana (una distribución
+    normal), entonces puede tener sentido utilizar la estandarización a
+    través de la función `scale ()` integrada de R.
+
+-   Por otro lado, si los datos siguen una distribución uniforme o son
+    severamente no normales, entonces la normalización a un rango de 0-1
+    puede ser más apropiada.
+
+<!-- -->
+
+    normalize <- function(x) {
+    return((x - min(x)) / (max(x) - min(x)))
+    }
+    concrete_norm <- as.data.frame(lapply(concrete, normalize))
+    summary(concrete_norm$strength)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  0.0000  0.2664  0.4001  0.4172  0.5457  1.0000
+
+En comparación, los valores mínimos y máximos originales fueron 2.33 y
+82.6
+
+    summary(concrete$strength)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##    2.33   23.71   34.45   35.82   46.13   82.60
+
+> Cualquier transformación aplicada a los datos antes de entrenar el
+> modelo tendrá que **aplicarse en reversa** más adelante para **volver
+> a las unidades de medida originales**. Para facilitar el cambio de
+> escala, es conveniente guardar los datos originales, o al menos las
+> estadísticas de resumen de los datos originales.
+
+Dividiremos los datos en un conjunto de capacitación con el 75 por
+ciento de los ejemplos y un conjunto de prueba con el 25 por ciento.
+
+    concrete_train <- concrete_norm[1:773, ]
+    concrete_test <- concrete_norm[774:1030, ]
+
+### Paso 3: entrenar un modelo en los datos
+
+Para modelar la relación entre los ingredientes usados en el concreto y
+la resistencia del producto terminado, usaremos una red neuronal
+feedforward (red que no tiene ciclos) de múltiples capas. El paquete
+`neuralnet` (Fritsch and Guenther (2016)) proporciona una implementación
+estándar y fácil de usar de tales redes. También ofrece una función para
+trazar la topología de red (más paquetes
+[aquí](https://cran.r-project.org/web/views/MachineLearning.html)).
+
+Empezaremos a entrenar la red con solo un nodo oculto
+
+    library(neuralnet)
+    concrete_model <- neuralnet(strength ~ cement + slag +
+    ash + water + superplastic +
+    coarseagg + fineagg + age,
+    data = concrete_train)
+
+Grafiquemos el resultado
+
+    plot(concrete_model)
+
+-   En este modelo simple, hay un nodo de entrada para cada una de las
+    ocho características, seguido de un único nodo oculto y un único
+    nodo de salida que predice la fuerza del concreto.
+-   Los pesos para cada una de las conexiones también se representan, al
+    igual que los términos de sesgo (indicados por los nodos con un 1).
+
+-   El diagrama también informa el número de pasos de entrenamiento y
+    una *medida* llamada, la suma de los errores cuadrados (SSE). Estas
+    métricas serán útiles cuando estemos evaluando el rendimiento del
+    modelo.
+
+### Paso 4: evaluar el rendimiento del modelo
+
+El diagrama de topología de red nos permite observar la caja negra de la
+ANN, pero no proporciona mucha información sobre qué tan bien el modelo
+se ajusta a nuestros datos. Para estimar el rendimiento de nuestro
+modelo, podemos usar la función `compute()` para generar predicciones en
+el conjunto de datos de prueba:
+
+    model_results <- compute(concrete_model, concrete_test[1:8])
+
+Ten en cuenta que la función de `compute()` funciona de manera un poco
+diferente de las funciones de `predict()` que hemos utilizado hasta
+ahora. Devuelve una lista con dos componentes: `$neuronas`, que almacena
+las neuronas para cada capa en la red, y `$net.results`, que almacena
+los valores predichos. Vamos a querer lo último:
+
+    predicted_strength <- model_results$net.result
+
+Debido a que este es un problema de predicción numérica en lugar de un
+problema de clasificación, no podemos usar una matriz de confusión para
+examinar la precisión del modelo. En cambio, debemos medir la
+correlación entre nuestra *fuerza del concreto* predicha y el valor
+verdadero. Esto proporciona una idea de la fuerza de la asociación
+lineal entre las dos variables.
+
+    cor(predicted_strength, concrete_test$strength)
+
+    ##              [,1]
+    ## [1,] 0.8056109467
+
+> No te alarmes si el resultado difiere. Debido a que la red neuronal
+> comienza con pesos aleatorios, las predicciones pueden variar de un
+> modelo a otro.
+
+Si la correlación es alta implica que el modelo está haciendo un buen
+trabajo.
+
+### Paso 5: mejorando el ajuste
+
+Como las redes con topologías más complejas son capaces de aprender
+conceptos más difíciles, veamos qué sucede cuando aumentamos la cantidad
+de nodos ocultos a cinco.
+
+    concrete_model2 <- neuralnet(strength ~ cement + slag +
+    ash + water + superplastic +
+    coarseagg + fineagg + age,
+    data = concrete_train, hidden = 5)
+
+    plot(concrete_model2)
+
+Observa que el error informado (medido nuevamente por SSE) se ha
+reducido.
+
+Comparemos los resultados:
+
+    model_results2 <- compute(concrete_model2, concrete_test[1:8])
+    predicted_strength2 <- model_results2$net.result
+    cor(predicted_strength2, concrete_test$strength)
+
+    ##              [,1]
+    ## [1,] 0.9357843643
+
+<!-- ### Paso 1: recopilación de datos -->
+<!-- ### Paso 2: Explorar y preparar los datos -->
+<!-- ### Paso 3: entrenar un modelo en los datos -->
+<!-- ### Paso 4: evaluar el rendimiento del modelo -->
+<!-- ### Paso 5: mejorando el ajuste -->
 <!-- ## Naive Bayes -->
 <!-- ## Support vector machine -->
 <!-- # Aprendizaje no supervizado -->
@@ -1146,3 +2514,12 @@ Transformemos los datos en un data.frame
 <!-- ## Redes neuronales -->
 Referencias
 ===========
+
+Fritsch, Stefan, and Frauke Guenther. 2016. *Neuralnet: Training of
+Neural Networks*. <https://CRAN.R-project.org/package=neuralnet>.
+
+Mingers, John. 1989. “An Empirical Comparison of Selection Measures for
+Decision-Tree Induction.” *Machine Learning* 3 (4). Springer: 319–42.
+
+Venables, W. N., and B. D. Ripley. 2002. *Modern Applied Statistics with
+S*. Fourth. New York: Springer. <http://www.stats.ox.ac.uk/pub/MASS4>.
