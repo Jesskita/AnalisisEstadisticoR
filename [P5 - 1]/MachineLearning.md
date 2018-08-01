@@ -6,6 +6,12 @@
     -   [Árboles de decisión](#arboles-de-decision)
     -   [Vecinos más cercanos](#vecinos-mas-cercanos)
     -   [Redes neuronales](#redes-neuronales)
+    -   [Análisis de componentes
+        principales](#analisis-de-componentes-principales)
+-   [Aprendizaje no supervizado
+    (Clustering)](#aprendizaje-no-supervizado-clustering)
+    -   [kmedias](#kmedias)
+    -   [kmedoides](#kmedoides)
 -   [Referencias](#referencias)
 
 <script type="text/x-mathjax-config">
@@ -715,9 +721,9 @@ discriminante".
     ## Number of permutations: 999
     ## 
     ## Response: Distances
-    ##            Df  Sum Sq Mean Sq      F N.Perm Pr(>F)   
-    ## Groups      2  190082   95041 8.3286    999  0.002 **
-    ## Residuals 175 1997003   11411                        
+    ##            Df  Sum Sq Mean Sq      F N.Perm Pr(>F)    
+    ## Groups      2  190082   95041 8.3286    999  0.001 ***
+    ## Residuals 175 1997003   11411                         
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -934,9 +940,11 @@ Realizamos un gráfico de los datos:
     ## Number of permutations: 999
     ## 
     ## Response: Distances
-    ##           Df Sum Sq Mean Sq      F N.Perm Pr(>F)
-    ## Groups     2   6224  3112.0 2.4009    999   0.11
-    ## Residuals 82 106285  1296.2
+    ##           Df Sum Sq Mean Sq      F N.Perm Pr(>F)  
+    ## Groups     2   6224  3112.0 2.4009    999  0.095 .
+    ## Residuals 82 106285  1296.2                       
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Conclusión: no rechazo la hipótesis nula de homogeneidad intra-grupo.
 
@@ -1476,7 +1484,7 @@ mirar las decisiones, usamos `summary`
     ## C5.0.default(x = credit_train[-17], y = credit_train$default)
     ## 
     ## 
-    ## C5.0 [Release 2.07 GPL Edition]      Tue Jul 31 05:42:02 2018
+    ## C5.0 [Release 2.07 GPL Edition]      Wed Aug  1 04:05:19 2018
     ## -------------------------------
     ## 
     ## Class specified by attribute `outcome'
@@ -2507,11 +2515,895 @@ Comparemos los resultados:
 <!-- ### Paso 5: mejorando el ajuste -->
 <!-- ## Naive Bayes -->
 <!-- ## Support vector machine -->
-<!-- # Aprendizaje no supervizado -->
-<!-- ## kmedias -->
-<!-- ## kmedoides -->
+Análisis de componentes principales
+-----------------------------------
+
+### Planteamiento[1]
+
+Se aplica a tablas de datos donde las filas son considerados como
+individuos y las columnas como datos cuantitativos.
+
+Más formalmente, se dispone de los valores de *p* variables y *n*
+elementos dispuestos en una matriz **X** de dimensión *n* × *p*.
+
+Siempre (casi) se usa la matriz centrada y/o estandarizada, los paquetes
+suelen hacer este trabajo por nosostros. Supongamos que **X** ha sido
+centrada, su matriz de varianza covarianza viene dada por
+$\\frac{1}{n}\\mathbf{X'X}$.
+
+¿Cómo encontrar un espacio de dimensión más reducida que represente
+adeucadamente los datos?
+
+### Notación
+
+Se desea encontrar un subespacio de dimensión menor que *p* tal que al
+proyectar sobre él los puntos conserven su estructura con la menor
+distorsión posible.
+
+Consideremos primero un subespacio de dimensión uno (una recta) obtenida
+por un conjunto de *p* = 2 variables.
+
+La siguiente figura indica el diagrama de dispersión y una recta que,
+intuitivamente, proporciona un buen resumen de los datos, ya que las
+proyecciones de los puntos sobre ella indican aproximadamente la
+situación de los puntos en el plano.
+
+<img src="Figures/fig1.png" alt="Ejemplo de la recta que minimiza las distancias ortogonales de los puntos a ella." width="550" />
+
+Si consideramos un punto **x**<sub>**i**</sub> y una dirección
+**a**<sub>**1**</sub> = (*a*<sub>11</sub>, …, *a*<sub>1*p*</sub>)′,
+definida por un vector **a**<sub>**1**</sub> de norma unidad, la
+proyección del punto **x**<sub>**i**</sub> sobre esta dirección es el
+escalar:
+
+*z*<sub>*i*</sub> = *a*<sub>11</sub>*x*<sub>*i*1</sub> + … + *a*<sub>1*p*</sub>*x*<sub>*i**p*</sub> = **a**<sub>**1**</sub><sup>**′**</sup>**x**<sub>**i**</sub>
+
+y el vector que representa esta proyección será
+*z*<sub>*i*</sub>**a**<sub>**1**</sub>. Llamando *r*<sub>*i*</sub> a la
+distancia entre el punto *x*<sub>*i*</sub>, y su proyección sobre la
+dirección **a**<sub>**1**</sub>, este criterio implica:
+
+$$
+min\\sum\_{i = 1}^{n} r^2\_i = \\sum\_{i = 1}^{n} |\\mathbf{x\_i}-z\_i\\mathbf{a\_1}|^2
+$$
+
+donde | ⋅ | es la norma euclideana o módulo del vector.
+
+Notemos que al proyectar cada punto sobre la recta se forma un triángulo
+rectángulo donde la hipotenusa es la distancia al origen del punto al
+origen, (**x**<sub>**i**</sub>**′****x**<sub>**i**</sub>)<sup>1/2</sup>,
+y los catetos la proyeccion del punto sobre la recta (*z*<sub>*i*</sub>)
+y la distancia entre el punto y su proyección (*r*<sub>*i*</sub>). Por
+el teorema de Pitágoras, podemos escribir:
+
+(**x**<sub>**i**</sub>**′****x**<sub>**i**</sub>)=*z*<sub>*i*</sub><sup>2</sup> + *r*<sub>*i*</sub><sup>2</sup>
+
+y sumando esta expresión para todos los puntos, se obtiene:
+
+$$
+\\sum\_{i=1}^{n}(\\mathbf{x\_i'x\_i}) = \\sum\_{i=1}^{n}z\_i^2+\\sum\_{i=1}^{n}r\_i^2
+$$
+
+Como el primer miembro es constante, minimizar $\\sum\_{i=1}^{n}r\_i^2$,
+la suma de las distancias a la recta de todos los puntos, es equivalente
+a maximizar $\\sum\_{i=1}^{n}z\_i^2$, la suma al cuadrado de los valores
+de las proyecciones. Como las proyecciones *z*<sub>*i*</sub> son
+variables de media cero, **maximizar la suma de sus cuadrados equivale a
+mazimizar su varianza**.
+
+*¿Cómo es eso posible?*
+
+### Cálculo del primer componente
+
+El primer componente principal será la combinación lineal de las
+variables originales que tenga varianza máxima. Los valores de este
+primer componente en los *n* individuos se representarán por un vector
+**z**<sub>**1**</sub>, dado por
+
+**z**<sub>**1**</sub> = **X****a**<sub>**1**</sub>
+
+Como las variables originales tienen media cero también
+**z**<sub>**1**</sub> tendrá media nula. Su varianza será:
+
+$$
+Var(\\mathbf{z\_1}) = \\frac{1}{n}\\mathbf{z\_1^{'}z\_1} = \\frac{1}{n}\\mathbf{a\_1^{'}X'Xa\_1} = \\mathbf{a\_1^{'}Sa\_1}
+$$
+
+donde *S* es la matriz de varianzas y covarianzas de las observaciones.
+Para que la maximización de la ecuación anterior tenga solución debemos
+imponer una restricción al módulo del vector **a**<sub>**1**</sub>, y,
+sin pérdida de generalidad, impondremos que
+**a**<sub>**1**</sub><sup>**′**</sup>**a**<sub>**1**</sub> = 1. Usamos
+para ello el multiplicador de Lagrange
+
+*M* = **a**<sub>**1**</sub><sup>**′**</sup>**S****a**<sub>**1**</sub> − *λ*(**a**<sub>**1**</sub><sup>**′**</sup>**a**<sub>**1**</sub> − 1)
+
+Se maximiza derivando respecto a los componentes de
+**a**<sub>**1**</sub> e igualando a cero. Entonces
+
+$$
+\\frac{\\partial M}{\\partial\\mathbf{a\_1}} = 2\\mathbf{Sa\_1}-2\\lambda\\mathbf{a\_1} = 0
+$$
+
+cuya solución es:
+
+**S****a**<sub>**1**</sub> = *λ***a**<sub>**1**</sub>
+
+que implica que **a****1** es un vector propio de la matriz **S**, y *λ*
+su correspondiente valor propio. Para determinar qué valor propio de
+**S** es la solución de la ecuación tendremos en cuenta que,
+multiplicando por la izquierda por **a****′**<sub>**1**</sub> esta
+ecuación,
+
+**a**<sub>**1**</sub><sup>**′**</sup>**S****a**<sub>**1**</sub> = *λ***a**<sub>**1**</sub><sup>**′**</sup>**a**<sub>**1**</sub> = *λ*
+
+y concluimos, que *λ* es la varianza de **z**<sub>**1**</sub>. Como esta
+es la cantidad que queremos maximizar, *λ* será el mayor valor propio de
+la matriz **S**. Su vector asociado, **a****1**, define los coeficientes
+de cada variable en el primer componente principal.
+
+### En R
+
+El siguiente conjunto de datos corresponde a calificaciones de 20
+estudiantes en 5 materias Ciencias Natuales (CNa), Matemáticas (Mat),
+Francés (Fra), Latín (Lat) y Literatura (Lit)
+
+    CNa <- c(7,5,5,6,7,4,5,5,6,6,6,5,6,8,6,4,6,6,6,7)
+    Mat <- c(7,5,6,8,6,4,5,6,5,5,7,5,6,7,7,3,4,6,5,7)
+    Fra <- c(5,6,5,5,6,6,5,5,7,6,5,4,6,8,5,4,7,7,4,6)
+    Lat <- c(5,6,7,6,7,7,5,5,6,6,6,5,6,8,6,4,8,7,4,7)
+    Lit <- c(6,5,5,6,6,6,6,5,6,6,5,4,5,8,6,4,7,7,4,6)
+    Notas <- cbind(CNa,Mat,Fra,Lat,Lit)
+    Notas
+
+    ##       CNa Mat Fra Lat Lit
+    ##  [1,]   7   7   5   5   6
+    ##  [2,]   5   5   6   6   5
+    ##  [3,]   5   6   5   7   5
+    ##  [4,]   6   8   5   6   6
+    ##  [5,]   7   6   6   7   6
+    ##  [6,]   4   4   6   7   6
+    ##  [7,]   5   5   5   5   6
+    ##  [8,]   5   6   5   5   5
+    ##  [9,]   6   5   7   6   6
+    ## [10,]   6   5   6   6   6
+    ## [11,]   6   7   5   6   5
+    ## [12,]   5   5   4   5   4
+    ## [13,]   6   6   6   6   5
+    ## [14,]   8   7   8   8   8
+    ## [15,]   6   7   5   6   6
+    ## [16,]   4   3   4   4   4
+    ## [17,]   6   4   7   8   7
+    ## [18,]   6   6   7   7   7
+    ## [19,]   6   5   4   4   4
+    ## [20,]   7   7   6   7   6
+
+Es pertiente empezar por un análisis explotario para tener una mejor
+perspectiva de los datos:
+
+    summary(Notas)
+
+    ##       CNa           Mat           Fra           Lat            Lit      
+    ##  Min.   :4.0   Min.   :3.0   Min.   :4.0   Min.   :4.00   Min.   :4.00  
+    ##  1st Qu.:5.0   1st Qu.:5.0   1st Qu.:5.0   1st Qu.:5.00   1st Qu.:5.00  
+    ##  Median :6.0   Median :6.0   Median :5.5   Median :6.00   Median :6.00  
+    ##  Mean   :5.8   Mean   :5.7   Mean   :5.6   Mean   :6.05   Mean   :5.65  
+    ##  3rd Qu.:6.0   3rd Qu.:7.0   3rd Qu.:6.0   3rd Qu.:7.00   3rd Qu.:6.00  
+    ##  Max.   :8.0   Max.   :8.0   Max.   :8.0   Max.   :8.00   Max.   :8.00
+
+Ahora algo gráfico:
+
+    library(corrplot)
+    plot(as.data.frame(Notas))
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-81-1.png)
+
+    corrplot(cor(Notas))
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-81-2.png)
+
+Como habíamos visto, los valores propios corresponden la varianzas
+explicadas de cada componente y los vectores propios son sus direcciones
+o pesos (*loadings*). Es decir:
+
+    fc <- function(x) return((x-mean(x)))
+    Notasc <- apply(Notas,2,fc) #Datos centrados
+    S <- cov(Notas*19/20) # Matriz de covarianza
+    VarLoad <- eigen(S) # valores y vectores propios
+    VarLoad
+
+    ## eigen() decomposition
+    ## $values
+    ## [1] 3.4101492921 1.4993716587 0.3696656364 0.1987624245 0.1128009882
+    ## 
+    ## $vectors
+    ##               [,1]          [,2]          [,3]           [,4]
+    ## [1,] -0.3953451592  0.3310292215  0.6615512339 -0.47595391778
+    ## [2,] -0.3488287919  0.7977235811 -0.3708461436  0.17998543200
+    ## [3,] -0.4822572131 -0.3715412245  0.2152088238  0.01712248334
+    ## [4,] -0.5040057271 -0.2987146178 -0.5998377625 -0.46491466261
+    ## [5,] -0.4852080858 -0.1636564643  0.1367586327  0.72431642911
+    ##               [,5]
+    ## [1,]  0.2644611364
+    ## [2,] -0.2683914010
+    ## [3,] -0.7633983768
+    ## [4,]  0.2842478134
+    ## [5,]  0.4409676429
+
+Ahora podemos calcular los puntajes de los componetes por individuo:
+
+    Notasc%*%VarLoad$vectors #scores
+
+    ##                 [,1]           [,2]           [,3]           [,4]
+    ##  [1,] -0.27915410925  1.91357104210  0.86033137179  0.39423401618
+    ##  [2,]  0.70813893856 -0.85053394112 -0.24246638023 -0.18593762063
+    ##  [3,]  0.33756163267  0.02001624672 -1.42835911004 -0.48798933458
+    ##  [4,] -0.73664346905  2.08155078392 -0.77190376815  0.58525870335
+    ##  [5,] -1.42059398462  0.14687700095  0.24671081421 -0.69845825769
+    ##  [6,]  0.46309907684 -2.44165782575 -0.99625060032  0.36943263165
+    ##  [7,]  1.20919379300 -0.34393456309  0.27892119116  0.98617098774
+    ##  [8,]  1.34557308684  0.61744548226 -0.22868358511  0.44183999063
+    ##  [9,] -0.65467151952 -1.05470240838  0.77105231013  0.07954737405
+    ## [10,] -0.17241430640 -0.68316118387  0.55584348636  0.06242489070
+    ## [11,]  0.09739340863  1.44748366709 -0.53781625726 -0.31904315776
+    ## [12,]  2.66186717763  0.35491958994 -0.20980489800 -0.47958435382
+    ## [13,] -0.03603501256  0.27821886148  0.04823871009 -0.48190610641
+    ## [14,] -4.60370426057 -0.09348019176  0.64151305499  0.02353641883
+    ## [15,] -0.38781467713  1.28382720283 -0.40105762457  0.40527327135
+    ## [16,]  4.25887564776 -1.27284217598  0.47017391773  0.10131336257
+    ## [17,] -1.79906226753 -2.61351168928  0.07898156147 -0.30595095406
+    ## [18,] -1.99271412428 -0.71934990932 -0.06287296322  0.51893457255
+    ## [19,]  2.77052774551  0.98466342922  1.05158409836 -0.49062360899
+    ## [20,] -1.76942277653  0.94460058205 -0.12413532937 -0.51847282569
+    ##                  [,5]
+    ##  [1,]  0.282362039405
+    ##  [2,] -0.629895637701
+    ##  [3,]  0.149359151376
+    ##  [4,]  0.033757315293
+    ##  [5,]  0.355850690443
+    ##  [6,]  0.099250083227
+    ##  [7,]  0.290222568625
+    ##  [8,] -0.419136475367
+    ##  [9,] -0.687865235070
+    ## [10,]  0.075533141682
+    ## [11,] -0.138818926606
+    ## [12,]  0.171685659485
+    ## [13,] -0.633825902311
+    ## [14,] -0.008693228407
+    ## [15,]  0.302148716340
+    ## [16,]  0.159759511770
+    ## [17,]  0.589989435666
+    ## [18,] -0.231041179799
+    ## [19,]  0.151898982550
+    ## [20,]  0.087459289397
+
+El porcentaje de la varianza explicada por cada componente es:
+
+    VarLoad$values/(sum(VarLoad$values))
+
+    ## [1] 0.60996275850 0.26818792805 0.06612093841 0.03555201440 0.02017636063
+
+Verifiquemos nuestros resultados usando la función `princomp` de `R`:
+
+    result1 <- princomp(Notas,cor=FALSE)
+    summary(result1)
+
+    ## Importance of components:
+    ##                              Comp.1       Comp.2        Comp.3
+    ## Standard deviation     1.8946321104 1.2562985141 0.62379621878
+    ## Proportion of Variance 0.6099627585 0.2681879281 0.06612093841
+    ## Cumulative Proportion  0.6099627585 0.8781506866 0.94427162497
+    ##                              Comp.4        Comp.5
+    ## Standard deviation     0.4574096684 0.34458363620
+    ## Proportion of Variance 0.0355520144 0.02017636063
+    ## Cumulative Proportion  0.9798236394 1.00000000000
+
+    result1$loadings
+
+    ## 
+    ## Loadings:
+    ##     Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+    ## CNa -0.395  0.331  0.662 -0.476  0.264
+    ## Mat -0.349  0.798 -0.371  0.180 -0.268
+    ## Fra -0.482 -0.372  0.215        -0.763
+    ## Lat -0.504 -0.299 -0.600 -0.465  0.284
+    ## Lit -0.485 -0.164  0.137  0.724  0.441
+    ## 
+    ##                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+    ## SS loadings       1.0    1.0    1.0    1.0    1.0
+    ## Proportion Var    0.2    0.2    0.2    0.2    0.2
+    ## Cumulative Var    0.2    0.4    0.6    0.8    1.0
+
+    result1$sdev
+
+    ##       Comp.1       Comp.2       Comp.3       Comp.4       Comp.5 
+    ## 1.8946321104 1.2562985141 0.6237962188 0.4574096684 0.3445836362
+
+    str(result1)
+
+    ## List of 7
+    ##  $ sdev    : Named num [1:5] 1.895 1.256 0.624 0.457 0.345
+    ##   ..- attr(*, "names")= chr [1:5] "Comp.1" "Comp.2" "Comp.3" "Comp.4" ...
+    ##  $ loadings: loadings [1:5, 1:5] -0.395 -0.349 -0.482 -0.504 -0.485 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : chr [1:5] "CNa" "Mat" "Fra" "Lat" ...
+    ##   .. ..$ : chr [1:5] "Comp.1" "Comp.2" "Comp.3" "Comp.4" ...
+    ##  $ center  : Named num [1:5] 5.8 5.7 5.6 6.05 5.65
+    ##   ..- attr(*, "names")= chr [1:5] "CNa" "Mat" "Fra" "Lat" ...
+    ##  $ scale   : Named num [1:5] 1 1 1 1 1
+    ##   ..- attr(*, "names")= chr [1:5] "CNa" "Mat" "Fra" "Lat" ...
+    ##  $ n.obs   : int 20
+    ##  $ scores  : num [1:20, 1:5] -0.279 0.708 0.338 -0.737 -1.421 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:5] "Comp.1" "Comp.2" "Comp.3" "Comp.4" ...
+    ##  $ call    : language princomp(x = Notas, cor = FALSE)
+    ##  - attr(*, "class")= chr "princomp"
+
+    plot(result1)
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-86-1.png)
+
+    biplot(result1)
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-86-2.png)
+
+#### FactoMineR
+
+En este paquete tenemos la función `PCA` que nos brinda la misma
+información anterior además de otros temas interesantes:
+
+    library(FactoMineR)
+    result <- PCA(Notas,graph=FALSE,scale.unit = FALSE)
+    plot(result,choix="var")
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-87-1.png)
+
+    summary(result)
+
+    ## 
+    ## Call:
+    ## PCA(X = Notas, scale.unit = FALSE, graph = FALSE) 
+    ## 
+    ## 
+    ## Eigenvalues
+    ##                        Dim.1   Dim.2   Dim.3   Dim.4   Dim.5
+    ## Variance               3.590   1.578   0.389   0.209   0.119
+    ## % of var.             60.996  26.819   6.612   3.555   2.018
+    ## Cumulative % of var.  60.996  87.815  94.427  97.982 100.000
+    ## 
+    ## Individuals (the 10 first)
+    ##         Dist    Dim.1    ctr   cos2    Dim.2    ctr   cos2    Dim.3    ctr
+    ## 1   |  2.171 |  0.279  0.109  0.017 |  1.914 11.600  0.777 |  0.860  9.511
+    ## 2   |  1.310 | -0.708  0.698  0.292 | -0.851  2.292  0.422 | -0.242  0.755
+    ## 3   |  1.554 | -0.338  0.159  0.047 |  0.020  0.001  0.000 | -1.428 26.216
+    ## 4   |  2.411 |  0.737  0.756  0.093 |  2.082 13.726  0.745 | -0.772  7.656
+    ## 5   |  1.648 |  1.421  2.811  0.743 |  0.147  0.068  0.008 |  0.247  0.782
+    ## 6   |  2.705 | -0.463  0.299  0.029 | -2.442 18.887  0.815 | -0.996 12.753
+    ## 7   |  1.648 | -1.209  2.037  0.539 | -0.344  0.375  0.044 |  0.279  1.000
+    ## 8   |  1.617 | -1.346  2.522  0.692 |  0.617  1.208  0.146 | -0.229  0.672
+    ## 9   |  1.617 |  0.655  0.597  0.164 | -1.055  3.524  0.425 |  0.771  7.639
+    ## 10  |  0.903 |  0.172  0.041  0.036 | -0.683  1.479  0.573 |  0.556  3.970
+    ##       cos2  
+    ## 1    0.157 |
+    ## 2    0.034 |
+    ## 3    0.845 |
+    ## 4    0.102 |
+    ## 5    0.022 |
+    ## 6    0.136 |
+    ## 7    0.029 |
+    ## 8    0.020 |
+    ## 9    0.227 |
+    ## 10   0.379 |
+    ## 
+    ## Variables
+    ##        Dim.1    ctr   cos2    Dim.2    ctr   cos2    Dim.3    ctr   cos2  
+    ## CNa |  0.749 15.630  0.584 |  0.416 10.958  0.180 |  0.413 43.765  0.177 |
+    ## Mat |  0.661 12.168  0.289 |  1.002 63.636  0.665 | -0.231 13.753  0.035 |
+    ## Fra |  0.914 23.257  0.732 | -0.467 13.804  0.191 |  0.134  4.631  0.016 |
+    ## Lat |  0.955 25.402  0.731 | -0.375  8.923  0.113 | -0.374 35.981  0.112 |
+    ## Lit |  0.919 23.543  0.822 | -0.206  2.678  0.041 |  0.085  1.870  0.007 |
+
+    sum(sqrt(result$eig[,1]))
+
+    ## [1] 4.576720148
+
+    result$var
+
+    ## $coord
+    ##            Dim.1         Dim.2          Dim.3           Dim.4
+    ## CNa 0.7490336333  0.4158715191  0.41267315824  0.217705923700
+    ## Mat 0.6609022302  1.0021789496 -0.23133242211 -0.082327076765
+    ## Fra 0.9137000014 -0.4667666883  0.13424645052 -0.007831989429
+    ## Lat 0.9549054344 -0.3752747305 -0.37417652811  0.212656461653
+    ## Lit 0.9192908195 -0.2056013729  0.08530951796 -0.331309337648
+    ##              Dim.5
+    ## CNa -0.09112898003
+    ## Mat  0.09248328490
+    ## Fra  0.26305458853
+    ## Lat -0.09794714511
+    ## Lit -0.15195023385
+    ## 
+    ## $cor
+    ##            Dim.1         Dim.2          Dim.3           Dim.4
+    ## CNa 0.7644792508  0.4244470918  0.42118277843  0.222195177936
+    ## Mat 0.5378346073  0.8155616628 -0.18825565526 -0.066996824916
+    ## Fra 0.8557584574 -0.4371670576  0.12573332081 -0.007335330175
+    ## Lat 0.8549487620 -0.3359920833 -0.33500883749  0.190396213151
+    ## Lit 0.9069054417 -0.2028313564  0.08416016393 -0.326845688886
+    ##              Dim.5
+    ## CNa -0.09300812577
+    ## Mat  0.07526182988
+    ## Fra  0.24637319529
+    ## Lat -0.08769432809
+    ## Lit -0.14990304593
+    ## 
+    ## $cos2
+    ##            Dim.1         Dim.2          Dim.3            Dim.4
+    ## CNa 0.5844285248 0.18015533375 0.177394932843 0.04937069709786
+    ## Mat 0.2892660648 0.66514082585 0.035440191736 0.00448857454878
+    ## Fra 0.7323225374 0.19111503622 0.015808867962 0.00005380706878
+    ## Lat 0.7309373856 0.11289068001 0.112230921193 0.03625071798233
+    ## Lit 0.8224774801 0.04114055915 0.007082933192 0.10682810434354
+    ##              Dim.5
+    ## CNa 0.008650511459
+    ## Mat 0.005664343037
+    ## Fra 0.060699751357
+    ## Lat 0.007690295179
+    ## Lit 0.022470923180
+    ## 
+    ## $contrib
+    ##           Dim.1        Dim.2        Dim.3          Dim.4        Dim.5
+    ## CNa 15.62977949 10.958034549 43.765003507 22.65321318478  6.993969269
+    ## Mat 12.16815261 63.636291183 13.752686221  3.23947557312  7.203394416
+    ## Fra 23.25720196 13.804288151  4.631483783  0.02931794359 58.277708163
+    ## Lat 25.40217729  8.923042287 35.980534128 21.61456435081  8.079681941
+    ## Lit 23.54268865  2.678343829  1.870292362 52.46342894770 19.445246213
+
+    loadings<-sweep(result$var$coord,2,sqrt(result$eig[1:5,1]),FUN="/")
+
+
+    result$var$coord # correlacion entre las variables y los componentes
+
+    ##            Dim.1         Dim.2          Dim.3           Dim.4
+    ## CNa 0.7490336333  0.4158715191  0.41267315824  0.217705923700
+    ## Mat 0.6609022302  1.0021789496 -0.23133242211 -0.082327076765
+    ## Fra 0.9137000014 -0.4667666883  0.13424645052 -0.007831989429
+    ## Lat 0.9549054344 -0.3752747305 -0.37417652811  0.212656461653
+    ## Lit 0.9192908195 -0.2056013729  0.08530951796 -0.331309337648
+    ##              Dim.5
+    ## CNa -0.09112898003
+    ## Mat  0.09248328490
+    ## Fra  0.26305458853
+    ## Lat -0.09794714511
+    ## Lit -0.15195023385
+
+    result$eig # Descomposicion de la varianza por componente
+
+    ##          eigenvalue percentage of variance
+    ## comp 1 3.5896308338           60.996275850
+    ## comp 2 1.5782859566           26.818792805
+    ## comp 3 0.3891217226            6.612093841
+    ## comp 4 0.2092236047            3.555201440
+    ## comp 5 0.1187378823            2.017636063
+    ##        cumulative percentage of variance
+    ## comp 1                       60.99627585
+    ## comp 2                       87.81506866
+    ## comp 3                       94.42716250
+    ## comp 4                       97.98236394
+    ## comp 5                      100.00000000
+
+    result$ind$dist # Distancias de los individuos al centro de la nube
+
+    ##            1            2            3            4            5 
+    ## 2.1714050751 1.3095800854 1.5540270268 2.4114311104 1.6477257053 
+    ##            6            7            8            9           10 
+    ## 2.7046256673 1.6477257053 1.6170961629 1.6170961629 0.9027735043 
+    ##           11           12           13           14           15 
+    ## 1.5858751527 2.7413500324 0.8455767263 4.6491934784 1.4882876066 
+    ##           16           17           18           19           20 
+    ## 4.4738126917 3.2426840734 2.1943108257 3.1646484797 2.0772578078
+
+    result$ind$contrib # Contribucion de los individuos a la construccion de los componentes
+
+    ##              Dim.1           Dim.2          Dim.3          Dim.4
+    ## 1   0.108544611300 11.600414100874  9.51077807229  3.71421904596
+    ## 2   0.698485136117  2.291751953992  0.75541844792  0.82621649714
+    ## 3   0.158718070364  0.001269257104 26.21557251771  5.69088729179
+    ## 4   0.755848756630 13.726453206997  7.65615735022  8.18568608157
+    ## 5   2.810995562739  0.068342664139  0.78209750726 11.65843448550
+    ## 6   0.298722577479 18.886605792775 12.75327488900  3.26159348754
+    ## 7   2.036629526451  0.374745093551  0.99964903480 23.24147933238
+    ## 8   2.521940299530  1.207762515967  0.67197716122  4.66540516705
+    ## 9   0.596990078246  3.524067250331  7.63927622730  0.15122062173
+    ## 10  0.041406337350  1.478531824997  3.96999143720  0.09312684829
+    ## 11  0.013212328069  6.637608849502  3.71665612323  2.43252993942
+    ## 12  9.869450647514  0.399065564757  0.56560830032  5.49653928190
+    ## 13  0.001808712637  0.245220882066  0.02990032445  5.54988753984
+    ## 14 29.521270988874  0.027683659655  5.28804967508  0.01323853999
+    ## 15  0.209492606291  5.221526174803  2.06679823939  3.92514087211
+    ## 16 25.264466769699  5.132552812133  2.84054448889  0.24529730880
+    ## 17  4.508297917412 21.638801642860  0.08015598577  2.23698435953
+    ## 18  5.531083508286  1.639323627899  0.05079399678  6.43553319238
+    ## 19 10.691662101309  3.071566545951 14.20929559814  5.75249446636
+    ## 20  4.360973463701  2.826706579648  0.19800462302  6.42408564071
+    ##              Dim.5
+    ## 1   3.357324542421
+    ## 2  16.707747628043
+    ## 3   0.939386641433
+    ## 4   0.047986216083
+    ## 5   5.332321555556
+    ## 6   0.414803549916
+    ## 7   3.546852010565
+    ## 8   7.397613193282
+    ## 9  19.924499759730
+    ## 10  0.240245799404
+    ## 11  0.811480464561
+    ## 12  1.241219949896
+    ## 13 16.916895709007
+    ## 14  0.003182312951
+    ## 15  3.844343733830
+    ## 16  1.074766582444
+    ## 17 14.657812963608
+    ## 18  2.247809448532
+    ## 19  0.971606552422
+    ## 20  0.322101386316
+
+    result$var$contrib # Contribucion de las variables a la construccion de los componentes
+
+    ##           Dim.1        Dim.2        Dim.3          Dim.4        Dim.5
+    ## CNa 15.62977949 10.958034549 43.765003507 22.65321318478  6.993969269
+    ## Mat 12.16815261 63.636291183 13.752686221  3.23947557312  7.203394416
+    ## Fra 23.25720196 13.804288151  4.631483783  0.02931794359 58.277708163
+    ## Lat 25.40217729  8.923042287 35.980534128 21.61456435081  8.079681941
+    ## Lit 23.54268865  2.678343829  1.870292362 52.46342894770 19.445246213
+
+    result$var$cos2
+
+    ##            Dim.1         Dim.2          Dim.3            Dim.4
+    ## CNa 0.5844285248 0.18015533375 0.177394932843 0.04937069709786
+    ## Mat 0.2892660648 0.66514082585 0.035440191736 0.00448857454878
+    ## Fra 0.7323225374 0.19111503622 0.015808867962 0.00005380706878
+    ## Lat 0.7309373856 0.11289068001 0.112230921193 0.03625071798233
+    ## Lit 0.8224774801 0.04114055915 0.007082933192 0.10682810434354
+    ##              Dim.5
+    ## CNa 0.008650511459
+    ## Mat 0.005664343037
+    ## Fra 0.060699751357
+    ## Lat 0.007690295179
+    ## Lit 0.022470923180
+
+### Ejemplo
+
+#### Paso 1: recopilación de datos
+
+Trabajemos los datos de los resultados de las competencias de heptatlón
+en Seúl 1988
+
+    library(HSAUR)
+    data("heptathlon")
+
+Las variables son
+
+-   hurdles: vallas 100m
+-   highjump: salto alto
+-   shot: tiro
+-   run200m: velocidad 200m
+-   longjump: salto largo
+-   javelin: lanzamiento de javalina
+-   run800m: velocidad 800m
+-   score: puntaje
+
+#### Paso 2: Explorar y preparar los datos
+
+Resumimos la variable score:
+
+    summary(heptathlon$score)
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  4566.0  5746.0  6137.0  6090.6  6351.0  7291.0
+
+Ahora las variables que generaron el score
+
+    cor(heptathlon[,-8])
+
+    ##                  hurdles        highjump          shot       run200m
+    ## hurdles   1.000000000000 -0.811402536405 -0.6513346878  0.7737205435
+    ## highjump -0.811402536405  1.000000000000  0.4407861399 -0.4876636847
+    ## shot     -0.651334687799  0.440786139937  1.0000000000 -0.6826704342
+    ## run200m   0.773720543490 -0.487663684735 -0.6826704342  1.0000000000
+    ## longjump -0.912133616590  0.782442273246  0.7430730041 -0.8172052997
+    ## javelin  -0.007762548851  0.002153015774  0.2689888370 -0.3330427216
+    ## run800m   0.779257109727 -0.591162822519 -0.4196195716  0.6168100616
+    ##                longjump         javelin        run800m
+    ## hurdles  -0.91213361659 -0.007762548851  0.77925710973
+    ## highjump  0.78244227325  0.002153015774 -0.59116282252
+    ## shot      0.74307300414  0.268988836967 -0.41961957162
+    ## run200m  -0.81720529970 -0.333042721640  0.61681006159
+    ## longjump  1.00000000000  0.067108409346 -0.69951115666
+    ## javelin   0.06710840935  1.000000000000  0.02004908795
+    ## run800m  -0.69951115666  0.020049087945  1.00000000000
+
+    library(psych)
+    pairs.panels(cor(heptathlon[,-8]))
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-90-1.png)
+
+    heptathlon[,-8]
+
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["hurdles"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["highjump"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["shot"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["run200m"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["longjump"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["javelin"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["run800m"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"12.69","2":"1.86","3":"15.80","4":"22.56","5":"7.27","6":"45.66","7":"128.51","_rn_":"Joyner-Kersee (USA)"},{"1":"12.85","2":"1.80","3":"16.23","4":"23.65","5":"6.71","6":"42.56","7":"126.12","_rn_":"John (GDR)"},{"1":"13.20","2":"1.83","3":"14.20","4":"23.10","5":"6.68","6":"44.54","7":"124.20","_rn_":"Behmer (GDR)"},{"1":"13.61","2":"1.80","3":"15.23","4":"23.92","5":"6.25","6":"42.78","7":"132.24","_rn_":"Sablovskaite (URS)"},{"1":"13.51","2":"1.74","3":"14.76","4":"23.93","5":"6.32","6":"47.46","7":"127.90","_rn_":"Choubenkova (URS)"},{"1":"13.75","2":"1.83","3":"13.50","4":"24.65","5":"6.33","6":"42.82","7":"125.79","_rn_":"Schulz (GDR)"},{"1":"13.38","2":"1.80","3":"12.88","4":"23.59","5":"6.37","6":"40.28","7":"132.54","_rn_":"Fleming (AUS)"},{"1":"13.55","2":"1.80","3":"14.13","4":"24.48","5":"6.47","6":"38.00","7":"133.65","_rn_":"Greiner (USA)"},{"1":"13.63","2":"1.83","3":"14.28","4":"24.86","5":"6.11","6":"42.20","7":"136.05","_rn_":"Lajbnerova (CZE)"},{"1":"13.25","2":"1.77","3":"12.62","4":"23.59","5":"6.28","6":"39.06","7":"134.74","_rn_":"Bouraga (URS)"},{"1":"13.75","2":"1.86","3":"13.01","4":"25.03","5":"6.34","6":"37.86","7":"131.49","_rn_":"Wijnsma (HOL)"},{"1":"13.24","2":"1.80","3":"12.88","4":"23.59","5":"6.37","6":"40.28","7":"132.54","_rn_":"Dimitrova (BUL)"},{"1":"13.85","2":"1.86","3":"11.58","4":"24.87","5":"6.05","6":"47.50","7":"134.93","_rn_":"Scheider (SWI)"},{"1":"13.71","2":"1.83","3":"13.16","4":"24.78","5":"6.12","6":"44.58","7":"142.82","_rn_":"Braun (FRG)"},{"1":"13.79","2":"1.80","3":"12.32","4":"24.61","5":"6.08","6":"45.44","7":"137.06","_rn_":"Ruotsalainen (FIN)"},{"1":"13.93","2":"1.86","3":"14.21","4":"25.00","5":"6.40","6":"38.60","7":"146.67","_rn_":"Yuping (CHN)"},{"1":"13.47","2":"1.80","3":"12.75","4":"25.47","5":"6.34","6":"35.76","7":"138.48","_rn_":"Hagger (GB)"},{"1":"14.07","2":"1.83","3":"12.69","4":"24.83","5":"6.13","6":"44.34","7":"146.43","_rn_":"Brown (USA)"},{"1":"14.39","2":"1.71","3":"12.68","4":"24.92","5":"6.10","6":"37.76","7":"138.02","_rn_":"Mulliner (GB)"},{"1":"14.04","2":"1.77","3":"11.81","4":"25.61","5":"5.99","6":"35.68","7":"133.90","_rn_":"Hautenauve (BEL)"},{"1":"14.31","2":"1.77","3":"11.66","4":"25.69","5":"5.75","6":"39.48","7":"133.35","_rn_":"Kytola (FIN)"},{"1":"14.23","2":"1.71","3":"12.95","4":"25.50","5":"5.50","6":"39.64","7":"144.02","_rn_":"Geremias (BRA)"},{"1":"14.85","2":"1.68","3":"10.00","4":"25.23","5":"5.47","6":"39.14","7":"137.30","_rn_":"Hui-Ing (TAI)"},{"1":"14.53","2":"1.71","3":"10.83","4":"26.61","5":"5.50","6":"39.26","7":"139.17","_rn_":"Jeong-Mi (KOR)"},{"1":"16.42","2":"1.50","3":"11.78","4":"26.16","5":"4.88","6":"46.38","7":"163.43","_rn_":"Launa (PNG)"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+
+El *sentido* de los datos podría ser un problema. Podemos hacer que
+estos *apunten* a un mismo sentido:
+
+    heptathlon$hurdles <- with(heptathlon, max(hurdles)-hurdles)
+    heptathlon$run200m <- with(heptathlon, max(run200m)-run200m)
+    heptathlon$run800m <- with(heptathlon, max(run800m)-run800m)
+    score <- which(colnames(heptathlon) == "score")
+    pairs.panels(heptathlon[,-score])
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-91-1.png)
+
+#### Paso 3: entrenar un modelo en los datos
+
+Ajustamos un PCA:
+
+    heptathlon_pca <- prcomp(heptathlon[, -score], scale = TRUE)
+    cbind(predict(heptathlon_pca)[,1])
+
+    ##                                [,1]
+    ## Joyner-Kersee (USA) -4.121447626360
+    ## John (GDR)          -2.882185934840
+    ## Behmer (GDR)        -2.649633765991
+    ## Sablovskaite (URS)  -1.343351209678
+    ## Choubenkova (URS)   -1.359025695543
+    ## Schulz (GDR)        -1.043847470922
+    ## Fleming (AUS)       -1.100385638572
+    ## Greiner (USA)       -0.923173638862
+    ## Lajbnerova (CZE)    -0.530250688783
+    ## Bouraga (URS)       -0.759819023916
+    ## Wijnsma (HOL)       -0.556268302152
+    ## Dimitrova (BUL)     -1.186453832101
+    ## Scheider (SWI)       0.015461226409
+    ## Braun (FRG)          0.003774222557
+    ## Ruotsalainen (FIN)   0.090747708938
+    ## Yuping (CHN)        -0.137225439803
+    ## Hagger (GB)          0.171128651449
+    ## Brown (USA)          0.519252645741
+    ## Mulliner (GB)        1.125481832771
+    ## Hautenauve (BEL)     1.085697646191
+    ## Kytola (FIN)         1.447055499153
+    ## Geremias (BRA)       2.014029620424
+    ## Hui-Ing (TAI)        2.880298635279
+    ## Jeong-Mi (KOR)       2.970118606982
+    ## Launa (PNG)          6.270021971628
+
+    plot(heptathlon_pca)
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-92-1.png)
+
+#### Paso 4: evaluar el rendimiento del modelo
+
+Obtenemos la correlación entre el primer componente y los puntajes
+oficiales:
+
+    cor(heptathlon$score, heptathlon_pca$x[,1])
+
+    ## [1] -0.9910977748
+
+    plot(heptathlon$score, heptathlon_pca$x[,1])
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-93-1.png)
+
+#### Paso 5: mejorando el ajuste
+
+Una de las alternativas más usadas es probar con diferentes rotaciones
+de los ejes.
+
+**Bonus**
+
+    dm <- dist(heptathlon[,-8])
+    par(mfrow = c(1,3))
+    plot(cs <- hclust(dm, method = "single"))
+    plot(cc <- hclust(dm, method = "complete"))
+    plot(ca <- hclust(dm, method = "average"))
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-94-1.png)
+
+Aprendizaje no supervizado (Clustering)
+=======================================
+
+> La agrupación en clúster es una tarea de aprendizaje automático no
+> supervisada que divide automáticamente los datos en grupos o
+> agrupaciones de elementos similares.
+
+-   La agrupación se usa para el descubrimiento de conocimiento en lugar
+    de la predicción. Proporciona una idea de las agrupaciones naturales
+    encontradas en los datos.
+
+-   Las muestras no etiquetadas reciben una etiqueta de grupo y se
+    deducen por completo de las relaciones dentro de los datos.
+
+-   El problema es que las etiquetas de clase obtenidas de un
+    clasificador no supervisado carecen de significado intrínseco.
+    **Depende de ti aplicar una etiqueta procesable y significativa**
+
+Por ejemplo, veamos la relación entre las publicaciones de matemáticas y
+estadística y las de ciencias computacionales:
+
+<img src="Figures/imclus1.png" alt="Clustering 1" style="width:60.0%" style="height:60.0%" />
+
+Como se esperaba, parece haber un patrón aquí. Podríamos adivinar que la
+esquina superior izquierda, que representa a personas con muchas
+publicaciones de informática, pero pocos artículos sobre matemáticas,
+podría ser un grupo de científicos informáticos.
+
+<img src="Figures/imclus2.png" alt="Clustering 2" style="width:60.0%" style="height:60.0%" />
+
+kmedias
+-------
+
+> El algoritmo k-means es quizás el método de agrupación más utilizado.
+> Después de haber sido estudiado durante varias décadas, sirve como
+> base para muchas técnicas de agrupación más sofisticadas.
+
+> El objetivo es minimizar las diferencias dentro de cada grupo y
+> maximizar las diferencias entre los clústeres.
+
+### Algoritmo
+
+1.  Calcular la Matriz Global de distancias.
+2.  Seleccionar, los *k* patrones más alejados, como atractores
+    iniciales.
+3.  Calcular y almacenar la distancia entre cada patrón y cada uno de
+    los k patrones atractores
+4.  Particionar el espacio en grupos, asignando cada patrón al grupo del
+    atractor más cercano
+5.  Calcular, para cada grupo definido, su centroide
+6.  Considerar los centroides recién calculados como nuevos patrones
+    atractores
+7.  Regresar al paso (3)
+8.  Terminar cuando el conjunto de centroides sea idéntico que el de la
+    iteración anterior
+
+### Ejemplo
+
+#### Paso 1: recopilación de datos
+
+Tenemos información de tasas (por cada 100 personas) de tipos de
+crímenes por cada estado de USA.
+
+    www <- "ftp://stat.ethz.ch/Teaching/Datasets/WBL/crime2.dat"
+    crime <- read.csv(www,sep="")
+    str(crime)
+
+    ## 'data.frame':    50 obs. of  7 variables:
+    ##  $ murder    : num  14.2 10.8 9.5 8.8 11.5 6.3 4.2 6 10.2 11.7 ...
+    ##  $ rape      : num  25.2 51.6 34.2 27.6 49.4 42 16.8 24.9 39.6 31.1 ...
+    ##  $ robbery   : num  96.8 96.8 138.2 83.2 287 ...
+    ##  $ assault   : num  278 284 312 203 358 ...
+    ##  $ burglary  : num  1136 1332 2346 973 2139 ...
+    ##  $ larceny   : num  1882 3370 4467 1862 3500 ...
+    ##  $ auto.theft: num  281 753 440 183 664 ...
+
+#### Paso 2: Explorar y preparar los datos
+
+¿Qué estados superan 15 en su tasa de homicidios?
+
+    subset(crime, murder > 15)
+
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["murder"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["rape"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["robbery"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["assault"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["burglary"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["larceny"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["auto.theft"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"15.5","2":"30.9","3":"142.9","4":"335.5","5":"1165.5","6":"2469.9","7":"337.7","_rn_":"LOU"},{"1":"15.8","2":"49.1","3":"323.1","4":"355.0","5":"2453.1","6":"4212.6","7":"559.2","_rn_":"NEV"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+
+    sapply(crime, var)
+
+    ##          murder            rape         robbery         assault 
+    ##     14.95190204    115.76963673   7805.46932245  10050.67387755 
+    ##        burglary         larceny      auto.theft 
+    ## 187017.94161633 526943.45046531  37401.40073878
+
+    rge <- sapply(crime, function(x) diff(range(x))) # obtendo el rango
+    crime_s <- sweep(crime, 2, rge, FUN = "/") # divido para el rango
+    sapply(crime_s, mean)
+
+    ##       murder         rape      robbery      assault     burglary 
+    ## 0.4995973154 0.6040845070 0.2701763553 0.4785956965 0.6436990533 
+    ##      larceny   auto.theft 
+    ## 0.8276647560 0.3791563724
+
+#### Paso 3: entrenar un modelo en los datos
+
+Agrupamos
+
+    kmeans(crime_s, centers = 2)$centers * rge
+
+    ##         murder        rape      robbery      assault     burglary
+    ## 1  6.029032258 205.7563835  369.1262932 358.56549081  22.30253821
+    ## 2 27.883362769 379.1532617 1326.2163533  10.01142874 385.70094800
+    ##        larceny   auto.theft
+    ## 1  314.4328118 1076.0215459
+    ## 2 2039.2474964  451.8736842
+
+¿Qué pasa al multiplicar por `rge`?
+
+#### Paso 4: evaluar el rendimiento del modelo
+
+Gráfico de codo
+
+    n <- nrow(crime_s)
+    wss <- rep(0, 6)
+    wss[1] <- (n - 1) * sum(sapply(crime_s, var))
+    for (i in 2:6)
+      wss[i] <- sum(kmeans(crime_s, centers = i)$withinss)
+
+    plot(1:6, wss, type = "b", xlab = "Num de Grupos",
+           ylab = "Suma de cuadrados dentro de los grupos")
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-99-1.png)
+
+#### Paso 5: mejorando el ajuste
+
+Uno de los determinantes de los algorimos de agrupación es el número de
+grupos. Podría modificar k en función de algún criterio.
+
+kmedoides
+---------
+
+### Algoritmo:
+
+1.  Seleccionar una función de comparación entre patrones. Por ejemplo,
+    si se trata de variables cuantitativas se suele usar la distancia
+    euclideana
+2.  Calcular la Matriz Global de semejanza/diferencia, esto es, la
+    matriz de distancias.
+3.  Seleccionar, los *k* patrones más alejados, como atractores
+    iniciales.
+4.  Calcular y almacenar la semejanza/diferencia entre cada patrón y
+    cada uno de los k patrones atractores
+5.  Particionar el espacio en grupos, asignando cada patrón al grupo del
+    atractor más cercano
+6.  Calcular, para cada grupo definido, su medoide
+7.  Considerar los medoides recién calculados como nuevos patrones
+    atractores
+8.  Regresar al paso (4)
+9.  Terminar cuando el conjunto de medoides sea idéntico que el de la
+    iteración anterior
+
+La última partición obtenida, (idéntica a la de la iteración anterior)
+es la respuesta final del algoritmo.
+
 <!-- ## Clasificación jerárquica -->
 <!-- ## Redes neuronales -->
+#### Paso 1: recopilación de datos
+
+#### Paso 2: Explorar y preparar los datos
+
+#### Paso 3: entrenar un modelo en los datos
+
+Los pasos anteriores son los mismos realizados en kmeans. Ahora
+ajustamos un kmedoides:
+
+    library(cluster)
+    pamx <- pam(crime_s, 2)
+
+#### Paso 4: evaluar el rendimiento del modelo
+
+Gráficamente:
+
+    library(fpc)
+    clusplot(pam(x=crime_s,k=2))
+
+![](MachineLearning_files/figure-markdown_strict/unnamed-chunk-101-1.png)
+
+#### Paso 5: mejorando el ajuste
+
+    print(pamk(crime_s,krange=1:5)$nc)
+
+    ## [1] 2
+
 Referencias
 ===========
 
@@ -2523,3 +3415,7 @@ Decision-Tree Induction.” *Machine Learning* 3 (4). Springer: 319–42.
 
 Venables, W. N., and B. D. Ripley. 2002. *Modern Applied Statistics with
 S*. Fourth. New York: Springer. <http://www.stats.ox.ac.uk/pub/MASS4>.
+
+[1] Teoría obtenida de Peña, D. *Análisis de datos multivariantes*
+(2002). Referencias de `FactoMineR` vienen de Husson, F. *Exploratory
+multivariate analysis by example using R* (2017)
