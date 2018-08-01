@@ -21,18 +21,27 @@ knitr::opts_knit$set(root.dir = normalizePath("/Users/victormoralesonate/Documen
 La revisión metodológica aquí vertida se basa en [@Wang_2012].
 -->
 
-# Análisis Estadístico con R - FLACSO 18-06-18/06-07-18
+
+#  Estadística y Técnicas de Machine Learning con R
+## Banco Solidario 11-07-18/01-08-18
+
+![](3 Solidario.jpg)
+
+
+# Análisis Estadístico con R 
+## FLACSO 18-06-18/06-07-18
 
 ![](2.jpg)
 
 
 
-# Análisis Estadístico con R - Grupo A, FLACSO 19-03-18/17-03-18
+# Análisis Estadístico con R - Grupo A, 
+## FLACSO 19-03-18/17-03-18
 
 ![](1Ga.jpg)
 
-#  Análisis Estadístico con R - Grupo B, FLACSO 19-03-18/17-03-18
+#  Análisis Estadístico con R
+## Grupo B, FLACSO 19-03-18/17-03-18
 
 ![](1Gb.jpg)
-
 
